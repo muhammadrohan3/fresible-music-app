@@ -1,0 +1,47 @@
+<div class="submissions">
+  <table
+    class="table table-hover text-center submissions__table <%= pageData.length ? '' : 'hide' %>"
+  >
+    <thead class="submissions__table--head">
+      <tr>
+        <th>Id</th>
+        <th>Status</th>
+        <th>Type</th>
+        <th>R.Date</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% pageData.forEach(({id, type, status, package, releaseDate}) => { %>
+      <tr>
+        <td>
+          <a
+            href="<%= status === 'incomplete' ? '/add-music?id='+Fns.idLookUp(id) : '/submission?id='+Fns.idLookUp(id) %>"
+            ><%= Fns.idLookUp(id) %></a
+          >
+        </td>
+        <td>
+          <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
+            ><%= status %></span
+          >
+        </td>
+        <td><%=type %></td>
+        <td><%= Fns.dateFormat(releaseDate) %></td>
+        <td>
+          <a
+            href="<%= status === 'incomplete' ? '/add-music?id='+Fns.idLookUp(id) : '/submission?id='+Fns.idLookUp(id) %>"
+            ><%= status === 'incomplete' ? 'Continue' : 'View' %></a
+          >
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <% if(!pageData.length) { %>
+  <div class="submissions__nodata">
+    <div>You have made no submission(s) yet &rarr;</div>
+    <a href="/add-music" class="btn-outline">Add Music</a>
+  </div>
+  <% } %>
+</div>

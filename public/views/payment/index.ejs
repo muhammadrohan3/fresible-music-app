@@ -1,0 +1,123 @@
+<div class="-u-page payment">
+  <% const {id, status, package} = pageData %>
+  <div class="overview__cat">
+    <div class="overview__cat--name">
+      <span
+        class="iconify overview__cat--name-icon"
+        data-icon="ion:folder-open-outline"
+        data-inline="false"
+      ></span>
+      SUBSCRIPTION INFO
+    </div>
+    <ul class="overview__cat__list">
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Package:</span>
+        </div>
+        <span><%= package.package %></span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Max Tracks:</span>
+        </div>
+        <span><%= package.maxTracks %></span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Status:</span>
+        </div>
+        <div>
+          <span class="badge badge-pill badge-<%=Fns.colorText(status) %>">
+            <%=status %>
+          </span>
+        </div>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Period:</span>
+        </div>
+        <span>1 year</span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Amount:</span>
+        </div>
+        <span><%= Fns.formatCurrency(package.price) %></span>
+      </li>
+    </ul>
+  </div>
+  <% if(status.toLowerCase() === 'inactive') { %>
+  <div>
+    <div
+      class="w-75 mx-auto d-flex flex-column flex-md-row justify-content-between"
+    >
+      <button
+        class="btn-primary mb-3 mb-sm-0"
+        id="payment-button"
+        data-id="<%= id %>"
+      >
+        Pay Online &rarr;
+      </button>
+      <a
+        class="btn-outline d-flex align-items-center justify-content-center"
+        href="/payment/manual?id=<%=Fns.idLookUp(id) %>"
+      >
+        Manual Payment &rarr;
+      </a>
+    </div>
+    <div class="alert alert-info payment__note">
+      N.B: Clicking the <b>"Pay Online"</b> button will redirect you to
+      Paystack's secure page, you will be redirected back to us after making
+      payment.
+    </div>
+  </div>
+  <% } else {%>
+  <div class="payment__success">
+    <div class="payment__success--icon">
+      <span
+        class="iconify"
+        data-icon="entypo:thumbs-up"
+        data-inline="false"
+      ></span>
+    </div>
+    <div class="payment__success--title">
+      Payment Successful
+    </div>
+    <div class="payment__success--text">
+      Your subscription is now activated, your submission(s) for this
+      subscription is now eligible for approval...
+    </div>
+    <div>
+      <a href="/subscription?id=<%= Fns.idLookUp(id) %>"
+        ><button class="btn-outline">Go to package &rarr;</button></a
+      >
+    </div>
+  </div>
+  <% } %>
+</div>
+<!-- <script src="https://js.paystack.co/v1/inline.js"></script> -->

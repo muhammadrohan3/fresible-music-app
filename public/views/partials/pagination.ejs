@@ -1,0 +1,27 @@
+<% let { p } = Fns.query; const { count } = pageData; p = p ? parseInt(p) : 1 ;
+len = Math.ceil(count/20);%>
+
+<ul
+  class="pagination pagination-md mt-5 justify-content-center"
+  data-set="<%= count +' ' + p + ' ' + len %>"
+>
+  <li class="page-item <%= p === 1 ? 'disabled' : '' %>">
+    <% if(p === 1) { %>
+    <span class="page-link">&laquo;</span>
+    <% } else { %>
+    <a class="page-link" href="<%=Fns.pagination(p-1) %>">&laquo;</a>
+    <% } %>
+  </li>
+  <% for(let i = 1; i <= len; i++) { %>
+  <li class="page-item <%= i === p && 'active' %>">
+    <a class="page-link" href="<%=Fns.pagination(i) %>"><%= i %></a>
+  </li>
+  <% } %>
+  <li class="page-item <%= len === p  ? 'disabled' : '' %>">
+    <% if(len === p ) { %>
+    <span class="page-link">&raquo;</span>
+    <% } else { %>
+    <a class="page-link" href="<%=Fns.pagination(p+1) %>">&raquo;</a>
+    <% } %>
+  </li>
+</ul>

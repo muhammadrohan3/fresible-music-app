@@ -1,0 +1,25 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">NEW CONTACT</h1>
+      </div>
+      <div class="action__body">
+        <div><p>Hi</p></div>
+        <div>
+          <p>A user just submitted a contact form on the music portal...</p>
+        </div>
+        <div style="border: 1px solid grey; padding: 10px;">
+          <div><b>Email:</b> <span><%=email %></span></div>
+          <div><b>Subject:</b> <span><%=subject %></span></div>
+          <div>
+            <b>Content:</b>
+            <span><%=content %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

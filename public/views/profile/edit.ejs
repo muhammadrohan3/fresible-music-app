@@ -1,0 +1,93 @@
+<div class="-u-page" style="max-width: 500px;">
+  <% const {firstName, lastName, stageName, label, twitter, instagram, phone,
+  bank, bankAccount, bankAccountNo} = pageData; %>
+  <div class="alert alert-info">
+    Edit the input fields that require update.
+  </div>
+  <form class="form -u-form-input-spacing" id="editProfile">
+    <div class="form__input">
+      <label for="" class="form__input--label">Stage Name</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="stageName"
+        value="<%=stageName %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Record Label</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="label"
+        value="<%=label %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Twitter</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="twitter"
+        value="<%=twitter %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Instagram</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="instagram"
+        value="<%=instagram %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Phone</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="phone"
+        value="<%=phone %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Bank Name</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="bank"
+        value="<%=bank %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Account No</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="bankAccountNo"
+        value="<%=bankAccountNo %>"
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Account Name</label>
+      <input
+        type="text"
+        class="form__input--element"
+        name="bankAccount"
+        value="<%=bankAccount %>"
+      />
+    </div>
+    <div class="form__submit">
+      <div class="text-center">
+        <a href="/profile"
+          ><button type="button" class="btn-outline">
+            &larr; View profile
+          </button></a
+        >
+      </div>
+      <button type="submit" class="form__submit--btn btn-primary">
+        Update profile
+      </button>
+    </div>
+  </form>
+</div>

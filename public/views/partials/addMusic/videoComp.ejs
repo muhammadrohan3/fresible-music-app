@@ -1,0 +1,158 @@
+<div>
+  <form
+    class="music-form track-form"
+    data-mixed="true"
+    data-submiturl="/add-music/video"
+    data-type="submit-info"
+    data-submitnum="<%= submitStatus+1 %>"
+  >
+    <div class="track-form__body">
+      <div class="track-form__body__1">
+        <div class="form__input">
+          <div class="form__input--label">
+            <span>Upload video artwork</span>
+            <span><%= subscription.packageId < 3 ? '*required' : '' %></span>
+          </div>
+          <div class="form__file -u-flexerize">
+            <label for="artwork" class="form__file--label btn-outline"
+              >Select Item</label
+            >
+            <input type="file" name="artwork" id="artwork"
+            class="form__input--element form__file--input"
+            accept="image/jpg,image/gif,image/png,image/jpeg"
+            data-public_id="music/artworks/artwork-<%= Fns.token(10) %>"
+            data-url="<%= Fns.cloudinaryUrl() %>" data-upload_preset="<%=
+            Fns.cloudinaryUploadPreset %>" data-filetype="image"
+            data-filelimit="0.35" <%= subscription.packageId < 3 ? 'required' :
+            '' %> />
+            <div class="form__file--preview">
+              <div>Max size: 350kb</div>
+            </div>
+          </div>
+        </div>
+        <div class="form__input" style="display: block;">
+          <label class="form__input--label">
+            <span></span>
+            <span>*</span>
+          </label>
+          <input
+            type="text"
+            name="track"
+            class="form__input--element"
+            placeholder="Youtube Video Link only"
+            required
+          />
+        </div>
+      </div>
+      <div class="track-form__body__1">
+        <div class="form__input">
+          <label class="form__input--label">
+            <span></span>
+            <span>*</span>
+          </label>
+          <input
+            type="text"
+            class="form__input--element"
+            data-target="#small-title-"
+            name="title"
+            placeholder="Track Title"
+            required
+          />
+          <div class="form__input--text"></div>
+        </div>
+        <div class="form__input">
+          <label class="form__input--label">
+            <span></span>
+            <span>*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control form__input--element"
+            name="artiste"
+            placeholder="Artiste"
+            value="<%= user.profile.stageName %>"
+            required
+            disabled
+          />
+          <div class="form__input--text"></div>
+        </div>
+      </div>
+      <div class="music-form__body__2">
+        <div class="form__input music-form__body__2--1">
+          <label class="form__input--label">
+            <span></span>
+            <span>*</span>
+          </label>
+          <select class="form__input--element" name="explicit" required>
+            <option value="">Explicit Content</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form__input music-form__body__2--2">
+          <label class="form__input--label">
+            <span></span>
+            <span>&nbsp;</span>
+          </label>
+          <input
+            type="text"
+            class="form__input--element"
+            placeholder="Featured Artist(s) - separated by comma"
+            name="featured"
+          />
+        </div>
+      </div>
+      <div class="music-form__body__3">
+        <div class="music-form__body__3--1">
+          <div class="form__input">
+            <label class="form__input--label">
+              <span></span>
+              <span>*</span>
+            </label>
+            <input
+              type="number"
+              class="form__input--element"
+              placeholder="Copyright Year"
+              name="copyrightYear"
+              required
+            />
+            <div class="form__input--text"></div>
+          </div>
+          <div class="form__input">
+            <label class="form__input--label">
+              <span></span>
+              <span>*</span>
+            </label>
+            <input
+              type="text"
+              class="form__input--element"
+              placeholder="Copyright Holder"
+              name="copyrightHolder"
+              required
+            />
+            <div class="form__input--text"></div>
+          </div>
+        </div>
+        <div class="form__input music-form__body__3--2">
+          <label class="form__input--label">
+            <span></span>
+            <span>*</span>
+          </label>
+          <input
+            type="text"
+            class="form__input--element"
+            placeholder="Genre"
+            name="genre"
+            required
+          />
+          <div class="form__input--text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="add-music__next text-right">
+      <button class="btn-primary" data-type="album-submit" type="submit">
+        Next &rarr;
+      </button>
+    </div>
+  </form>
+</div>

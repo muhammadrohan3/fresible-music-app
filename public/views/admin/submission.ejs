@@ -1,0 +1,299 @@
+<div class="-u-page submission">
+  <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
+  <% const {id, type, status, comment, subscription, user, createdAt,
+  releaseDate, album, track, video, linkId} = pageData; const profile = user.profile %>
+  <div class="single-head">
+    <a class="single-head__back" href="/fmadmincp/submissions">
+      <span
+        class="iconify"
+        data-icon="ion:arrow-back-circle-outline"
+        data-inline="false"
+      ></span>
+      <span>Back</span>
+    </a>
+    <div class="single-head__title -u-id-head">
+      <span>Submission</span>
+      <span>&mdash;</span>
+      <span><%= Fns.idLookUp(id) %></span>
+    </div>
+  </div>
+  <div class="submission__alert">
+    <% if(comment) { %>
+    <div class="submission__alert__comment">
+      <% if(Fns.isAdminPage) { %>
+      <div
+        class="submission__alert__comment--pen"
+        data-id="<%= Fns.idLookUp(id) %>"
+        id="decline-comment-edit"
+      >
+        <span
+          class="iconify"
+          data-icon="dashicons:edit-large"
+          data-inline="false"
+        ></span>
+      </div>
+      <% } %>
+      <div
+        class="submission__alert__comment--text alert alert-danger text-center"
+        id="decline-comment"
+      >
+        <%= comment %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <div class="submission__body">
+    <div class="overview__cat">
+      <div class="overview__cat--name">
+        <span
+          class="iconify overview__cat--name-icon"
+          data-icon="ion:folder-open-outline"
+          data-inline="false"
+        ></span>
+        SUBMISSION INFO.
+      </div>
+      <ul class="overview__cat__list">
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Type:</span>
+          </div>
+          <span><%= type %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Status:</span>
+          </div>
+          <div>
+            <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
+              ><%= status %></span
+            >
+          </div>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Date Added:</span>
+          </div>
+          <span><%= Fns.dateTimeFormat(createdAt) %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Release Date:</span>
+          </div>
+          <span><%= Fns.dateTimeFormat(releaseDate) %></span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="overview__cat">
+      <div class="overview__cat--name">
+        <span
+          class="iconify overview__cat--name-icon"
+          data-icon="ion:folder-open-outline"
+          data-inline="false"
+        ></span>
+        SUBSCRIBER INFO.
+      </div>
+      <ul class="overview__cat__list">
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>First Name:</span>
+          </div>
+          <span><%= user.firstName %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Last Name:</span>
+          </div>
+          <span><%= user.lastName %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Stage Name:</span>
+          </div>
+          <span><%= profile.stageName %></span>
+        </li>
+      </ul>
+      <div class="text-center">
+        <a
+          href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(user.id) %>"
+          class="btn-outline"
+          >View Profile &rarr;</a
+        >
+      </div>
+    </div>
+
+    <div class="overview__cat">
+      <div class="overview__cat--name">
+        <span
+          class="iconify overview__cat--name-icon"
+          data-icon="ion:folder-open-outline"
+          data-inline="false"
+        ></span>
+        SUBSCRIPTION INFO.
+      </div>
+      <ul class="overview__cat__list">
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Package:</span>
+          </div>
+          <span><%= subscription.package.package %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Status:</span>
+          </div>
+          <div>
+            <span
+              class="badge badge-pill badge-<%= Fns.colorText(subscription.status) %>"
+              ><%= subscription.status %></span
+            >
+          </div>
+        </li>
+      </ul>
+      <div class="text-center">
+        <a
+          href="/fmadmincp/subscription?id=<%=Fns.idLookUp(subscription.id) %>"
+          class="btn-outline"
+          >View Subscription &rarr;</a
+        >
+      </div>
+    </div>
+
+    <% if(album && type === 'album') { %> <%-
+    include('../partials/addMusic/albumOverview', album); %> <% } %> <% if(track
+    && type === 'track') { %> <%- include('../partials/addMusic/trackOverview',
+    track); %> <% } %> <% if(video && type === 'video') { %> <%-
+    include('../partials/addMusic/videoOverview', video); %> <% } %> <%
+    if(!album && !track && !video) { %>
+    <div class="alert alert-info text-center -u-mw-450">
+      The subscriber is yet to add release details for the <b><%= type %></b>
+    </div>
+    <% } %>
+  </div>
+  <hr />
+  <% if(subscription.status === 'inactive' || status === 'deleted' || status ===
+  'incomplete') { %>
+
+  <div class="alert alert-info text-center -u-mw-450">
+    You cannot approve or decline this <b><%= type %></b> release, as a result
+    of either inactive subscription or it has been marked as deleted or an
+    incomplete submission
+  </div>
+
+  <% } else { %>
+  <div class="admin-submission">
+    <div class="row admin-submission__action__btns text-center">
+      <div class="col-xs-12 col-md">
+        <% if(status === 'approved') { %>
+        <button class="btn btn-secondary" disabled>
+          Approved
+        </button>
+        <% } else { %>
+        <button
+          class="btn btn-success"
+          data-url="/fmadmincp/submission/action/approve?id=<%=Fns.idLookUp(id) %>"
+        >
+          Approve
+        </button>
+        <% } %>
+      </div>
+      <div class="col-xs-12 col-md">
+        <% if(status === 'declined') { %>
+        <button class="btn btn-secondary" disabled>
+          Declined
+        </button>
+        <% } else { %>
+        <button
+          id="decline"
+          class="btn btn-danger"
+          data-url="/fmadmincp/submission/action/decline?id=<%=Fns.idLookUp(id) %>"
+        >
+          Decline
+        </button>
+        <% } %>
+      </div>
+      <div class="col-xs-12 col-md">
+        <% if(status === 'approved') { %> <% if(linkId) { %>
+        <button
+          id="store-link"
+          class="btn-outline"
+          data-type="edit"
+          data-link_id="<%=Fns.idLookUp(linkId) %>"
+        >
+          Edit Links
+        </button>
+        <% } else { %>
+        <button
+          id="store-link"
+          class="btn btn-primary"
+          data-type="add"
+          data-submission_id="<%=Fns.idLookUp(id) %>"
+          data-details="<%=JSON.stringify({stageName: profile.stageName, title: type === "album" ? album.name : track.title}) %>"
+        >
+          Add Links
+        </button>
+        <% } %> <% } %>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <div class="mt-3 text-center">
+    <% if(status === 'deleted') { %>
+    <button class="btn btn-secondary" disabled>
+      Deleted
+    </button>
+    <% } else { %>
+    <button
+      class="btn btn-danger"
+      data-url="/fmadmincp/submission/action/delete?id=<%=Fns.idLookUp(id) %>"
+    >
+      Delete
+    </button>
+    <% } %>
+  </div>
+</div>

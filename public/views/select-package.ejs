@@ -1,0 +1,219 @@
+
+<div class="select-package -u-mobile-default" id="select-package">
+  <% const packages = {} %> 
+  <% Fns.packages.forEach(({package, ...others}) => packages[package.toLowerCase().replace(/ /g, "")] = others) %>
+  <% const {single, album, basic, professional, worldclass, legendary} = packages; %> 
+  <div class="select-package__packages -u-grid-mobile">
+    <div class="package">
+      <div class="package__head">
+        <span class="package__head--type">Single</span> -
+        <span class="package__head--price"><%= Fns.formatCurrency(single["price"]) %></span>
+        <span class="package__head--info">artist / year</span>
+      </div>
+      <ul class="package__list">
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span
+            >Quickly Distribute your Single Track on 100+ Music Streaming Platform like
+            Spotify, Apple Music, Boomplay Music, iTunes, Deezer, Amazon Music,
+            etc.</span
+          >
+        </li>
+      </ul>
+      <button data-package="<%= single["id"] %>" class="package__btn btn-primary">
+        GET STARTED
+      </button>
+    </div>
+    <div class="package">
+      <div class="package__head">
+        <span class="package__head--type">Album</span> -
+        <span class="package__head--price"><%= Fns.formatCurrency(album["price"]) %></span>
+        <span class="package__head--info">artist / year</span>
+      </div>
+      <ul class="package__list">
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span
+            >Quickly Distribute your Single Album on 100+ Music Streaming Platform like
+            Spotify, Apple Music, Boomplay Music, iTunes, Deezer, Amazon Music,
+            etc.</span
+          >
+        </li>
+      </ul>
+      <button data-package="<%= album["id"] %>" class="package__btn btn-primary">
+        GET STARTED
+      </button>
+    </div>
+    <div class="package">
+      <div class="package__head">
+        <span class="package__head--type">Basic</span> -
+        <span class="package__head--price"><%= Fns.formatCurrency(basic["price"]) %></span>
+        <span class="package__head--info">artist / year</span>
+      </div>
+      <ul class="package__list">
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span
+            >Distribution for 1 Artist on 100+ Music Streaming Platform like
+            Spotify, Apple Music, Boomplay Music, iTunes, Deezer, Amazon Music,
+            etc.</span
+          >
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>3 Separate Tracks for a year</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Analytics & Trending Report​</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Free ISRC & UPC Code</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Copyright Protection​</span>
+        </li>
+      </ul>
+      <button data-package="<%= basic["id"] %>" class="package__btn btn-primary">
+        SELECT PACKAGE
+      </button>
+    </div>
+    <div class="package">
+      <div class="package__head">
+        <span class="package__head--type">Professional</span> -
+        <span class="package__head--price"><%= Fns.formatCurrency(professional["price"]) %></span>
+        <span class="package__head--info">artist / year</span>
+      </div>
+      <ul class="package__list">
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>All Basic Content... plus</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>10 Separate Tracks for a year</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Album Distribution</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span
+            >Music Shoutout on twitter via @manlikepolsa (over 100,000+
+            followers) for a day</span
+          >
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Complimentary 30 minutes music consultancy</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Priority Access</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Prime Support</span>
+        </li>
+      </ul>
+      <button data-package="<%= professional["id"] %>"  class="package__btn btn-primary">
+        SELECT PACKAGE
+      </button>
+    </div>
+    <div class="package">
+      <div class="package__head">
+        <span class="package__head--type">World Class</span> -
+        <span class="package__head--price"><%= Fns.formatCurrency(worldclass["price"]) %></span>
+        <span class="package__head--info">artist / year</span>
+      </div>
+      <ul class="package__list">
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>All Professional Contents... plus</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Unlimited uploads for a year</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span
+            >Local content distribution on 5+ blogs including mynotjustok
+            music</span
+          >
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>24/7 Support</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Playlist Pitching</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Artist Recommendations</span>
+        </li>
+      </ul>
+      <button data-package="<%= worldclass["id"] %>"  class="package__btn btn-primary">
+        SELECT PACKAGE
+      </button>
+    </div>
+    <div class="package">
+      <div class="package__head">
+        <span class="package__head--type">Legendary</span> -
+        <span class="package__head--price"><%= Fns.formatCurrency(legendary["price"]) %></span>
+        <span class="package__head--info">artist / year</span>
+      </div>
+      <ul class="package__list">
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>All World Class Content... plus</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Music Video Distribution</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Unlimited uploads for a year</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span> Instagram sponsored ads for one week for one song/video*</span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span
+            >Local Content Distribution on 15+ blogs including mynotjustok
+            music</span
+          >
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Access to sale boosting tools </span>
+        </li>
+        <li class="package__list--item">
+          <span class="iconify" data-icon="ei:check" data-inline="false"></span>
+          <span>Exclusive Invite to Premium Entertainment Events*​</span>
+        </li>
+      </ul>
+      <button data-package="<%= legendary["id"] %>"  class="package__btn btn-primary">
+        SELECT PACKAGE
+      </button>
+    </div>
+  </div>
+  <div class="select-package__footer">
+    <div class="select-package__footer--text">
+      Want further customizations based on your taste?... We've got you covered
+    </div>
+    <div>
+      <a href="/contact-us" class="btn-primary select-package__footer--btn"
+        >Let's Talk &rarr;</a
+      >
+    </div>
+  </div>
+</div>

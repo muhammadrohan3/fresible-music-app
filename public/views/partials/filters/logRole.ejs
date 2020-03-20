@@ -1,0 +1,10 @@
+<div class="form__input">
+  <% const { r } = Fns.query; %> <% const a = Fns.filter(["subscriber",
+  "admin"], r); %>
+  <select class="form__input--element" name="r">
+    <option value="<%= r && r %>"><%= r ? r : "Filter by role" %></option>
+    <% a.forEach(i => { %>
+    <option value="<%= i %>"><%= i %></option>
+    <% }) %>
+  </select>
+</div>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body class="invoice">
+    <main class="invoice__main">
+      <section class="invoice__content">
+        <section class="invoice__head">
+          <div class="invoice__head--logo">
+            <img src="/images/logo-1.png" alt="Fresible Logo" />
+          </div>
+          <div class="invoice__head--status">
+            <div class="invoice__head--status--paid">PAID</div>
+          </div>
+        </section>
+        <section class="invoice__id">Invoice #44150</section>
+        <hr style="color: #DDD" />
+        <section class="invoice__info">
+          <div class="invoice__info--item">
+            <div>Invoiced To:</div>
+            <div>MOCAI NIGERIA LIMITED</div>
+          </div>
+          <div class="invoice__info--item">
+            <div>Pay To:</div>
+            <div></div>
+          </div>
+          <div class="invoice__info--item">
+            <div>Invoice Date:</div>
+            <div></div>
+          </div>
+          <div class="invoice__info--item">
+            <div>Payment Method:</div>
+            <form class="form p-0">
+              <div class="form__input">
+                <select class="form__input--element" name="" id="">
+                  <option value="">-- Payment Method --</option>
+                  <option value="wallet">Wallet</option>
+                  <option value="bank">Bank</option>
+                  <option value="online(paystack)">Online (Paystack)</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </section>
+        <div class="invoice__list">
+          <table class="table">
+            <thead>
+              <tr>
+                <td>DESCRIPTION</td>
+                <td>AMOUNT</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Subscription (BASIC)</td>
+                <td>N4500</td>
+              </tr>
+              <tr class="invoice__list--calc">
+                <td>Sub Total</td>
+                <td>N4500</td>
+              </tr>
+              <tr class="invoice__list--calc">
+                <td>Credit</td>
+                <td></td>
+              </tr>
+              <tr class="invoice__list--total">
+                <td>Total</td>
+                <td>N4500</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <section class="invoice__txs">
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <td>
+                  TRANSACTION DATE
+                </td>
+                <td>
+                  GATEWAY
+                </td>
+                <td>
+                  TRANSACTION ID
+                </td>
+                <td>
+                  AMOUNT
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tuesday, August 6th, 2019</td>
+                <td>Bank Payment Details</td>
+                <td>44150_1565070614</td>
+                <td>N4,500.00</td>
+              </tr>
+              <tr>
+                <td>Balance</td>
+                <td></td>
+                <td></td>
+                <td>N0.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+    <footer class="invoice__footer"></footer>
+  </body>
+</html>

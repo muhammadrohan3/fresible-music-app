@@ -1,0 +1,134 @@
+<section class="-u-page subscription">
+  <% const {id, status, package, releases, toExpire, paymentDate } = pageData %>
+  <div class="single-head">
+    <a class="single-head__back" href="/subscriptions">
+      <span
+        class="iconify"
+        data-icon="ion:arrow-back-circle-outline"
+        data-inline="false"
+      ></span>
+      <span>Back</span>
+    </a>
+    <div class="single-head__title -u-id-head">
+      <span>Subscription</span><span>&mdash;</span
+      ><span><%= Fns.idLookUp(id) %></span>
+    </div>
+  </div>
+  <section class="subscription__info">
+    <div class="overview__cat">
+      <div class="overview__cat--name">
+        <span
+          class="iconify overview__cat--name-icon"
+          data-icon="ion:folder-open-outline"
+          data-inline="false"
+        ></span>
+        INFORMATION
+      </div>
+      <ul class="overview__cat__list">
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Package:</span>
+          </div>
+          <span><%=package.package %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Status:</span>
+          </div>
+          <div>
+            <span class="badge badge-pill badge-<%=Fns.colorText(status) %>">
+              <%=status %>
+            </span>
+          </div>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Max Tracks:</span>
+          </div>
+          <span><%=package.maxTracks %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Max Albums:</span>
+          </div>
+          <span><%=package.maxAlbums %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Submitted Releases:</span>
+          </div>
+          <span><%=releases.length %></span>
+        </li>
+        <% if(status !== 'inactive') { %>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Date activated:</span>
+          </div>
+          <span><%=Fns.dateFormat(paymentDate) %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>To expire:</span>
+          </div>
+          <span><%=Fns.nextYear(paymentDate) %></span>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+    <% if(status === 'inactive') { %>
+    <div class="subscription__info__alert">
+      <div>ACTIVATE SUBSCRIPTION</div>
+      <div class="alert alert-info">
+        <b>N.B:</b> none of your releases for this subscription will be approved
+        until you activate it.
+      </div>
+      <div>
+        <a href="/payment?id=<%= Fns.idLookUp(id) %>"
+          ><button class="btn-outline">Click to activate &rarr;</button></a
+        >
+      </div>
+    </div>
+    <% } %>
+  </section>
+  <div class="subscription__table">
+    <div class="subscription__table--head">
+      Subscription (<%= Fns.idLookUp(id) %>) - submissions
+    </div>
+    <%- include('partials/submissions', {pageData: releases}) %>
+  </div>
+</section>

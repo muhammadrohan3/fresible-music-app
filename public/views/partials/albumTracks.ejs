@@ -1,0 +1,35 @@
+<div class="submissions">
+  <table class="table table-hover text-center submissions__table">
+    <thead class="submissions__table--head">
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Featured</th>
+        <th>Genre</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% pageData.forEach(({id, title, featured, genre}) => { %>
+      <tr>
+        <td>
+          <a href="/albums/t<%=Fns.idLookUp(id) %>"><%= Fns.idLookUp(id) %></a>
+        </td>
+        <td>
+          <%= title %>
+        </td>
+        <td><%=featured %></td>
+        <td>
+          <%= genre %>
+        </td>
+        <td>
+          <a
+            href="<%= Fns.url(`/submission/album-track/${Fns.idLookUp(albumId)}/${Fns.idLookUp(id)}`) %>"
+            >view</a
+          >
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

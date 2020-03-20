@@ -1,0 +1,38 @@
+<section class="view__item" id="package">
+  <div class="view__item--title">Your Subscriptions</div>
+  <div class="view__item--body">
+    <form class="form -u-mw-450 -u-form-input-spacing" data-type="create">
+      <div class="form__input">
+        <label for="artiste" class="form__input--label"
+          ><span></span> <span>*required</span></label
+        >
+        <select class="form__input--element" id="package-select" required>
+          <option value="">Select from your packages</option>
+          <% compData.forEach((subscription) => { %> <% let res =
+          Fns.packageSelectHandler(subscription); %> <% if(res) { %> <% const
+          {trackStatus, albumStatus, notApplicable} = res; const { package:
+          {package}, id, status } = subscription; %>
+          <option
+            value="<%-`${package}-${status}-${trackStatus}-${id}-${albumStatus}-${notApplicable}`%>"
+            ><%-`<b>${package}</b> - ${status}`%></option
+          >
+          } <% } %> <% }) %>
+        </select>
+      </div>
+      <div class="form__input">
+        <label for="artiste" class="form__input--label"
+          ><span></span> <span>*required</span></label
+        >
+        <select class="form__input--element" name="type" required>
+          <option value="">Select a release type</option>
+          <option value="album">Album</option>
+          <option value="track">Single Track</option>
+        </select>
+      </div>
+      <div id="package-view"></div>
+      <button class="view__item--btn btn-primary" type="submit">
+        Next &rarr;
+      </button>
+    </form>
+  </div>
+</section>

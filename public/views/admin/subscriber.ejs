@@ -1,0 +1,99 @@
+<div class="-u-page profile">
+  <% const {avatar, firstName, lastName, email, role, profile, id} = pageData;
+  const {stageName, label, twitter, instagram, phone, bank, bankAccount,
+  bankAccountNo} = profile || {} %>
+  <div class="profile__left">
+    <div class="profile__left__avatar">
+      <%if(avatar) { %>
+      <img src="<%=avatar %>" alt="<%=firstName %> image" />
+      <% }else { %>
+      <span
+        class="iconify icon:simple-line-icons:user icon-inline:false"
+      ></span>
+      <% } %>
+    </div>
+    <div class="profile__left__links">
+      <div>
+        <a href="/fmadmincp/subscriptions/<%= Fns.idLookUp(id) %>"
+          >&raquo; Subscriptions</a
+        >
+      </div>
+      <div>
+        <a href="/fmadmincp/submissions/<%= Fns.idLookUp(id) %>"
+          >&raquo; Submissions</a
+        >
+      </div>
+      <div>
+        <a href="/fmadmincp/payments/<%= Fns.idLookUp(id) %>"
+          >&raquo; Payment History</a
+        >
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col">Role:</div>
+        <div class="text-center pr-3">
+          <span
+            class="col badge badge-pill badge-<%= role !== 'subscriber' ? 'success' : 'info' %>"
+          >
+            <%= role %>
+          </span>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <% if(loggedInUserRole.toLowerCase() === 'superadmin' && id !==
+        loggedInUserId) { %>
+        <button
+          class="btn btn-primary p-1"
+          id="changeRole"
+          style="font-weight: 300; font-size: 13px;"
+          data-url="/fmadmincp/subscriber/action/change-role?id=<%= Fns.idLookUp(id) %>"
+          data-user_role="<%= role %>"
+        >
+          Change Role
+        </button>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <div class="profile__right">
+    <ul class="profile__right__list">
+      <li class="profile__right__list__item">
+        <span>User ID: </span><span><b><%=Fns.idLookUp(id) %></b></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Email: </span><span><%=email %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>First Name: </span><span><%=firstName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Last Name: </span><span><%=lastName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Stage Name: </span><span><%=stageName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Record Label: </span><span><%=label %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Twitter: </span><span><%=twitter %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Instagram: </span><span><%=instagram %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Phone: </span><span><%=phone %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Bank Name: </span><span><%=bank %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Account No: </span><span><%=bankAccountNo %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Account Name: </span><span><%=bankAccount %></span>
+      </li>
+    </ul>
+  </div>
+</div>

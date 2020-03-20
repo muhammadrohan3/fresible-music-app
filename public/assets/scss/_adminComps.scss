@@ -1,0 +1,183 @@
+.admin-dash {
+  padding: 0 30px;
+  a {
+    font-weight: normal;
+    color: $color-primary;
+  }
+  &__top {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 30px 50px;
+    &__item {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      padding: 5px 10px;
+      background: $color-white;
+      @include box-shadow;
+      border-radius: 4px;
+      color: white;
+      &__left {
+        text-align: center;
+        flex: 3;
+        margin-right: 20px;
+        &--title {
+          font-size: 12px;
+        }
+        &--price {
+          font-size: 24px;
+          font-weight: 600;
+          line-height: 2em;
+        }
+      }
+      &__right {
+        line-height: 30px;
+        flex: 2;
+        text-align: right;
+        font-size: 40px;
+        font-weight: 700;
+      }
+
+      &--1,
+      &--2,
+      &--3,
+      &--4 {
+        box-shadow: 3px 3px 3px rgba(#000102, 0.5);
+      }
+      &--1 {
+        background-color: #1e1e2c;
+      }
+      &--2 {
+        background-color: rgb(86, 12, 104);
+      }
+      &--3 {
+        background-color: #91b252;
+      }
+      &--4 {
+        background-color: #6262af;
+      }
+      @media (max-width: $sm) {
+        margin-bottom: 20px;
+      }
+    }
+  }
+  &__middle {
+    margin-top: 50px;
+    min-height: 400px;
+    display: flex;
+    & > * {
+      &:first-child {
+        flex: 2;
+        margin-right: 30px;
+      }
+      &:last-child {
+        flex: 1;
+      }
+    }
+    @media screen and (max-width: $sm) {
+      display: block;
+      & > * {
+        &:first-child {
+          margin: 0;
+          margin-bottom: 30px;
+        }
+      }
+    }
+  }
+  &__bottom {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 40px;
+    margin: 50px 0 40px;
+    min-height: 200px;
+  }
+}
+
+.admin-submission {
+  max-width: 500px;
+  margin: 30px auto 0;
+}
+
+////////////////////////////>>>>>>> LOGGER
+.logger {
+  &__title {
+    & h3 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+  &__body {
+    &__item {
+      max-width: 600px;
+      padding: 5px 0;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      &--icon {
+        flex: 2;
+        text-align: left;
+        &--blue {
+          color: $color-primary;
+        }
+        &--green {
+          color: $success;
+        }
+      }
+      &--text {
+        justify-self: center;
+        flex: 5;
+        padding-left: 20px;
+        word-spacing: 0.1em;
+      }
+      &--time {
+        flex: 2;
+        text-align: right;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+///////////////////////////////////////>>>>>>>>>> ADMIN COMP LOADER;
+@keyframes ldio-4jlfukxc4mq {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.ldio-4jlfukxc4mq div {
+  position: absolute;
+  animation: ldio-4jlfukxc4mq 1s linear infinite;
+  width: 80px;
+  height: 80px;
+  top: 10px;
+  left: 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 0 0 #011b33;
+  transform-origin: 40px 41px;
+}
+.loadingio-spinner-eclipse-xexx7vdniub {
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  overflow: hidden;
+  background: #ffffff;
+}
+.ldio-4jlfukxc4mq {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(0.64);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio-4jlfukxc4mq div {
+  box-sizing: content-box;
+}

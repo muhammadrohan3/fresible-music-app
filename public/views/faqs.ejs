@@ -1,0 +1,33 @@
+<div class="-u-page">
+  <% const faqs = JSON.parse(Fns.fs.readFileSync(Fns.dirs.viewsDir +
+  '/faqs.json', 'utf-8')); %>
+  <div class="faq accordion" id="accordion">
+    <% faqs.forEach((q, i) => { %>
+    <div class="card faq__item">
+      <div class="card-header faq__item__head" id="heading<%= i %>">
+        <h2 class="mb-0 faq__item__head__h2">
+          <a
+            class="w-100"
+            data-toggle="collapse"
+            data-target="#collapse<%= i %>"
+            aria-expanded="true"
+            aria-controls="collapse<%= i %>"
+          >
+            <%= q.question %>
+          </a>
+        </h2>
+      </div>
+      <div
+        id="collapse<%= i %>"
+        class="collapse faq__item__body"
+        aria-labelledby="heading<%= i %>"
+        data-parent="#accordion"
+      >
+        <div class="card-body faq__item__body--content">
+          <%= q.answer %>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>

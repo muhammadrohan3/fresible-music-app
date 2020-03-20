@@ -1,0 +1,24 @@
+<div class="-u-page-s">
+<%- include('../partials/filters/index', data = ['uid','l', 'd']) %>
+<div class="-u-page mt-0">
+  <% const { rows, count } = pageData; %>
+    <%
+rows.forEach(({user, action, link, userId, role, type, createdAt}) => { %>
+<div class="row logger__body__item">
+  <span class='iconify logger__body__item--icon logger__body__item--icon--<%= role === 'admin' ? 'blue' : 'green' %>'
+    data-icon='ant-design:notification-twotone'
+    data-inline="false"></span>
+  <div class='logger__body__item--text'>
+    <a href='/fmadmincp/subscriber?id=<%= Fns.idLookUp(userId) %>'><%= user.firstName %></a> <%= action %>    
+    <% if(link) { %> 
+        <a
+        href="/fmadmincp<%= link %>"
+        ><%= type %></a> 
+    <% } %>
+  </div>
+  <div class="logger__body__item--time"><%= Fns.dateTimeFormat(createdAt) %></div>
+</div>
+<% }) %>
+</div>
+<%- include('../partials/pagination') %>
+</div>

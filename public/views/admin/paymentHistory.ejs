@@ -1,0 +1,45 @@
+<div class="-u-page-s">
+  <%- include('../partials/filters/index', data = ['ps', 'd']) %>
+  <div class="-u-page mt-0">
+    <% const { count, rows } = pageData %>
+    <div class="submissions">
+      <table class="table table-hover text-center submissions__table">
+        <thead class="submissions__table--head">
+          <tr>
+            <th>Id</th>
+            <th>Subscriber</th>
+            <th>Package</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(({id, status, createdAt, package, user}) => { %>
+          <tr>
+            <td>
+              <a href="/fmadmincp/payments/single?id=<%=Fns.idLookUp(id) %>"
+                ><%=Fns.idLookUp(id) %></a
+              >
+            </td>
+            <td><%=user.firstName + ' ' + user.lastName %></td>
+            <td><%=package.package %></td>
+            <td>
+              <span class="badge badge-pill badge-<%=Fns.colorText(status) %>"
+                ><%=status %></span
+              >
+            </td>
+            <td><%=Fns.dateTimeFormat(createdAt) %></td>
+            <td>
+              <a href="/fmadmincp/payments/single?id=<%=Fns.idLookUp(id) %>"
+                >View</a
+              >
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <%- include('../partials/pagination') %>
+</div>

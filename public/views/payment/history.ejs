@@ -1,0 +1,37 @@
+<div class="-u-page">
+  <div class="submissions">
+    <table class="table table-hover text-center submissions__table">
+      <thead class="submissions__table--head">
+        <tr>
+          <th>Id</th>
+          <th>Package</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pageData && pageData.forEach(d => { const {id, status, date, package}
+        = d; %>
+        <tr>
+          <td>
+            <a href="/payment/history/single?id=<%=Fns.idLookUp(id) %>"
+              ><%=Fns.idLookUp(id) %></a
+            >
+          </td>
+          <td><%=package.package %></td>
+          <td>
+            <span class="badge badge-pill badge-<%=Fns.colorText(status) %>"
+              ><%=status %></span
+            >
+          </td>
+          <td><%=Fns.dateFormat(date) %></td>
+          <td>
+            <a href="/payment/history/single?id=<%=Fns.idLookUp(id) %>">View</a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>

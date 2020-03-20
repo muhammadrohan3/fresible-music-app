@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    /> -->
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+    <script src="https://code.iconify.design/1/1.0.3/iconify.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Poppins:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/dist/bundle.css" />
+    <title><%= title %> | Control Panel - FMD</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-150022065-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-150022065-1");
+    </script>
+  </head>
+  <body>
+    <main class="dashboard -u-close-menu" id="main-page">
+      <aside class="dashboard__nav nav">
+        <a href="/">
+          <div class="nav__logo">
+            <img
+              src="/images/fresible-logo-white.png"
+              class="nav__logo--img"
+              alt="Fresible Logo"
+            />
+          </div>
+        </a>
+        <ul class="nav__list">
+          <a href="/fmadmincp" class="nav__list--item">
+            <span
+              class="iconify icon:simple-line-icons:speedometer icon-inline:false nav__list--item-icon"
+              style="color: #fff;"
+            ></span>
+            <span class="nav__list--item-text">Dashboard</span>
+          </a>
+          <a href="/fmadmincp/submissions" class="nav__list--item">
+            <span
+              class="iconify icon:simple-line-icons:music-tone-alt icon-inline:false nav__list--item-icon"
+              style="color: #fff;"
+            ></span>
+            <span class="nav__list--item-text">Releases</span>
+          </a>
+          <a href="/fmadmincp/subscriptions" class="nav__list--item">
+            <span
+              class="iconify icon:simple-line-icons:pie-chart icon-inline:false nav__list--item-icon"
+              style="color: #fff;"
+            ></span>
+            <span class="nav__list--item-link">Subscriptions</span>
+          </a>
+          <a href="/fmadmincp/payments" class="nav__list--item">
+            <span
+              class="iconify icon:simple-line-icons:graph icon-inline:false nav__list--item-icon"
+              style="color: #fff;"
+            ></span>
+            <span class="nav__list--item-link">Payments</span>
+          </a>
+          <a href="/fmadmincp/subscribers" class="nav__list--item">
+            <span
+              class="iconify icon:simple-line-icons:envelope icon-inline:false nav__list--item-icon"
+              style="color: #fff;"
+            ></span>
+            <span class="nav__list--item-link">Subscribers</span>
+          </a>
+          <a href="/fmadmincp/logs" class="nav__list--item">
+            <span
+              class="iconify nav__list--item-icon"
+              style="color: #fff; font-size: 18px;"
+              data-icon="dashicons:welcome-write-blog"
+              data-inline="false"
+            ></span>
+            <span class="nav__list--item-link">Logs</span>
+          </a>
+          <a href="/" class="nav__list--item bg-success">
+            <span
+              class="iconify icon:simple-line-icons:layers icon-inline:false nav__list--item-icon"
+              style="color: #fff;"
+            ></span>
+            <span class="nav__list--item-link">Front End</span>
+          </a>
+        </ul>
+      </aside>
+      <aside class="dashboard__body">
+        <header class="dashboard__body--header header">
+          <div class="header__left">
+            <div class="header__left__hamburger">
+              <input
+                type="checkbox"
+                id="hamburger"
+                class="header__left__hamburger--check"
+              />
+              <label
+                for="hamburger"
+                class="header__left__hamburger--div"
+              ></label>
+            </div>
+            <div class="header__left__page">
+              <span class="header__left__page--title"><%= title %></span>
+            </div>
+          </div>
+          <div class="header__avatar">
+            <div class="dropdown">
+              <label class="dropdown__click" for="checkboxD">
+                <div class="dropdown__click--text">
+                  Hi, <span class="-u-bold"><%= loggedInUserFirstName %></span>
+                </div>
+                <div class="header__avatar--img">
+                  <% if(loggedInUserAvatar) { %>
+                  <img
+                    class="header__avatar--img-image"
+                    src="<%= loggedInUserAvatar %>"
+                    alt="<%= loggedInUserFirstName %>"
+                  />
+                  <% } else { %>
+                  <span
+                    class="iconify icon:simple-line-icons:user icon-inline:false header__avatar--img-icon"
+                  ></span>
+                  <% } %>
+                </div>
+              </label>
+              <input
+                type="checkbox"
+                id="checkboxD"
+                name="checkbox"
+                class="dropdown--check"
+              />
+              <div class="dropdown__container">
+                <div>
+                  <a href="/profile" class="dropdown__container--link"
+                    >Profile</a
+                  >
+                </div>
+                <div>
+                  <a href="/logout" class="dropdown__container--link">Logout</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="dashboard__body--main">
+          <div class="dashboard__body--main-page -u-mobile-default">
+            <%- include(page) %>
+          </div>
+
+          <%- include("../partials/popups/index") %>
+
+          <div class="page__alert" id="page-alert">
+            <div id="page-alert-text"></div>
+            <div id="alert-close">&times;</div>
+          </div>
+
+          <div class="loader loader__page hide" id="loader">
+            <div class="lds-roller">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <span class="lds-roller__text" id="loader-text"></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </body>
+  <script src="/dist/admin.bundle.js"></script>
+</html>

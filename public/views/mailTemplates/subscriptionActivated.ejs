@@ -1,0 +1,36 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">SUBSCRIPTION ACTIVATED</h1>
+      </div>
+      <div class="action__body">
+        <div>
+          <p>Hi <b><%= firstName %></b>,</p>
+        </div>
+        <div>
+          <p>
+            Your payment has been confirmed.
+          </p>
+        </div>
+        <div>
+          <p>
+            We would like to notify you that your subscription has been
+            activated.
+          </p>
+        </div>
+        <div>
+          <p>
+            Submissions for this subscription are now eligible for approval
+            review and distribution process.
+          </p>
+        </div>
+        <button class="mail-btn">
+          <a href="<%= url %>">VIEW SUBSCRIPTION</a>
+        </button>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

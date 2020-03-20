@@ -1,0 +1,17 @@
+$color-primary: #0050bf;
+$color-secondary: #0075bf;
+$color-white: #fff;
+$color-dark-blue-primary: #011b33;
+$color-dark-blue-secondary: #1a1a26;
+$color-background: #eff0f6;
+$color-light-black: #333;
+$sm: 780px;
+$color-border: #ddd;
+@import "custom";
+@import "mixins";
+@import "utilities";
+@import "components";
+@import "dashboard";
+@import "adminComps";
+@import "popups";
+@import "root";

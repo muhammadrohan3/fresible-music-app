@@ -1,0 +1,41 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">RELEASE DECLINED</h1>
+      </div>
+      <div class="action__body">
+        <div class="">
+          <p>Hi <b><%= firstName %>,</b></p>
+        </div>
+        <div>
+          <p>
+            This is to notify you that one of your releases has just been
+            declined.
+          </p>
+        </div>
+        <div>
+          <p>
+            Our team reviewed the release and unfortunately it failed our test.
+          </p>
+        </div>
+        <div>
+          <p>
+            The details of the review is on the release page, you can make
+            corrections based on the information and re-submit for review.
+          </p>
+        </div>
+        <div>
+          <p>
+            Thanks for being all in.
+          </p>
+        </div>
+        <button class="mail-btn">
+          <a href="<%= url %>">VIEW RELEASE</a>
+        </button>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

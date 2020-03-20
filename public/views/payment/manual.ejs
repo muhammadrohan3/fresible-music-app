@@ -1,0 +1,155 @@
+<div class="-u-page payment">
+  <% const {id, status, package} = pageData %>
+  <div class="overview__cat">
+    <div class="overview__cat--name">
+      <span
+        class="iconify overview__cat--name-icon"
+        data-icon="ion:folder-open-outline"
+        data-inline="false"
+      ></span>
+      SUBSCRIPTION INFO
+    </div>
+    <ul class="overview__cat__list">
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Subscription ID:</span>
+        </div>
+        <span><%= Fns.idLookUp(id) %></span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Package:</span>
+        </div>
+        <span><%= package.package %></span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Max Tracks:</span>
+        </div>
+        <span><%= package.maxTracks %></span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Status:</span>
+        </div>
+        <div>
+          <span class="badge badge-pill badge-<%=Fns.colorText(status) %>">
+            <%=status %>
+          </span>
+        </div>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Period:</span>
+        </div>
+        <span>1 year</span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Amount:</span>
+        </div>
+        <span><%= Fns.formatCurrency(package.price) %></span>
+      </li>
+    </ul>
+  </div>
+  <hr />
+  <div class="overview__cat">
+    <div class="overview__cat--name">
+      <span
+        class="iconify overview__cat--name-icon"
+        data-icon="ion:folder-open-outline"
+        data-inline="false"
+      ></span>
+      BANK DETAILS
+    </div>
+    <ul class="overview__cat__list">
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>Bank:</span>
+        </div>
+        <span>First Bank PLC</span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>A/C Number:</span>
+        </div>
+        <span>2031768616</span>
+      </li>
+      <li class="overview__cat__list__item">
+        <div class="u-flex-middle">
+          <span
+            class="iconify overview__cat__list__item--icon"
+            data-icon="ei:check"
+            data-inline="false"
+          ></span>
+          <span>A/C Name:</span>
+        </div>
+        <span>GEM Fresible Limited</span>
+      </li>
+    </ul>
+  </div>
+  <hr />
+  <div class="alert alert-info mx-auto w-100">
+    <b>NOTE:</b> When making payment, the depositors name or transaction
+    note/comment should be
+    <strong>"ACTIVATEME - [Subscription ID here]"</strong> <br />
+    Example -
+    <strong>ACTIVATEME - <%= Fns.idLookUp(id) %> </strong>.
+    <br />
+
+    After making the exact payment (<%= Fns.formatCurrency(package.price) %>),
+    You are required to send a mail containing the following information to
+    <strong>music@fresible.com</strong> to get your subscription activated;
+    <br />
+    Mail Subject to us should be: <strong>Proof of Payment</strong>, with the
+    following info; <br />
+    <strong>Payment Transaction ID:</strong> <br />
+    <strong>Payment Date: </strong> <br />
+    <strong>Account Email:</strong> <br />
+    <strong>Subscription ID: </strong> <br />
+    <strong>Subscription Package Type:</strong> <br />
+    <strong>Attach payment picture to mail</strong> <br />
+    Your subscription will be approved when we successfully confirm the payment.
+  </div>
+</div>
+<!-- <script src="https://js.paystack.co/v1/inline.js"></script> -->

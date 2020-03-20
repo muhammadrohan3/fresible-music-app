@@ -1,0 +1,37 @@
+<div class="submissions">
+  <% const { count, rows } = pageData %>
+  <table class="table table-hover text-center submissions__table">
+    <thead class="submissions__table--head">
+      <tr>
+        <th>Id</th>
+        <th>Subscriber</th>
+        <th>Status</th>
+        <th>Type</th>
+        <th>Date Added</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows && rows.forEach(({id, type, status, user, createdAt}) => { %>
+      <tr>
+        <td>
+          <a href="/fmadmincp/submission?id=<%= Fns.idLookUp(id) %>"
+            ><%= Fns.idLookUp(id) %></a
+          >
+        </td>
+        <td><%=user.firstName + ' ' + user.lastName %></td>
+        <td>
+          <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
+            ><%= status %></span
+          >
+        </td>
+        <td><%=type %></td>
+        <td><%= Fns.dateTimeFormat(createdAt) %></td>
+        <td>
+          <a href="/fmadmincp/submission?id=<%= Fns.idLookUp(id) %>">edit</a>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

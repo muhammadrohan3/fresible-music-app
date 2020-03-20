@@ -1,0 +1,12 @@
+<form
+  action=""
+  method="get"
+  class="form mx-auto d-flex align-items-center justify-content-md-around mb-md-3 filterby"
+  style="background: none"
+  data-ignore="true"
+>
+  <% const a = {r: "releaseStatus", ps: "paymentStatus", s:
+  "subscriptionStatus", d: "date", l: "logRole", uid: "userId", e: "email" }; %>
+  <% data.forEach(key => { %> <%- a[key] && include(a[key]) %> <% }) %>
+  <button class="btn-outline" style="flex: 0.5" type="submit">filter</button>
+</form>

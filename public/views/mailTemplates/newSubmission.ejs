@@ -1,0 +1,26 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">NEW RELEASE</h1>
+      </div>
+      <div class="action__body">
+        <div class="">
+          <p>Hi <b><%= firstName %>,</b></p>
+        </div>
+        <div><p>You have just submitted a new release.</p></div>
+        <div>
+          <p>
+            Our team has been notified of this process, you will be notified of
+            subsequent actions on this submission.
+          </p>
+        </div>
+        <button class="mail-btn">
+          <a href="<%= url %>">VIEW RELEASE</a>
+        </button>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

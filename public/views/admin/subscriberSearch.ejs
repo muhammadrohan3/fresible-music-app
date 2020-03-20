@@ -1,0 +1,47 @@
+<div class="-u-page-s">
+  <div class="search">
+    <div class="search__box">
+      <form action="/fmadmincp/subscribers/search" class="d-flex" method="GET">
+        <input type="email" placeholder="subscriber's email address" name="e" />
+        <button type="submit" class="btn btn-primary">search</button>
+      </form>
+    </div>
+  </div>
+  <div class="-u-page" style="margin: 0">
+    <% if(pageData) { %> <% const {id, firstName, lastName, createdAt, profile}
+    = pageData; %>
+    <div class="submissions">
+      <table class="table table-hover text-center submissions__table">
+        <thead class="submissions__table--head">
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Stage Name</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <a href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(id) %>"
+                ><%=Fns.idLookUp(id) %></a
+              >
+            </td>
+            <td><%=firstName %> <%=lastName%></td>
+            <td><%=profile && profile.stageName %></td>
+            <td><%=Fns.dateFormat(createdAt) %></td>
+            <td>
+              <a href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(id) %>">view</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+    <div class="text-center">
+      <h3>Subscriber Not Found!</h3>
+    </div>
+    <% } %>
+  </div>
+</div>

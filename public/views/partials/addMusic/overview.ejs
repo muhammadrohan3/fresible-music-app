@@ -1,0 +1,81 @@
+<section class="view__item" id="overview">
+  <div class="view__item--title">Overview</div>
+  <div class="view__item--body overview">
+    <div class="overview__cat">
+      <div class="overview__cat--name">
+        <span
+          class="iconify overview__cat--name-icon"
+          data-icon="ion:folder-open-outline"
+          data-inline="false"
+        ></span>
+        PACKAGE DATA
+      </div>
+      <ul class="overview__cat__list">
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Package:</span>
+          </div>
+          <span><%= subscription.package.package %></span>
+        </li>
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Status:</span>
+          </div>
+          <div>
+            <span
+              class="badge badge-pill badge-<%=Fns.colorText(subscription.status) %>"
+              ><%= subscription.status %></span
+            >
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="overview__cat">
+      <div class="overview__cat--name">
+        <span
+          class="iconify overview__cat--name-icon"
+          data-icon="ion:folder-open-outline"
+          data-inline="false"
+        ></span>
+        RELEASE DATE
+      </div>
+      <ul class="overview__cat__list">
+        <li class="overview__cat__list__item">
+          <div class="u-flex-middle">
+            <span
+              class="iconify overview__cat__list__item--icon"
+              data-icon="ei:check"
+              data-inline="false"
+            ></span>
+            <span>Selected Date:</span>
+          </div>
+          <span><%= Fns.dateFormat(releaseDate) %></span>
+        </li>
+      </ul>
+    </div>
+    <% if(type === 'album') { %> <%- include('albumOverview', album, showBtn =
+    false); %> <% } %> <% if(type === 'track') { %> <%- include('trackOverview',
+    track); %> <% } %> <% if(type === 'video') { %> <%- include('videoOverview',
+    video); %> <% } %>
+  </div>
+  <button
+    class="view__item--btn btn-primary"
+    type="submit"
+    data-type="confirm"
+    data-id="<%= Fns.idLookUp(subscription.id) %>"
+    id="submission"
+  >
+    Confirm &rarr;
+  </button>
+</section>

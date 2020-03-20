@@ -1,0 +1,26 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">NEW SUBSCRIPTION</h1>
+      </div>
+      <div class="action__body">
+        <div class="">
+          <p>Hi <b><%= firstName %>,</b></p>
+        </div>
+        <div><p>You have just added a new subscription.</p></div>
+        <div>
+          <p>
+            Note that release(s) for this subscription won't be reviewed for
+            online stores distribution until it's activated.
+          </p>
+        </div>
+        <button class="mail-btn">
+          <a href="<%= url %>">VIEW SUBSCRIPTION</a>
+        </button>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

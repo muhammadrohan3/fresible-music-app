@@ -1,0 +1,28 @@
+<section class="view__item -u-mw-450" id="release">
+  <div class="view__item--title">Select Release Date</div>
+  <div class="view__item--body">
+    <form
+      class="form"
+      data-type="submit"
+      data-submitnum="<%= submitStatus+1 %>"
+    >
+      <div class="form__input">
+        <label for="title" class="form__input--label">
+          <span>Select Date (must be atleast 12 days time)</span>
+          <span>*required</span>
+        </label>
+        <input
+          type="date"
+          class="form__input--element"
+          id="date-input"
+          name="releaseDate"
+          required
+        />
+        <div class="form__input--text"></div>
+      </div>
+      <button class="view__item--btn btn-primary" type="submit">
+        Next &rarr;
+      </button>
+    </form>
+  </div>
+</section>

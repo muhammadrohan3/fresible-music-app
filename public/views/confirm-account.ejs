@@ -1,0 +1,34 @@
+<section class="-u-page confirm-account">
+  <div class="confirm-account__box">
+    <div class="confirm-account__box__head">
+      <span class="confirm-account__box__head--text"> <h2>Important</h2></span>
+      <span
+        class="iconify confirm-account__box__head--icon"
+        data-icon="ps:important"
+        data-inline="false"
+      ></span>
+    </div>
+    <div>
+      It seems you haven't verified your email address yet
+    </div>
+    <div class="alert alert-info">
+      We require your email address in the input box below to be verified by you
+      before we continue, a verification link would be sent to your email... Hit
+      the confirm button
+    </div>
+    <form class="form">
+      <div class="form__input mb-3">
+        <input
+          type="text"
+          class="form-control form__input--element"
+          name="email"
+          value="<%= email %>"
+          disabled
+        />
+      </div>
+      <button class="btn-primary" id="confirm-account" type="button">
+        Confirm &rarr;
+      </button>
+    </form>
+  </div>
+</section>

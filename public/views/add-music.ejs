@@ -1,0 +1,78 @@
+<div class="add-music">
+  <div class="add-music--container">
+    <aside class="add-music__actions">
+      <ul class="action">
+        <li class="action__item <%= Fns.activeSwitch('package') %>">
+          <div class="action__item--icon">
+            <span
+              class="iconify"
+              data-icon="uil:package"
+              data-inline="false"
+            ></span>
+          </div>
+          <div class="action__item--info">
+            <div>Package</div>
+            <div>Your current packages</div>
+          </div>
+        </li>
+        <li class="action__item  <%= Fns.activeSwitch('terms') %>">
+          <div class="action__item--icon">
+            <span
+              class="iconify"
+              data-icon="octicon:law"
+              data-inline="false"
+            ></span>
+          </div>
+          <div class="action__item--info">
+            <div>Terms</div>
+            <div>Agree to terms & conditions</div>
+          </div>
+        </li>
+        <li class="action__item  <%= Fns.activeSwitch('information') %>">
+          <div class="action__item--icon">
+            <span
+              class="iconify"
+              data-icon="mdi:information-outline"
+              data-inline="false"
+            ></span>
+          </div>
+          <div class="action__item--info">
+            <div>Information</div>
+            <div>Valid music information</div>
+          </div>
+        </li>
+        <li class="action__item  <%= Fns.activeSwitch('release') %>">
+          <div class="action__item--icon">
+            <span
+              class="iconify"
+              data-icon="ion:open-outline"
+              data-inline="false"
+            ></span>
+          </div>
+          <div class="action__item--info">
+            <div>Release</div>
+            <div>Select music release date</div>
+          </div>
+        </li>
+        <li class="action__item  <%= Fns.activeSwitch('overview') %>">
+          <div class="action__item--icon">
+            <span
+              class="iconify"
+              data-icon="dashicons:list-view"
+              data-inline="false"
+            ></span>
+          </div>
+          <div class="action__item--info">
+            <div>Overview</div>
+            <div>View & confirm music data</div>
+          </div>
+        </li>
+      </ul>
+    </aside>
+    <aside class="add-music__view">
+      <section class="view" id="addMusicView">
+        <%- include('partials/addMusic/'+comp, compData) %>
+      </section>
+    </aside>
+  </div>
+</div>

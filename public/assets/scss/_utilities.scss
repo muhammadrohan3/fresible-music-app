@@ -1,0 +1,165 @@
+.-u-bold {
+  font-weight: 700;
+}
+
+.-u-font-normal {
+  font-weight: normal !important;
+}
+
+.-u-text-underline {
+  text-decoration: underline;
+}
+
+.show {
+  display: block !important;
+}
+
+.u-flex-middle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-overflow: ellipsis !important;
+}
+
+.-u-mb-big {
+  display: block;
+  border: 1px solid red;
+  margin-top: 40px;
+}
+
+.-u-text-small {
+  font-size: 11px;
+  text-align: center;
+}
+
+.-u-page-s {
+  max-width: 800px;
+  margin: 50px auto;
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 25px;
+  }
+}
+
+.-u-page {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 40px 30px;
+  background-color: $color-white;
+  box-shadow: 0px 1px 13px -5px rgba(2, 3, 10, 1);
+  border-radius: 10px;
+  a {
+    color: $color-primary;
+    font-weight: normal;
+  }
+  @media only screen and (max-width: $sm) {
+    padding: 40px 10px;
+  }
+}
+
+.-u-link-default {
+  font-weight: 700;
+  color: $color-primary;
+}
+
+.-u-mobile-default {
+  @media only screen and (max-width: $sm) {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+.-u-grid-mobile {
+  @media only screen and (max-width: $sm) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.-u-id-head {
+  display: flex;
+  justify-content: space-around;
+  max-width: 400px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 auto;
+}
+
+.-u-flexerize {
+  @include flexerize;
+  height: auto;
+  & > * {
+    flex: 1;
+  }
+}
+
+.-u-close-menu {
+  & > * {
+    &:first-child {
+      left: -60vw;
+    }
+    &:last-child {
+      right: 0;
+    }
+  }
+}
+
+.-u-border-error {
+  border: 1px solid $red !important;
+}
+
+.-u-box-center {
+  display: block;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.-u-mt-10 {
+  margin-top: 10px;
+}
+
+.-u-border-grey {
+  border: 1px solid rgba(grey, 0.4);
+}
+
+.-u-mw-450 {
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.-u-album-track-reverse {
+  & > * {
+    overflow: hidden !important;
+    &:first-child {
+      height: 0 !important;
+      width: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      visibility: hidden;
+    }
+    &:last-child {
+      transition: opacity 0.3s ease-out;
+      opacity: 1 !important;
+      height: 100% !important;
+      width: 100% !important;
+      // margin: auto !important;
+      // padding: auto !important;
+    }
+  }
+}
+
+.-u-form-input-spacing {
+  .form__input {
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.-u-mini-comp {
+  padding: 40px 30px;
+  background-color: $color-white;
+  box-shadow: 0px 1px 13px -5px rgba(2, 3, 10, 0.4);
+  border-radius: 2px;
+}

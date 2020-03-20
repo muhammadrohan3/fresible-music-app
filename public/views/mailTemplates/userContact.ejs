@@ -1,0 +1,23 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">MESSAGE RECEIVED</h1>
+      </div>
+      <div class="action__body">
+        <div>
+          <p>Hi <b><%= firstName %></b>,</p>
+        </div>
+        <div>
+          <p>
+            This is a notification to inform you that we have received your
+            request, one of our staff will contact you shortly. <br />(Please do
+            not reply to this mail)
+          </p>
+        </div>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

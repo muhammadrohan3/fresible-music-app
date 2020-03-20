@@ -1,0 +1,47 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">RELEASE IS LIVE</h1>
+      </div>
+      <div class="action__body">
+        <div class="">
+          <p>Hi <b><%= firstName %>,</b></p>
+        </div>
+        <div>
+          <p>
+            This is to notify you that one of your releases is now live on music stores like Spotify, Boomplay, iTunes, Deezer, Amazon Music, Apple Music and 35+ other stores.
+          </p>
+        </div>
+        <div>
+          <p>
+            We just created your release card containing links to the major
+            stores listed above.
+          </p>
+        </div>
+        <div>
+          <p>
+            You can easily share a single link (your release card) containing
+            links to your release on major stores to your fans.
+          </p>
+        </div>
+        <div>
+          <p>
+            The link to your release card is available on the release details
+            page.
+          </p>
+        </div>
+        <div>
+          <p>
+            Thanks for being all in.
+          </p>
+        </div>
+        <button class="mail-btn">
+          <a href="<%= url %>">VIEW RELEASE CARD</a>
+        </button>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

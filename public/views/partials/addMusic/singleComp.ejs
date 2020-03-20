@@ -1,0 +1,42 @@
+<section class="view__item" id="information">
+  <div class="view__item--title">Your Music Details</div>
+  <div class="view__item--body">
+    <form
+      class="form"
+      data-type="submit"
+      data-compNo="2"
+      data-validation="musicInfo"
+      data-addInfo="<%= JSON.stringify({submitStatus: 2}) %>"
+    >
+      <div class="form__input">
+        <label for="title" class="form__input--label"
+          ><span>Music title</span> <span>*required</span></label
+        >
+        <input type="text" name="title" class="form__input--element" required />
+        <div class="form__input--text"></div>
+      </div>
+      <div class="form__input">
+        <label for="artiste" class="form__input--label"
+          ><span>Artiste</span> <span>*required</span></label
+        >
+        <input type="text" name="artiste" class="form__input--element" />
+        <div class="form__input--text"></div>
+      </div>
+      <div class="form__input">
+        <label for="featured" class="form__input--label">Featured</label>
+        <input type="text" name="featured" class="form__input--element" />
+        <div class="form__input--text"></div>
+      </div>
+      <div class="form__input">
+        <label for="genre" class="form__input--label"
+          ><span>Music Genre</span> <span>*required</span></label
+        >
+        <input type="text" name="genre" class="form__input--element" required />
+        <div class="form__input--text"></div>
+      </div>
+      <button class="view__item--btn btn-primary" type="submit">
+        Next &rarr;
+      </button>
+    </form>
+  </div>
+</section>

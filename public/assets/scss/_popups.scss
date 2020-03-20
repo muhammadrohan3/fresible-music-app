@@ -1,0 +1,28 @@
+.releaseDate {
+  max-width: 900px;
+  h5 {
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  &__left {
+    padding: 25px 30px;
+    background-color: $color-dark-blue-primary;
+    color: white;
+    line-height: 30px;
+  }
+  &__right {
+    padding: 20px 30px 10px;
+    font-size: 13px;
+    background-color: white;
+    & ul {
+      & li {
+        list-style-type: none;
+        &:not(:last-child) {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+<div class="-u-page profile">
+  <% const {avatar, firstName, lastName, email, role, profile, id} = pageData;
+  const {stageName, label, twitter, instagram, phone, bank, bankAccount,
+  bankAccountNo} = profile || {} %>
+  <div class="profile__left">
+    <div class="profile__left__avatar">
+      <%if(avatar) { %>
+      <img
+        src="<%=avatar %>"
+        alt="<%=firstName %> image"
+      />
+      <% }else { %>
+      <span
+        class="iconify icon:simple-line-icons:user icon-inline:false"
+      ></span>
+      <% } %>
+    </div>
+    <div class="profile__left__links">
+      <div><a href="/subscriptions">&raquo; Subscriptions</a></div>
+      <div><a href="/submissions">&raquo; Releases</a></div>
+      <div><a href="/payment/history">&raquo; Payment History</a></div>
+    </div>
+    <div class="profile__left__auth-links">
+      <div><a href="/profile/change-password">&raquo; Change password</a></div>
+      <div><a href="/profile/change-email">&raquo; Change email</a></div>
+    </div>
+  </div>
+  <div class="profile__right">
+    <ul class="profile__right__list">
+      <li class="profile__right__list__item">
+        <span>First Name: </span><span><%=firstName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Last Name: </span><span><%=lastName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Stage Name: </span><span><%=stageName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Record Label: </span><span><%=label %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Twitter: </span><span><%=twitter %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Instagram: </span><span><%=instagram %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Phone: </span><span><%=phone %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Bank Name: </span><span><%=bank %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Account No: </span><span><%=bankAccountNo %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Account Name: </span><span><%=bankAccount %></span>
+      </li>
+    </ul>
+    <div class="text-center">
+     <a href="/profile/edit"><button class="btn-outline">Edit profile &rarr;</a></button>
+    </div>
+  </div>
+</div>

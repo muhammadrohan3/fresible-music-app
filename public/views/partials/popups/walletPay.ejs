@@ -1,0 +1,40 @@
+<section class="wallet-pay">
+  <% if (true) { %>
+  <div class="alert alert-info">
+    You are making payment from your wallet for this transaction
+  </div>
+  <% } else { %>
+  <div class="wallet-pay--alert alert alert-danger">
+    Wallet Balance is insufficient for this transaction
+    <a href="/wallet" class="alert-link -u-text-underline"
+      >Click here to Topup</a
+    >
+  </div>
+  <% } %>
+  <form class="form -u-form-input-spacing">
+    <div class="form__input">
+      <label for="" class="form__input--label">Amount to Pay</label>
+      <input
+        type="text"
+        class="form__input--element form-control"
+        value="₦3000"
+        disabled
+      />
+    </div>
+    <div class="form__input">
+      <label for="" class="form__input--label">Wallet Balance</label>
+      <input
+        type="text"
+        class="form-control form__input--element"
+        disabled
+        value="₦4000"
+        disabled
+      />
+    </div>
+    <% if(true) { %>
+    <div class="text-right">
+      <button class="btn-primary p-2 -u-font-normal">Pay Now</button>
+    </div>
+    <% } %>
+  </form>
+</section>

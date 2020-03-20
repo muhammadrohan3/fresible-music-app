@@ -1,0 +1,10 @@
+<div class="form__input">
+  <% const { s } = Fns.query; %> <% const a = Fns.filter(["success", "failed",
+  "not queried"], s); %>
+  <select class="form__input--element" name="s">
+    <option value="<%= s && s %>"><%= s ? s : "Filter by status" %></option>
+    <% a.forEach(i => { %>
+    <option value="<%= i %>"><%= i %></option>
+    <% }) %>
+  </select>
+</div>

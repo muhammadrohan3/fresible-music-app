@@ -1,0 +1,33 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">RELEASE DELETED</h1>
+      </div>
+      <div class="action__body">
+        <div class="">
+          <p>Hi <b><%= firstName %>,</b></p>
+        </div>
+        <div>
+          <p>
+            This is to notify you that one of your releases has just been
+            deleted.
+          </p>
+        </div>
+        <div>
+          <p>
+            This process is initiated if a subscriber requests for it or the
+            release violates our terms of service.
+          </p>
+        </div>
+        <div>
+          <p>
+            Thanks for being all in.
+          </p>
+        </div>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

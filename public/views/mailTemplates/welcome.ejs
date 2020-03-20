@@ -1,0 +1,54 @@
+<%- include partials/header %>
+<html>
+  <body>
+    <div class="mail">
+      <div class="welcome">
+        <div class="welcome__head">
+          <div class="welcome__head--img">
+            <img
+              src="https://music.fresible.com/images/hooray.png"
+              alt="hooray"
+              class="-u-img-100"
+            />
+          </div>
+          <div class="welcome__head--text">
+            <h2>Welcome to Fresible Music</h2>
+          </div>
+        </div>
+        <div class="welcome__body">
+          <div>
+            <h3 class="-u-text-center">Hey <b><%= firstName %></b>,</h3>
+          </div>
+          <div>
+            We are glad you are here. We make it easy for artiste and creatives
+            to distribute their music and videos online to as many platforms as
+            possible.
+          </div>
+
+          <div>
+            We started our music distribution platform to solve the problem of
+            music distribution across Africa, we have partnered with several
+            international streaming services to ensure that your music reaches
+            millions of listeners.
+          </div>
+          <div class="-u-text-center">
+            <button class="mail-btn">
+              <a href="https://music.fresible.com" class="-u-text-medium"
+                >Go to dashboard</a
+              >
+            </button>
+          </div>
+          <div>
+            We are always available to support and help you at every stage. Do
+            not hesitate to contact us.
+          </div>
+          <div>
+            <b>Victor</b> <br />
+            Fresible Music
+          </div>
+        </div>
+      </div>
+      <%- include partials/footer.ejs %>
+    </div>
+  </body>
+</html>
