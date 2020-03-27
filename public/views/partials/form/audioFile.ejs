@@ -1,0 +1,43 @@
+<% const hashMap = {label: '', required: '', type: 'text', name: '', value: '',
+classList: [], uploadTexts: [], size: '', public_id: ''} %>
+
+<!--  -->
+
+<% const {label, required, type, name, value, classList, uploadTexts, size,
+public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
+[key]: formData[key] || value}) , {}) %>
+
+<div class="form__input <%= classList && classList.join(' ') %>">
+  <label for="" class="form__input--label">
+    <span></span> <span><%= required && '*' %></span>
+  </label>
+  <div class="form__file">
+    <label for="music" class="form__file--label btn-outline"
+      ><%= value ? 'Change Audio' : 'Select Item' %></label
+    >
+    <input type="file" name="<% name %>" id="music" class="form__input--element
+    form__file--input" accept="audio/wav, audio/mp3" data-filelimit="<%= size
+    %>" data-filetype="audio" data-url="<%= Fns.cloudinaryUrl('video') %>"
+    data-public_id="music/musics/music-<%= token %>" data-upload_preset="<%=
+    Fns.cloudinaryUploadPreset %>" <%= required && 'required' %> />
+    <div class="form__file--preview">
+      <% if(value) { %>
+      <span class="form__file--preview--audio">
+        <audio id="track">
+          <source src="<%= value %>" type="audio/mpeg" />
+        </audio>
+        <div id="player-container">
+          <div id="play-pause" class="play">Play</div>
+        </div>
+      </span>
+      <% }else{ %>
+      <div>Max size: <%= size + 'mb' %></div>
+      <% } %>
+    </div>
+  </div>
+  <ul class="upload-text">
+    <% uploadTexts.forEach(text => { %>
+    <li><%- text %></li>
+    <% }) %>
+  </ul>
+</div>

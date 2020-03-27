@@ -1,7 +1,7 @@
 
 <div class="select-package -u-mobile-default" id="select-package">
   <% const packages = {} %> 
-  <% Fns.packages.forEach(({package, ...others}) => packages[package.toLowerCase().replace(/ /g, "")] = others) %>
+  <% JSON.parse(Fns.packages).forEach(({package, ...others}) => packages[package.toLowerCase().replace(/ /g, "")] = others) %>
   <% const {single, album, basic, professional, worldclass, legendary} = packages; %> 
   <div class="select-package__packages -u-grid-mobile">
     <div class="package">

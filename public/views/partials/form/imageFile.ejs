@@ -1,0 +1,37 @@
+<% const hashMap = {label: '', required: '', type: 'text', name: '', value: '',
+classList: [], uploadTexts: [], size: '', public_id: ''} %>
+
+<!--  -->
+
+<% const {label, required, type, name, value, classList, uploadTexts, size,
+public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
+[key]: formData[key] || value}) , {}) %>
+
+<div class="form__input <%= classList && classList.join(' ') %>">
+  <div class="form__input--label">
+    <span><%= label %></span><span><%= required && '*required' %></span>
+  </div>
+  <div class="form__file">
+    <label for="artwork" class="form__file--label btn-outline"
+      ><%= value ? 'Change Image' : 'Select Image' %></label
+    >
+    <input type="file" name="<%= name %>" id="artwork"
+    class="form__input--element form__file--input"
+    accept="image/jpg,image/gif,image/png,image/jpeg" data-public_id="<%=
+    public_id %>" data-url="<%= Fns.cloudinaryUrl() %>" data-upload_preset="<%=
+    Fns.cloudinaryUploadPreset %>" data-filetype="image" data-filelimit="<%=
+    size %>" <%= required && 'required' %> />
+    <div class="form__file--preview">
+      <% if(value) { %>
+      <img src="<%= value %>" alt="" class="form__file--preview-img" />
+      <% }else{ %>
+      <div>Max size: <%= size + 'mb' %></div>
+      <% } %>
+    </div>
+  </div>
+  <ul class="upload-text">
+    <% uploadTexts.forEach(text => { %>
+    <li><%- text %></li>
+    <% }) %>
+  </ul>
+</div>

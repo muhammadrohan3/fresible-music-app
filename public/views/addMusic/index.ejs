@@ -1,0 +1,49 @@
+<div class="-u-page">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs custom-tab" id="myTab" role="tablist">
+    <li class="nav-item custom-tab__item">
+      <a
+        class="nav-link custom-tab__item--link active"
+        id="home-tab"
+        data-toggle="tab"
+        href="#release-info"
+        role="tab"
+        aria-controls="home"
+        aria-selected="true"
+        >Release Info</a
+      >
+    </li>
+    <li class="nav-item custom-tab__item">
+      <a
+        class="nav-link custom-tab__item--link"
+        id="home-tab"
+        data-toggle="tab"
+        href="#other-info"
+        role="tab"
+        aria-controls="home"
+        aria-selected="true"
+        >Other Info</a
+      >
+    </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div
+      class="tab-pane active"
+      id="release-info"
+      role="tabpanel"
+      aria-labelledby="home-tab"
+    >
+      <%- include("../partials/addMusic/trackComp") %>
+    </div>
+    <div
+      class="tab-pane"
+      id="other-info"
+      role="tabpanel"
+      aria-labelledby="home-tab"
+    >
+      B
+    </div>
+  </div>
+</div>

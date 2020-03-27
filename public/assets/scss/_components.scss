@@ -1392,6 +1392,54 @@
   }
 }
 
+////////////////////////////////>>>>>>>>>>>>>>>> SELECT ACCOUNT
+@mixin select-account--bg {
+  color: $color-white;
+  background-color: $color-primary;
+}
+.select-account {
+  &__options {
+    display: flex;
+    margin-top: 40px;
+    @media screen and (max-width: $sm) {
+      display: block;
+      & > * {
+        &:first-child {
+          margin-right: 0 !important;
+          margin-bottom: 30px;
+        }
+      }
+    }
+  }
+  &__box {
+    flex: 1;
+    padding: 60px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    @include border($color-secondary);
+    border-radius: 8px;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      @include select-account--bg;
+    }
+    &:not(:last-child) {
+      margin-right: 20px;
+    }
+    &--bg {
+      @include select-account--bg;
+      &:hover,
+      &:focus {
+        color: inherit;
+        background-color: inherit;
+      }
+    }
+  }
+}
+
 ///////////////////////////////////////////////>>>>>>>>>>>>>>>>>>>> INVOICE
 
 .invoice {

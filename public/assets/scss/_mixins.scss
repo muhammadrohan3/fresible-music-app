@@ -22,8 +22,8 @@
   }
 }
 
-@mixin border {
-  border: 1px solid red;
+@mixin border($color: red, $px: 1px) {
+  border: $px solid $color;
 }
 
 @mixin flexerize {

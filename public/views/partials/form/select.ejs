@@ -1,0 +1,23 @@
+<% const hashMap = {label: '', disabled: false, required: '', placeholder: '', type: 'text', name: '', value: '', classList: [], options: []} %>
+
+<!--  -->
+
+<% const {label, disabled, required, placeholder, type, name, value, classList, options} =
+Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc, [key]:
+formData[key] || value}) , {}) %>
+
+<div class="form__input <%= classList.join(' ') %>">
+    <label class="form__input--label">
+      <span><%= label %></span>
+      <span><%= required %></span>
+    </label>
+    <select style="font-size: inherit;" class="form-control form__input--element" name="<%= name %>" <%= required && 'required' %> <%= disabled && 'disabled' %> >
+     <option value="<%= value ? value : ""%>"> <%= value ? value : `${placeholder || '-- select --'}` %></option>
+     <% options.forEach((item) => { %>
+        <% let [key, desc] = typeof item === 'string' ? [item, item] : item; %>
+        <% if(key !== value) { %>
+            <option value="<%= key %>"><%= desc %></option>
+       <% } %>
+     <% }) %>
+    </select>
+  </div>

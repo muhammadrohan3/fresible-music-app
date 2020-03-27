@@ -6,11 +6,12 @@ import flatpickr from "flatpickr";
 import injectIconToAlert from "../utilities/injectIconToAlert";
 import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/modal";
+import "bootstrap/js/dist/tab";
 import "../../../../../node_modules/flatpickr/dist/flatpickr.css";
 import "../../scss/index.scss";
 
 (() => {
   Event({ Controller: Controller(), album, flatpickr });
   injectIconToAlert();
-  $("#modal").modal();
+  // $("#modal").modal();
 })();

@@ -14,12 +14,22 @@ const { Package } = require("./database/models");
 //This async functions fetches the list of packages from the db on server initialization to be in sync with the latest.
 (async () => {
   const packages = JSON.stringify(await Package.findAll({}));
-  fs.writeFileSync(
-    __dirname + "/public/serverData/subscriptionPackages.json",
-    packages,
-    "utf-8"
-  );
-  server.locals = { packages: JSON.parse(packages), ...siteFns() };
+  const baseLocation = __dirname + "/public/serverData";
+  fs.writeFileSync(baseLocation + "/packages.json", packages, "utf-8");
+  fs.readdir(__dirname + "/public/serverData", (err, files) => {
+    if (err) throw new Error(err);
+    const data = files.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr.split(".")[0].trim()]: fs.readFileSync(
+          `${baseLocation}/${curr}`,
+          { encoding: "utf-8" }
+        )
+      }),
+      {}
+    );
+    server.locals = { ...data, ...siteFns() };
+  });
 })();
 
 server.use("/favicon.ico", (req, res, next) => res.status(204).send());

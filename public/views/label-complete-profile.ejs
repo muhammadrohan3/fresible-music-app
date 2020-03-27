@@ -1,9 +1,9 @@
 <div class="complete-profile">
   <form
     class="form -u-form-input-spacing"
-    id="complete-profile"
+    id="label-complete-profile"
     data-validation="completeProfile"
-    data-submitUrl="/complete-profile"
+    data-submitUrl="/label-complete-profile"
   >
     <div class="form__head">
       <h2></h2>
@@ -13,13 +13,9 @@
       profile by filling the fields below
     </div>
 
-    <!-- STAGE NAME -->
+    <!-- LABEL NAME -->
     <%- include('./partials/form/input', {formData: {required: '*required',
-    label: `Stage Name`, name: 'stageName'}}) %>
-
-    <!-- RECORD LABEL -->
-    <%- include('./partials/form/input', {formData: { label: `Record Label`,
-    name: 'label', inputText: `Fill this only if you have a record label`}}) %>
+    label: `Label Name`, name: 'labelName'}}) %>
 
     <!-- TWITTER HANDLE -->
     <%- include('./partials/form/input', {formData: {label: `Twitter handle`,

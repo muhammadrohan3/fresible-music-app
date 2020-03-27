@@ -1,4 +1,5 @@
 import View from "../View";
+import Swal from "sweetalert2";
 import { setStore, getStore } from "../Store";
 import SubmitForm from "../utilities/submitForm";
 import Validations from "../../../Validations";
@@ -8,9 +9,13 @@ import uploadFile from "../utilities/uploadFile";
 import mobileMenuHandler from "../utilities/handleMobileMenu";
 
 export default () => {
+  //temporary request variable 'R'
   let R;
+  //passes the view to the mobileMenuHandler
   const handleMobileMenu = mobileMenuHandler(View);
+  //passes the view to the submit form function
   const submitForm = SubmitForm(View);
+
   const handleFile = e => {
     let container = View.getElement(e).parentElement;
     const label = View.getElement("label", container);
@@ -20,10 +25,10 @@ export default () => {
     if (file.size / 1000000 > filelimit) {
       View.addContent(preview, `File is greater than ${filelimit}mb`);
       e.value = null;
-      View.addContent(label, "Select item");
+      View.addContent(label, `Select ${fileType}`);
       return;
     }
-    View.addContent(label, "Change item");
+    View.addContent(label, `Change ${fileType}`);
     setStore(e.name, { public_id, url, file, upload_preset });
     let html;
     if (filetype === "image") {
@@ -118,16 +123,46 @@ export default () => {
 
   const selectPackage = async e => {
     View.showLoader(true);
+    let { label } = e.dataset;
+    let artistId = null;
+    //Checks if the user is a label
+    if (label) {
+      const response = await serverRequest({
+        url: "/label/getArtists",
+        data: { packageId }
+      });
+      if ((R = !responseHandler(response))) return;
+      //converts the array of artist information to an object containing the artist's ID and stageName
+      const artists = R.reduce(
+        (acc, { id, stageName }) => ({ ...acc, [id]: stageName }),
+        {}
+      );
+      //fires a popup asking the user to select an artist from the list
+      const { value: artist, dismiss } = await Swal.fire({
+        title: "Select Label Artist",
+        input: "select",
+        inputOptions: artists,
+        inputPlaceholder: "-- select --",
+        showCancelButton: true,
+        inputValidator: value =>
+          Promise.resolve(value ? null : "You need to select an artist")
+      });
+      //Shows an alert if the user dismisses the popup
+      if (dismiss) return View.showAlert("You need to select an artist");
+      artistid = artist;
+      View.showLoader(true);
+    }
     let packageId = parseInt(e.dataset.package);
     if (isNaN(packageId)) return null;
     const response = await serverRequest({
-      data: { packageId }
+      data: { packageId, artistId }
     });
     if (!responseHandler(response)) return;
     await profileSetup();
     return location.replace("/add-music");
   };
 
+  //HANDLE-PACKAGE-SELECT
   const handlePackageSelect = e => {
     const value = e.target.value;
     if (!value) {

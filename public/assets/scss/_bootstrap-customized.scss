@@ -1,0 +1,18 @@
+.custom-tab {
+  a {
+    color: inherit;
+  }
+  display: flex;
+  background: inherit;
+  &__item {
+    &--link {
+      padding: 8px 10px;
+      background-color: $color-primary;
+      color: $color-white;
+      & .active {
+        background-color: $color-white;
+        color: $color-light-black;
+      }
+    }
+  }
+}
