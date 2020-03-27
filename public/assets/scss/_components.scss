@@ -34,6 +34,30 @@
   }
 }
 
+///////////////////////////PLAYER COMPONENT
+.player {
+  display: block;
+  padding: 5px;
+  margin-right: 1rem;
+  // @include border($color-primary);
+  & > * {
+    color: $color-primary;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  &--pause {
+    display: none;
+  }
+  &--playing {
+    & .player--play {
+      display: none;
+    }
+    & .player--pause {
+      display: block;
+    }
+  }
+}
+
 /////////////////////////////////////MODAL >>>>>>>
 .modal-custom {
   &__content {

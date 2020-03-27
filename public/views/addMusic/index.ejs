@@ -43,7 +43,21 @@
       role="tabpanel"
       aria-labelledby="home-tab"
     >
-      B
+      <section id="release" class="w-md-50 mx-auto">
+        <div class="-u-title">Select Release Date</div>
+        <form
+          class="form"
+          data-type="submit"
+          data-submitnum="<%= 'submitStatus+1' %>"
+        >
+          <%- include("../partials/form/input", {formData: {label: `Select Date
+          (must be atleast 12 days time)`, required: '*required', inputId:
+          'date-input', name: 'releaseDate', type: 'date'}}) %>
+          <button class="btn-primary" type="submit">
+            Next &rarr;
+          </button>
+        </form>
+      </section>
     </div>
   </div>
 </div>

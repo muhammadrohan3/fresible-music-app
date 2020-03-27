@@ -17,26 +17,37 @@ export default () => {
   const submitForm = SubmitForm(View);
 
   const handleFile = e => {
+    //Gets the parent container of the input="file" element
     let container = View.getElement(e).parentElement;
+    //Gets the label element of the container
     const label = View.getElement("label", container);
+    //Gets the preview element
     const preview = View.getElement("div", container);
+    //Gets the necessary data from the container
     const { filelimit, filetype, public_id, url, upload_preset } = e.dataset;
     const [file] = e.files;
+    //Comparing the actual file size to the limit set for the file
     if (file.size / 1000000 > filelimit) {
-      View.addContent(preview, `File is greater than ${filelimit}mb`);
+      //nulls the file and output an error of filesize larger than the limit specified
+      View.addContent(preview, `File is larger than ${filelimit}mb`);
       e.value = null;
-      View.addContent(label, `Select ${fileType}`);
+      View.addContent(label, `Select ${filetype}`);
       return;
     }
-    View.addContent(label, `Change ${fileType}`);
+    //Changes the label to indicate the file was successfully selected
+    View.addContent(label, `Change ${filetype}`);
+    //Saves the file details to the store
     setStore(e.name, { public_id, url, file, upload_preset });
     let html;
+    //This conditional block just creates the appropriate preview dependent on the file type
     if (filetype === "image") {
       let imgSrc = URL.createObjectURL(file);
       html = `<img src=${imgSrc} class="form__file--preview-img">`;
     } else if (filetype === "audio") {
       let fileName = file.name;
-      fileName = fileName.length > 6 ? `${fileName.substr(0, 6)}...` : fileName;
+      //This reduces the file name for longer file names to something small
+      fileName =
+        fileName.length > 15 ? `${fileName.substr(0, 15)}...` : fileName;
       html = `<span class="form__file--preview--audio">
               <span
                 class="iconify mr-1"
@@ -47,6 +58,7 @@ export default () => {
               <span class='text-truncate'>${fileName}</span>
             </span>`;
     }
+    //Sends the preview to the View
     return View.addContent(preview, html, true);
   };
 

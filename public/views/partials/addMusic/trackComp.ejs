@@ -10,18 +10,20 @@
     <div class="track-form__head">
       <!-- AUDIO UPLOAD -->
       <%- include("../form/audioFile", {formData: {required: '*required',
-      classList: ['track-form__head--1'], name: 'track', public_id:
-      `music/musics/music-${'token'}`, size: '50', uploadTexts: [`Upload Track
-      (.wav, .mp3)`, `file size no larger than 50MB`]}}) %>
+      classList: ['track-form__head--1'], name: 'track', value:
+      '/audio/eben.mp3', public_id: `music/musics/music-${'token'}`, size: '50',
+      uploadTexts: [`Upload Track (.wav, .mp3)`, `file size no larger than
+      50MB`]}}) %>
 
       <!-- ARTWORK UPLOAD -->
       <%- include("../form/imageFile", {formData: {required: '*required',
-      classList: ['track-form__head--2'], name: 'artwork', public_id:
-      `music/artworks/artwork-${'token'}`, size: '2', uploadTexts: [`File format
-      must be .jpg/.jpeg`, `File size must not be larger than 1.5mb`, `Image
-      dimensions should be at least 3000 x 3000 pixels`, `Design must not
-      contain website addresses, email addresses, logos, social media icons, or
-      any other reference to other services (ie. social media)`]}}) %>
+      classList: ['track-form__head--2'], name: 'artwork', value:
+      '/images/burna.jpg', public_id: `music/artworks/artwork-${'token'}`, size:
+      '2', uploadTexts: [`File format must be .jpg/.jpeg`, `File size must not
+      be larger than 1.5mb`, `Image dimensions should be at least 3000 x 3000
+      pixels`, `Design must not contain website addresses, email addresses,
+      logos, social media icons, or any other reference to other services (ie.
+      social media)`]}}) %>
     </div>
 
     <div class="track-form__body">

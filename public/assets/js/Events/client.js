@@ -1,4 +1,5 @@
 import View from "../View";
+import AudioPlayer from "../utilities/audioPlayer";
 
 export default ({ album, Controller, flatpickr }) => {
   const { getElement } = View;
@@ -43,6 +44,9 @@ export default ({ album, Controller, flatpickr }) => {
     // PAYMENT QUERY BUTTON HANDLER
     if (id === "queryPayment") return Controller.queryPayment(e.target);
 
+    if (id.startsWith("player-container"))
+      return AudioPlayer().handle(e.target);
+
     if (location.pathname === "/select-package") {
       if (tagName === "BUTTON" && dataset)
         return Controller.selectPackage(e.target);
@@ -84,5 +88,11 @@ export default ({ album, Controller, flatpickr }) => {
       default:
         return Controller.submitForm(form, true);
     }
+  });
+
+  // ENDED EVENT HANDLERS
+  document.body.addEventListener("ended", e => {
+    const { id } = e.target;
+    if (id.startsWith("player-track")) return AudioPlayer().ended(e.target);
   });
 };
