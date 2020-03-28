@@ -1,57 +1,25 @@
-<div class="album" id="album">
+<div class="album mt-5" id="album">
   <form
     class="album__top -u-form-input-spacing"
     id="album-form"
     data-submiturl="/add-music/album"
-    data-submitnum="<%= submitStatus+1 %>"
+    data-submitnum="<%= 'submitStatus+1' %>"
   >
     <div class="album__top__name">
-      <div class="form__input">
-        <label for="" class="form__input--label"
-          ><span>Album Name</span><span>*required</span></label
-        >
-        <input class="form__input--element" type="text" name="name" />
-      </div>
+      <!--  ALBUM NAME -->
+      <%- include("../form/input", {formData: {name: 'name', label: `Album
+      Name`, required: '*required'}}) %>
     </div>
     <div class="album__top__artwork">
-      <div class="form__input">
-        <div class="form__input--label">
-          <span>Upload Album Artwork (3000 X 3000)</span>
-          <span><%= subscription.packageId < 3 ? '*required' : '' %></span>
-        </div>
-        <div class="form__file -u-flexerize">
-          <label for="artwork" class="form__file--label btn-outline"
-            >Select Item</label
-          >
-          <input
-            type="file"
-            name="artwork"
-            id="artwork"
-            class="form__input--element form__file--input"
-            accept="image/jpg,image/gif,image/png,image/jpeg"
-            data-public_id="music/artworks/artwork-<%= Fns.token(10) %>"
-            data-url="<%= Fns.cloudinaryUrl() %>"
-            data-upload_preset="<%=
-          Fns.cloudinaryUploadPreset %>"
-            data-filetype="image"
-            data-filelimit="1.5"
-            required
-          />
-          <div class="form__file--preview">
-            <div>Max size: 1.5mb</div>
-          </div>
-        </div>
-        <ul class="upload-text">
-          <li>File format must be .jpg/.jpeg</li>
-          <li>File size must not be larger than 1.5mb</li>
-          <li>Image dimensions should be at least 3000 x 3000 pixels</li>
-          <li>
-            Design must not contain website addresses, email addresses, logos,
-            social media icons, or any other reference to other services (ie.
-            social media)
-          </li>
-        </ul>
-      </div>
+      <!-- ARTWORK UPLOAD -->
+      <%- include("../form/imageFile", {formData: {required: '*required', label:
+      `Upload Album Artwork (3000 X 3000)`, classList: ['track-form__head--2'],
+      name: 'artwork', public_id: `music/artworks/artwork-${'token'}`, size:
+      '2', uploadTexts: [`File format must be .jpg/.jpeg`, `File size must not
+      be larger than 1.5mb`, `Image dimensions should be at least 3000 x 3000
+      pixels`, `Design must not contain website addresses, email addresses,
+      logos, social media icons, or any other reference to other services (ie.
+      social media)`]}}) %>
     </div>
   </form>
 
@@ -66,12 +34,9 @@
     </div>
     <div
       id="track-list"
-      data-stagename="<%= user.profile.stageName %>"
+      data-stagename="<%= 'user.profile.stageName' %>"
       data-url="<%= Fns.cloudinaryUrl('video') %>"
       data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
     ></div>
-  </div>
-  <div class="add-music__next text-right">
-    <button class="btn-primary" id="album-submit">Next &rarr;</button>
   </div>
 </div>

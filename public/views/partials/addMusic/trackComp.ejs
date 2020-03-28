@@ -30,11 +30,12 @@
       <div class="track-form__body__1">
         <!-- TRACK TITLE -->
         <%- include("../form/input", {formData: {required: '*', name: 'title',
-        placeholder: 'Track Title'}}) %>
+        placeholder: 'Track Title', value: 'Dance'}}) %>
 
         <!-- ARTISTE -->
         <%- include("../form/input", {formData: {required: '*', name: 'artiste',
-        placeholder: 'Artiste', disabled: true, value: 'John'}}) %>
+        placeholder: 'Artiste', disabled: true, value: 'John', dontIgnore:
+        true}}) %>
       </div>
 
       <div class="music-form__body__2 align-items-baseline">
@@ -64,11 +65,6 @@
         classList:['music-form__body__3--2'], name: 'genre', placeholder:
         'Select genre...', options: genres}}) %>
       </div>
-    </div>
-    <div class="add-music__next text-right">
-      <button class="btn-primary" data-type="submit-info" type="submit">
-        Next &rarr;
-      </button>
     </div>
   </form>
 </div>

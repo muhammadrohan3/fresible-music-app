@@ -1,5 +1,6 @@
 import View from "../View";
 import AudioPlayer from "../utilities/audioPlayer";
+import processInputIgnore from "../utilities/processInputIgnore";
 
 export default ({ album, Controller, flatpickr }) => {
   const { getElement } = View;
@@ -18,13 +19,14 @@ export default ({ album, Controller, flatpickr }) => {
   }
 
   //CHANGE EVENT LISTENER GROUP
-  (t = getElement("body")) &&
-    t.addEventListener("change", e => {
-      const { id, type, dataset } = e.target;
-      if (id === "hamburger") return Controller.handleMobileMenu(e.target);
-      if (id === "package-select") return Controller.handlePackageSelect(e);
-      if (type === "file") return Controller.handleFile(e.target);
-    });
+  document.body.addEventListener("change", e => {
+    const { id, type, tagName } = e.target;
+    console.log(tagName);
+    if (tagName === "INPUT") processInputIgnore(e.target);
+    if (id === "hamburger") return Controller.handleMobileMenu(e.target);
+    if (id === "package-select") return Controller.handlePackageSelect(e);
+    if (type === "file") return Controller.handleFile(e.target);
+  });
 
   //CLICK EVENT LISTENER GROUP
   getElement("body").addEventListener("click", e => {
