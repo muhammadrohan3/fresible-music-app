@@ -1,9 +1,11 @@
 import View from "../View";
+import AudioPlayer from "../utilities/audioPlayer";
+import processInputIgnore from "../utilities/processInputIgnore";
 
 export default ({ album, Controller, flatpickr }) => {
   const { getElement } = View;
   let t;
-
+  album(Controller, View);
   if (location.pathname.startsWith("/add-music")) {
     //This opens the bootstrap modal containing informations relevant to the add music page (Maybe I will work on a generic form of notification later)
     //You may as well work on this (GREAT).
@@ -13,17 +15,18 @@ export default ({ album, Controller, flatpickr }) => {
       minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12)
     });
     //ALBUM FUNCTIONALITY
-    album(Controller, View);
+    // album(Controller, View);
   }
 
   //CHANGE EVENT LISTENER GROUP
-  (t = getElement("body")) &&
-    t.addEventListener("change", e => {
-      const { id, type, dataset } = e.target;
-      if (id === "hamburger") return Controller.handleMobileMenu(e.target);
-      if (id === "package-select") return Controller.handlePackageSelect(e);
-      if (type === "file") return Controller.handleFile(e.target);
-    });
+  document.body.addEventListener("change", e => {
+    const { id, type, tagName } = e.target;
+    // console.log(tagName);
+    if (["INPUT", "SELECT"].includes(tagName)) processInputIgnore(e.target);
+    if (id === "hamburger") return Controller.handleMobileMenu(e.target);
+    if (id === "package-select") return Controller.handlePackageSelect(e);
+    if (type === "file") return Controller.handleFile(e.target);
+  });
 
   //CLICK EVENT LISTENER GROUP
   getElement("body").addEventListener("click", e => {
@@ -42,6 +45,9 @@ export default ({ album, Controller, flatpickr }) => {
     if (id === "payment-button") return Controller.handlePayment(e);
     // PAYMENT QUERY BUTTON HANDLER
     if (id === "queryPayment") return Controller.queryPayment(e.target);
+
+    if (id.startsWith("player-container"))
+      return AudioPlayer().handle(e.target);
 
     if (location.pathname === "/select-package") {
       if (tagName === "BUTTON" && dataset)
@@ -77,12 +83,20 @@ export default ({ album, Controller, flatpickr }) => {
       if (type === "terms") return Controller.agreeTerms(form);
     }
 
+    if (id.startsWith("album-form")) return null;
+
     //SUBMIT EVENT HANDLERS FOR NORMAL PAGES
-    switch (id.toLowerCase()) {
-      // case "complete-profile":
-      //   return Controller.completeProfile(form);
-      default:
-        return Controller.submitForm(form, true);
-    }
+    // switch (id.toLowerCase()) {
+    //   // case "complete-profile":
+    //   //   return Controller.completeProfile(form);
+    //   default:
+    //     return Controller.submitForm(form, true);
+    // }
+  });
+
+  // ENDED EVENT HANDLERS
+  document.body.addEventListener("ended", e => {
+    const { id } = e.target;
+    if (id.startsWith("player-track")) return AudioPlayer().ended(e.target);
   });
 };

@@ -12,92 +12,44 @@
       We need more information from you to get started, please complete your
       profile by filling the fields below
     </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Stage Name</span> <span>*required</span></label
-      >
-      <input
-        type="text"
-        name="stageName"
-        class="form__input--element"
-        required
-      />
-      <div class="form__input--text"></div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Twitter handle</span></label
-      >
-      <input type="text" name="twitter" class="form__input--element" />
-      <div class="form__input--text">Should contain '@' - e.g @fresible</div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Instagram handle</span></label
-      >
-      <input type="text" name="instagram" class="form__input--element" />
-      <div class="form__input--text">Should contain '@' - e.g @fresible</div>
-    </div>
-    <div class="form__input">
-      <div class="form__input--label">Upload your Avatar (picture)</div>
-      <div class="form__file">
-        <label for="avatar" class="form__file--label btn-outline"
-          >Select Item</label
-        >
-        <input
-          type="file"
-          name="avatar"
-          id="avatar"
-          class="form__file--input"
-          accept="image/jpg,image/gif,image/png,image/jpeg"
-          data-filelimit="0.50"
-          data-filetype="image"
-          data-url="<%= Fns.cloudinaryUrl() %>"
-          data-public_id="music/avatars/avatar-<%= Fns.token(5) %>"
-          data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
-        />
-        <div class="form__file--preview">
-          <p>No file selected yet (Max size: 500kb)</p>
-        </div>
-      </div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Record label</label>
-      <input type="text" name="label" class="form__input--element" />
-      <div class="form__input--text">
-        Fill this only if you have a record label
-      </div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Phone</span> <span>*required</span></label
-      >
-      <input type="number" name="phone" class="form__input--element" required />
-      <div class="form__input--text">
-        Phone number should be in this format - 08030xxxxxx (11 digits)
-      </div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Bank</span><span></span>
-      </label>
-      <input type="text" name="bank" class="form__input--element" />
-      <div class="form__input--text"></div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Account Name</span><span></span>
-      </label>
-      <input type="text" name="bankAccount" class="form__input--element" />
-      <div class="form__input--text"></div>
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label"
-        ><span>Account Number</span><span></span>
-      </label>
-      <input type="number" name="bankAccountNo" class="form__input--element" />
-      <div class="form__input--text"></div>
-    </div>
+
+    <!-- STAGE NAME -->
+    <%- include('./partials/form/input', {formData: {required: '*required',
+    label: `Stage Name`, name: 'stageName'}}) %>
+
+    <!-- RECORD LABEL -->
+    <%- include('./partials/form/input', {formData: { label: `Record Label`,
+    name: 'label', inputText: `Fill this only if you have a record label`}}) %>
+
+    <!-- TWITTER HANDLE -->
+    <%- include('./partials/form/input', {formData: {label: `Twitter handle`,
+    name: 'twitter', inputText: `Should contain '@' - e.g @fresible`}}) %>
+
+    <!-- INSTAGRAM HANDLE -->
+    <%- include('./partials/form/input', {formData: {label: `Instagram handle`,
+    name: 'instagram', inputText: `Should contain '@' - e.g @fresible`}}) %>
+
+    <!-- AVATAR UPLOAD -->
+    <%- include('./partials/form/imageFile', {formData: {label: `Upload your
+    Avatar (picture)`, name: 'avatar', size: "0.50", public_id:
+    `music/avatars/avatar-${Fns.token(5)}`}}) %>
+
+    <!-- PHONE -->
+    <%- include('./partials/form/input', {formData: {label: `Phone`, name:
+    'phone', type: 'number', inputText: `Phone number should be in this format -
+    08030xxxxxx (11 digits)`, required: '*required'}}) %>
+
+    <!-- BANK  -->
+    <%- include('./partials/form/input', {formData: {label: `Bank`, name:
+    'bank'}}) %>
+
+    <!-- ACCOUNT NAME  -->
+    <%- include('./partials/form/input', {formData: {label: `Account Name`,
+    name: 'bankAccount'}}) %>
+
+    <!-- ACCOUNT NUMBER  -->
+    <%- include('./partials/form/input', {formData: {label: `Account Number`,
+    name: 'bankAccountNo'}}) %>
 
     <div class="form__submit">
       <div></div>

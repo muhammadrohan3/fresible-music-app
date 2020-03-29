@@ -8,6 +8,11 @@ const idLookUp = require("./util/idLookUp");
 const viewsDir = path.join(__dirname, "../public", "/views");
 
 module.exports = () => ({
+  getRandomId: (size = 5) =>
+    crypto
+      .randomBytes(size)
+      .toString("base64")
+      .slice(0, size),
   idLookUp,
   colorText: text => {
     let textColorMap = {

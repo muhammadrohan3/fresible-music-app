@@ -1,0 +1,66 @@
+<% const hashMap = {label: '', required: '', type: 'text', name: '', value: '',
+classList: [], uploadTexts: [], size: '', public_id: ''} %>
+
+<!--  -->
+
+<% const {label, required, type, name, value, classList, uploadTexts, size,
+public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
+[key]: formData[key] || value}) , {}) %>
+
+<!--  -->
+
+<% const randomNo = Fns.getRandomId() %>
+
+<div class="form__input <%= classList && classList.join(' ') %>">
+  <label for="" class="form__input--label">
+    <span></span> <span><%= required %></span>
+  </label>
+  <div class="form__file">
+    <label for="music" class="form__file--label btn-outline align-self-center"
+      ><%= value ? 'Change Audio' : 'Select Item' %></label
+    >
+    <input type="file" name="<% name %>" id="music" class="form__input--element
+    form__file--input" accept="audio/wav, audio/mp3" data-filelimit="<%= size
+    %>" data-filetype="audio" data-url="<%= Fns.cloudinaryUrl('video') %>"
+    data-public_id="music/musics/music-<%= token %>" data-upload_preset="<%=
+    Fns.cloudinaryUploadPreset %>" <%= required && 'required' %> />
+    <div class="form__file--preview">
+      <% if(value) { %>
+      <span class="form__file--preview--audio">
+        <div id="player-<%=randomNo %>">
+          <audio id="player-track-<%=randomNo %>">
+            <source src="<%= value %>" type="audio/mpeg" />
+          </audio>
+          <div
+            id="player-container-<%=randomNo %>"
+            data-playerno="<%= randomNo %>"
+            class="player"
+          >
+            <span
+              id="player-initiate-<%=randomNo %>"
+              data-playerno="<%= randomNo %>"
+              class="iconify player--play"
+              data-icon="cil:media-play"
+              data-inline="false"
+            ></span>
+            <span
+              id="player-initiate-<%=randomNo %>"
+              data-playerno="<%= randomNo %>"
+              class="iconify player--pause"
+              data-icon="ant-design:pause-outlined"
+              data-inline="false"
+            ></span>
+          </div>
+        </div>
+      </span>
+      <% }else{ %>
+      <div>Max size: <%= size + 'mb' %></div>
+      <% } %>
+    </div>
+  </div>
+  <ul class="upload-text">
+    <% uploadTexts.forEach(text => { %>
+    <li><%- text %></li>
+    <% }) %>
+  </ul>
+</div>

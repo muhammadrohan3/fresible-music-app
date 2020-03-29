@@ -255,8 +255,8 @@ router.get("/mail", (req, res) =>
 router.get(
   "/dotest",
   addToSchema(SITEDATA, {
-    page: "complete-profile",
-    title: "change"
+    page: "addMusic/index",
+    title: "Release Wizard"
   }),
   pageRender()
   // addToSchema("tempKey", { token: "464646fg" }),

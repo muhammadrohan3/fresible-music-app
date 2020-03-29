@@ -1,57 +1,39 @@
-<section class="view__item -u-mw-450 -u-form-input-spacing" id="terms">
-  <div class="view__item--title">Terms & Conditions</div>
-  <div class="view__item--body">
-    <form class="form" data-type="terms" data-compno="<%= submitStatus+1 %>">
-      <div class="form__input form__input__check">
-        <input
-          type="checkbox"
-          class="form__input__check--element"
-          name="term1"
-        />
-        <label for="title" class="form__input__check--label">
-          I understand my song may be rejected from stores if I don't correctly
-          label tracks as explicit that contain swear words or obsenities
-        </label>
-      </div>
-      <div class="form__input form__input__check">
-        <input
-          type="checkbox"
-          class="form__input__check--element"
-          name="term2"
-        />
-        <label for="title" class="form__input__check--label">
-          I recorded this music, and am authorized to sell it in stores
-          worldwide & collect all royalties
-        </label>
-      </div>
-      <div class="form__input form__input__check">
-        <input
-          type="checkbox"
-          class="form__input__check--element"
-          name="term3"
-        />
-        <label for="title" class="form__input__check--label">
-          I am not using any artiste's name in my name, song titles, or album
-          title without their approval
-        </label>
-      </div>
-      <div class="form__input form__input__check">
-        <input
-          type="checkbox"
-          class="form__input__check--element"
-          name="term3"
-        />
-        <label for="title" class="form__input__check--label">
-          I understand that I am bound by the Fresible Music Distribution
-          Agreement...
-          <a href="http://fresible.com/download/13868" target="_blank"
-            >Click here to read the agreement</a
-          >
-        </label>
-      </div>
-      <button class="view__item--btn btn-primary" type="submit">
-        Next &rarr;
-      </button>
-    </form>
+<div class="-u-title text-center">Terms & Conditions</div>
+<form class="mt-5 w-75 mx-auto form" id="terms">
+  <div class="form__input form__input__check">
+    <input type="checkbox" class="form__input__check--element" name="term1" />
+    <label for="title" class="form__input__check--label">
+      I understand my song may be rejected from stores if I don't correctly
+      label tracks as explicit that contain swear words or obsenities
+    </label>
   </div>
-</section>
+  <div class="form__input form__input__check">
+    <input type="checkbox" class="form__input__check--element" name="term2" />
+    <label for="title" class="form__input__check--label">
+      I recorded this music, and I am authorized to sell it in stores worldwide
+      & collect all royalties
+    </label>
+  </div>
+  <div class="form__input form__input__check">
+    <input type="checkbox" class="form__input__check--element" name="term3" />
+    <label for="title" class="form__input__check--label">
+      I am not using any artiste's name in my name, song titles, or album title
+      without their approval
+    </label>
+  </div>
+  <div class="form__input form__input__check">
+    <input type="checkbox" class="form__input__check--element" name="term4" />
+    <label for="title" class="form__input__check--label">
+      I understand that I am bound by the Fresible Music Distribution
+      Agreement...
+      <a href="http://fresible.com/download/13868" target="_blank"
+        >Click here to read the agreement</a
+      >
+    </label>
+  </div>
+  <div class="text-right mt-5">
+    <button class="btn-primary" type="submit">
+      Proceed &rarr;
+    </button>
+  </div>
+</form>

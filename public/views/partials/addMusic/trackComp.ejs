@@ -1,186 +1,69 @@
 <div>
   <% const token = Fns.token(10); %>
   <form
-    class="music-form track-form"
+    class="music-form track-form -u-form-small_label"
     data-mixed="true"
     data-submiturl="/add-music/track"
     data-type="submit-info"
-    data-submitnum="<%= submitStatus+1 %>"
+    data-submitnum="<%= 'submitStatus+1' %>"
   >
     <div class="track-form__head">
-      <div class="form__input track-form__head--1">
-        <label for="" class="form__input--label">
-          <span></span> <span>*required</span>
-        </label>
-        <div class="form__file">
-          <label for="music" class="form__file--label btn-outline"
-            >Select Item</label
-          >
-          <input
-            type="file"
-            name="track"
-            id="music"
-            class="form__input--element form__file--input"
-            accept="audio/wav, audio/mp3"
-            data-filelimit="50"
-            data-filetype="audio"
-            data-url="<%= Fns.cloudinaryUrl('video') %>"
-            data-public_id="music/musics/music-<%= token %>"
-            data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
-            required
-          />
-          <div class="form__file--preview">
-            <div>Max size: 50mb</div>
-          </div>
-        </div>
-        <ul class="upload-text">
-          <li><span>Upload Track (.wav, .mp3)</span> <span>*required</span></li>
-          <li>file size no larger than 50Mb</li>
-        </ul>
-      </div>
-      <div class="form__input track-form__head--2">
-        <div class="form__input--label">
-          <span></span><span>*required</span>
-        </div>
-        <div class="form__file">
-          <label for="artwork" class="form__file--label btn-outline"
-            >Select Item</label
-          >
-          <input
-            type="file"
-            name="artwork"
-            id="artwork"
-            class="form__input--element form__file--input"
-            accept="image/jpg,image/gif,image/png,image/jpeg"
-            data-public_id="music/artworks/artwork-<%= token %>"
-            data-url="<%=
-          Fns.cloudinaryUrl() %>"
-            data-upload_preset="<%=
-          Fns.cloudinaryUploadPreset %>"
-            data-filetype="image"
-            data-filelimit="1.5"
-            required
-          />
-          <div class="form__file--preview">
-            <div>Max size: 1.5mb</div>
-          </div>
-        </div>
-        <ul class="upload-text">
-          <li>File format must be .jpg/.jpeg</li>
-          <li>File size must not be larger than 1.5mbmb</li>
-          <li>Image dimensions should be at least 3000 x 3000 pixels</li>
-          <li>
-            Design must not contain website addresses, email addresses, logos,
-            social media icons, or any other reference to other services (ie.
-            social media)
-          </li>
-        </ul>
-      </div>
+      <!-- AUDIO UPLOAD -->
+      <%- include("../form/audioFile", {formData: {required: '*required',
+      classList: ['track-form__head--1'], name: 'track', value:
+      '/audio/eben.mp3', public_id: `music/musics/music-${'token'}`, size: '50',
+      uploadTexts: [`Upload Track (.wav, .mp3)`, `file size no larger than
+      50MB`]}}) %>
+
+      <!-- ARTWORK UPLOAD -->
+      <%- include("../form/imageFile", {formData: {required: '*required',
+      classList: ['track-form__head--2'], name: 'artwork', value:
+      '/images/burna.jpg', public_id: `music/artworks/artwork-${'token'}`, size:
+      '2', uploadTexts: [`File format must be .jpg/.jpeg`, `File size must not
+      be larger than 1.5mb`, `Image dimensions should be at least 3000 x 3000
+      pixels`, `Design must not contain website addresses, email addresses,
+      logos, social media icons, or any other reference to other services (ie.
+      social media)`]}}) %>
     </div>
 
     <div class="track-form__body">
       <div class="track-form__body__1">
-        <div class="form__input">
-          <label class="form__input--label">
-            <span></span>
-            <span>*</span>
-          </label>
-          <input
-            type="text"
-            class="form__input--element"
-            data-target="#small-title-"
-            name="title"
-            placeholder="Track Title"
-            required
-          />
-          <div class="form__input--text"></div>
-        </div>
-        <div class="form__input">
-          <label class="form__input--label">
-            <span></span>
-            <span>*</span>
-          </label>
-          <input
-            type="text"
-            class="form-control form__input--element"
-            name="artiste"
-            placeholder="Artiste"
-            value="<%= user.profile.stageName %>"
-            disabled
-          />
-          <div class="form__input--text"></div>
-        </div>
+        <!-- TRACK TITLE -->
+        <%- include("../form/input", {formData: {required: '*', name: 'title',
+        label: 'Track Title', value: 'Dance'}}) %>
+
+        <!-- ARTISTE -->
+        <%- include("../form/input", {formData: {required: '*', name: 'artiste',
+        label: 'Artiste', disabled: true, value: 'John', dontIgnore: true}}) %>
       </div>
-      <div class="music-form__body__2">
-        <div class="form__input music-form__body__2--1">
-          <label class="form__input--label">
-            <span></span>
-            <span>*</span>
-          </label>
-          <select class="form__input--element" name="explicit" required>
-            <option value="">Explicit Content</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-        <div class="form__input music-form__body__2--2">
-          <label class="form__input--label">
-            <span></span>
-            <span>&nbsp;</span>
-          </label>
-          <input
-            type="text"
-            class="form__input--element"
-            placeholder="Featured Artist(s) - separated by comma"
-            name="featured"
-          />
-        </div>
+
+      <div class="music-form__body__2 align-items-baseline">
+        <!-- EXPLICIT -->
+        <%- include("../form/select", {formData: {required: '*',
+        classList:['music-form__body__2--1'], name: 'explicit', label: `Explicit
+        Content`, options: [['yes', 'Yes'], ['no', 'No']]}}) %>
+
+        <!--  FEATURED -->
+        <%- include("../form/input", {formData: {name: 'featured',label:
+        `Featured Artist(s)`, placeholder:'each should be separated by a comma',
+        classList:['music-form__body__2--2']}}) %>
       </div>
       <div class="music-form__body__3">
         <div class="music-form__body__3--1">
-          <div class="form__input">
-            <label class="form__input--label">
-              <span></span>
-              <span>*</span>
-            </label>
-            <input
-              type="number"
-              class="form__input--element"
-              placeholder="Copyright Year"
-              name="copyrightYear"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__input">
-            <label class="form__input--label">
-              <span></span>
-              <span>*</span>
-            </label>
-            <input
-              type="text"
-              class="form__input--element"
-              placeholder="Copyright Holder"
-              name="copyrightHolder"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
+          <!--  COPYRIGHT YEAR -->
+          <%- include("../form/input", {formData: {name: 'copyright', type:
+          'number', required: '*', label: `Copyright Year`}}) %>
+
+          <!--  COPYRIGHT HOLDER -->
+          <%- include("../form/input", {formData: {name: 'copyrightHolder',
+          required: '*', label: `Copyright Holder`}}) %>
         </div>
-        <div class="form__input music-form__body__3--2">
-          <label class="form__input--label">
-            <span></span>
-            <span>*</span>
-          </label>
-          <%- include("../genres", {required: true, name: "genre"}) %>
-          <div class="form__input--text"></div>
-        </div>
+        <% const genres = JSON.parse(Fns.genres); %>
+        <!-- GENRES -->
+        <%- include("../form/select", {formData: {required: '*',
+        classList:['music-form__body__3--2'], name: 'genre', label: 'Genre',
+        options: genres}}) %>
       </div>
-    </div>
-    <div class="add-music__next text-right">
-      <button class="btn-primary" data-type="submit-info" type="submit">
-        Next &rarr;
-      </button>
     </div>
   </form>
 </div>

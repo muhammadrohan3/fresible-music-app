@@ -34,6 +34,30 @@
   }
 }
 
+///////////////////////////PLAYER COMPONENT
+.player {
+  display: block;
+  padding: 5px;
+  margin-right: 1rem;
+  // @include border($color-primary);
+  & > * {
+    color: $color-primary;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  &--pause {
+    display: none;
+  }
+  &--playing {
+    & .player--play {
+      display: none;
+    }
+    & .player--pause {
+      display: block;
+    }
+  }
+}
+
 /////////////////////////////////////MODAL >>>>>>>
 .modal-custom {
   &__content {
@@ -1139,7 +1163,7 @@
     }
     &__artwork {
       width: 50%;
-      border: 1px solid rgba($color-primary, 0.4);
+      // border: 1px solid rgba($color-primary, 0.4);
       border-radius: 10px;
       padding: 15px 10px;
       font-size: 12px;
@@ -1388,6 +1412,54 @@
     flex: 1;
     &:not(:last-child) {
       margin-right: 10px;
+    }
+  }
+}
+
+////////////////////////////////>>>>>>>>>>>>>>>> SELECT ACCOUNT
+@mixin select-account--bg {
+  color: $color-white;
+  background-color: $color-primary;
+}
+.select-account {
+  &__options {
+    display: flex;
+    margin-top: 40px;
+    @media screen and (max-width: $sm) {
+      display: block;
+      & > * {
+        &:first-child {
+          margin-right: 0 !important;
+          margin-bottom: 30px;
+        }
+      }
+    }
+  }
+  &__box {
+    flex: 1;
+    padding: 60px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    @include border($color-secondary);
+    border-radius: 8px;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      @include select-account--bg;
+    }
+    &:not(:last-child) {
+      margin-right: 20px;
+    }
+    &--bg {
+      @include select-account--bg;
+      &:hover,
+      &:focus {
+        color: inherit;
+        background-color: inherit;
+      }
     }
   }
 }
