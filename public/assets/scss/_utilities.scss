@@ -162,6 +162,12 @@
   }
 }
 
+.-u-form-small_label {
+  & label {
+    font-size: 1.3rem;
+  }
+}
+
 .-u-mini-comp {
   padding: 40px 30px;
   background-color: $color-white;

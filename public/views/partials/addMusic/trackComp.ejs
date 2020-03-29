@@ -1,7 +1,7 @@
 <div>
   <% const token = Fns.token(10); %>
   <form
-    class="music-form track-form"
+    class="music-form track-form -u-form-small_label"
     data-mixed="true"
     data-submiturl="/add-music/track"
     data-type="submit-info"
@@ -30,40 +30,39 @@
       <div class="track-form__body__1">
         <!-- TRACK TITLE -->
         <%- include("../form/input", {formData: {required: '*', name: 'title',
-        placeholder: 'Track Title', value: 'Dance'}}) %>
+        label: 'Track Title', value: 'Dance'}}) %>
 
         <!-- ARTISTE -->
         <%- include("../form/input", {formData: {required: '*', name: 'artiste',
-        placeholder: 'Artiste', disabled: true, value: 'John', dontIgnore:
-        true}}) %>
+        label: 'Artiste', disabled: true, value: 'John', dontIgnore: true}}) %>
       </div>
 
       <div class="music-form__body__2 align-items-baseline">
         <!-- EXPLICIT -->
         <%- include("../form/select", {formData: {required: '*',
-        classList:['music-form__body__2--1'], name: 'explicit', placeholder:
-        'Explicit Content', options: [['yes', 'Yes'], ['no', 'No']]}}) %>
+        classList:['music-form__body__2--1'], name: 'explicit', label: `Explicit
+        Content`, options: [['yes', 'Yes'], ['no', 'No']]}}) %>
 
         <!--  FEATURED -->
-        <%- include("../form/input", {formData: {name: 'featured',placeholder:
-        `Featured Artist(s) - separated by comma`,
+        <%- include("../form/input", {formData: {name: 'featured',label:
+        `Featured Artist(s)`, placeholder:'each should be separated by a comma',
         classList:['music-form__body__2--2']}}) %>
       </div>
       <div class="music-form__body__3">
         <div class="music-form__body__3--1">
           <!--  COPYRIGHT YEAR -->
           <%- include("../form/input", {formData: {name: 'copyright', type:
-          'number', required: '*', placeholder: `Copyright Year`}}) %>
+          'number', required: '*', label: `Copyright Year`}}) %>
 
           <!--  COPYRIGHT HOLDER -->
           <%- include("../form/input", {formData: {name: 'copyrightHolder',
-          required: '*', placeholder: `Copyright Holder`}}) %>
+          required: '*', label: `Copyright Holder`}}) %>
         </div>
         <% const genres = JSON.parse(Fns.genres); %>
         <!-- GENRES -->
         <%- include("../form/select", {formData: {required: '*',
-        classList:['music-form__body__3--2'], name: 'genre', placeholder:
-        'Select genre...', options: genres}}) %>
+        classList:['music-form__body__3--2'], name: 'genre', label: 'Genre',
+        options: genres}}) %>
       </div>
     </div>
   </form>

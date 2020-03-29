@@ -12,7 +12,7 @@ public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
     <span><%= label %></span><span><%= required && '*required' %></span>
   </div>
   <div class="form__file">
-    <label for="artwork" class="form__file--label btn-outline"
+    <label for="artwork" class="form__file--label btn-outline align-self-center"
       ><%= value ? 'Change Image' : 'Select Image' %></label
     >
     <input type="file" name="<%= name %>" id="artwork"

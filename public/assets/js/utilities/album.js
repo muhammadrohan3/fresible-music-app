@@ -8,7 +8,7 @@ export default (Controller, View) => {
     const { getElement } = View;
     //This script should only run if user is on the add-music page and about to add an album
     const albumElem = getElement("#album");
-    //This condition makes sure this script is only executed when the album Id is available on the page
+    //This condition makes sure this script is only executed when the album element is available on the page
     if (!albumElem) return;
     const {
       responseHandler,
@@ -21,10 +21,11 @@ export default (Controller, View) => {
     let i = 0;
     const TRACKLIST = getElement("#track-list");
 
+    if (TRACKLIST.dataset.existing) checkForTracksAndRender();
+    else handleNew();
+
     //This array variable holds currently uploaded files;
     let uploadingFiles = [];
-    //This function is hoisted and its called to add a track form after page loads
-    handleNew();
 
     //Click events handler
     albumElem.addEventListener("click", e => {
@@ -34,7 +35,7 @@ export default (Controller, View) => {
       if (type === "delete") return handleDelete(num);
     });
 
-    getElement("#album-submit").addEventListener("click", () => handleSubmit());
+    // getElement("#album-submit").addEventListener("click", () => handleSubmit());
     getElement("#new").addEventListener("click", () => handleNew());
 
     //Change event handler for music title changes
@@ -53,13 +54,6 @@ export default (Controller, View) => {
       if (type === "done") return handleDone(num);
     });
 
-    const toggleTrack = (trackNo, status) => {
-      const track = $(`#track${trackNo}`);
-      return status
-        ? track.addClass("-u-album-track-reverse")
-        : track.removeClass("-u-album-track-reverse");
-    };
-
     const handleDone = async num => {
       const result = await Swal.fire({
         title: "Are you sure?",
@@ -73,8 +67,10 @@ export default (Controller, View) => {
       });
       if (result.dismiss) return;
       const trackForm = getElement(`#track${num}`);
-      // const { rawFormData, formData } = View.getFormData(trackForm, true);
+      //Close the track tab
       toggleTrack(num, true);
+      //Checks to see if the user changed the audio file, by checking for the data-ignore attribute
+      if (getElement(`#music${num}`).dataset.ignore) return;
       let fileName = `musicFile${num}`;
       const uploadedFiles = getStore("uploadedFiles");
       //Checks to see if the file is uploaded or being uploaded
@@ -93,6 +89,8 @@ export default (Controller, View) => {
     };
 
     const handleEdit = num => {
+      if (isAnyOpen())
+        return View.showAlert("You are not yet done with an active track");
       return toggleTrack(num, false);
     };
 
@@ -163,16 +161,24 @@ export default (Controller, View) => {
             return View.refresh();
           }
         } catch (e) {
-          console.log(e);
+          throw new Error(e);
         }
       }
     };
 
+    function toggleTrack(trackNo, status) {
+      const track = $(`#track${trackNo}`);
+      return status
+        ? track.addClass("-u-album-track-reverse")
+        : track.removeClass("-u-album-track-reverse");
+    }
+
     function resetTrackCount() {
       const list = Array.from(TRACKLIST.children);
       list.forEach((item, i) => {
-        item.querySelector("#track-count").value = i + 1;
-        item.querySelector("#small-count").textContent = i + 1;
+        const { num } = item.dataset;
+        item.querySelector(`#track-count-${num}`).value = i + 1;
+        item.querySelector(`#small-count-${num}`).textContent = i + 1;
       });
     }
 
@@ -185,14 +191,35 @@ export default (Controller, View) => {
     }
 
     function handleNew() {
-      console.log("hi");
       //Check if a track form is still open
       if (isAnyOpen())
         return View.showAlert(
           "You can add a new track form when you are done with opened one(s)"
         );
-      i = i + 1;
+      //Inserts a track from component
+      insertComponent();
+      //Resets count of each track from to reflect the recent changes
+      resetTrackCount();
+      return (window.location.hash = `track${i}`);
+    }
+
+    function checkForTracksAndRender() {
+      //Checks and render template for already existing Album tracks.
+      const { existing } = TRACKLIST.dataset;
+      //If there are no existing dataset return false
+      if (!existing) return false;
+      //Parses the data set and insert component for each
+      JSON.parse(existing).forEach(data => {
+        insertComponent(data, true);
+      });
+      //Resets each individual track count
+      resetTrackCount();
+      return true;
+    }
+
+    function insertComponent(data = {}, tab) {
       const { url, upload_preset, stagename } = TRACKLIST.dataset;
+      i = i + 1;
       TRACKLIST.insertAdjacentHTML(
         "beforeend",
         ejs.render(albumTemplate, {
@@ -200,12 +227,14 @@ export default (Controller, View) => {
           token: generateToken(10),
           url,
           upload_preset,
-          stagename
+          stagename,
+          data
         })
       );
-      window.location.hash = `track${i}`;
-      return resetTrackCount();
+      tab && toggleTrack(i, true);
+      return;
     }
+
     function isAnyOpen() {
       const trackForms = Array.from(TRACKLIST.children);
       let status = false;
