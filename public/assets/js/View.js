@@ -17,27 +17,39 @@ const View = (document => {
   };
 
   const getFormData = (form, mix) => {
-    let formData = new FormData();
+    const groupData = {};
+    const _groupHelper = (key, name, setName = "") =>
+      (groupData[key] = [
+        ...(group[key] || []),
+        key === "default" ? name : [name, setName]
+      ]);
+
     let rawFormData = {};
     let isThereFile = [];
     let isThereDate = [];
+
     let target = "input";
     if (mix) target = ".form__input--element";
     let formInputs = form.querySelectorAll(target);
     try {
       for (let i = 0; i < formInputs.length; i++) {
         const { ignore } = formInputs[i].dataset;
+        //checks if form element should be ignored
         if (!ignore) {
           let { name, value, type, required } = formInputs[i];
+          const { group_id, group_set_name } = formInputs[i].dataset;
+
+          //This checks for groupings for inputs submitting to other API endpoints
+          if (!group_id) _groupHelper("default", name);
+          else _groupHelper(group_id, name, group_set_name);
+
           if (type === "file") isThereFile.push([name, required]);
           if (type === "hidden") isThereDate.push([name, required]);
-          let file = formInputs[i].files ? formInputs[i].files[0] : null;
           value = type === "checkbox" ? formInputs[i].checked : value;
-          formData.append(name, file ? file : value);
           rawFormData = { ...rawFormData, [name]: value };
         }
       }
-      return { formData, rawFormData, isThereFile, isThereDate };
+      return { formData, rawFormData, isThereFile, isThereDate, groupData };
     } catch (e) {
       throw new Error(e);
     }

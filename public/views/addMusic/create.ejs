@@ -10,15 +10,21 @@
 
     <!-- SELECT ARTIST -->
     <%- include('../partials/form/select', {formData: {label: 'Artist', name:
-    'artist', required: '*required', options: ['wizkid', 'phyno']}}) %>
+    'artist', required: '*required', options: ['wizkid', 'phyno'],
+    dataAttributes: {filter_href: '/add-music/getArtistPackages',
+    filter_target:'#artist-packages-select'}}}) %>
 
     <!-- SELECT PACKAGE -->
     <%- include('../partials/form/select', {formData: {label: 'Package', name:
-    'title', required: '*required', disabled: true}}) %>
+    'userPackageId', id: 'artist-packages-select', required: '*required',
+    disabled: true, dataAttributes: {filter_href:
+    '/add-music/getPackageReleaseTypes',
+    filter_target:'#artist-release-select'}}}) %>
 
     <!-- SELECT RELEASE TYPE -->
     <%- include('../partials/form/select', {formData: {label: 'Release Type',
-    name: 'type', required: '*required', disabled: true}}) %>
+    name: 'type', id: 'artist-release-select', required: '*required', disabled:
+    true}}) %>
 
     <div class="text-center text-md-right">
       <button class="btn-primary" type="submit">Create Release &rarr;</button>
@@ -32,11 +38,15 @@
 
     <!-- SELECT PACKAGE -->
     <%- include('../partials/form/select', {formData: {label: 'Package', name:
-    'title', required: '*required', options: ['BASIC', 'PROFESSIONAL']}}) %>
+    'userPackageId', id: 'artist-packages-select', required: '*required',
+    disabled: true, dataAttributes: {filter_href:
+    '/add-music/getPackageReleaseTypes',
+    filter_target:'#artist-release-select'}}}) %>
 
     <!-- SELECT RELEASE TYPE -->
     <%- include('../partials/form/select', {formData: {label: 'Release Type',
-    name: 'type', required: '*required', disabled: true}}) %>
+    name: 'type', id: 'artist-release-select', required: '*required', disabled:
+    true}}) %>
 
     <div class="text-center text-md-right">
       <button class="btn-primary" type="submit">Create Release &rarr;</button>

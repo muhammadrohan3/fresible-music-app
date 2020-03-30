@@ -5,8 +5,10 @@ import SubmitForm from "../utilities/submitForm";
 import Validations from "../../../Validations";
 import serverRequest from "../utilities/serverRequest";
 import { packageInfoView } from "../templates/packageInfoView";
+import OptionsTemplate from "../templates/options";
 import uploadFile from "../utilities/uploadFile";
 import mobileMenuHandler from "../utilities/handleMobileMenu";
+import extractDataFromList from "../utilities/extractDataFromList";
 
 export default () => {
   //temporary request variable 'R'
@@ -37,7 +39,7 @@ export default () => {
     //Changes the label to indicate the file was successfully selected
     View.addContent(label, `Change ${filetype}`);
     //Saves the file details to the store
-    setStore(e.name, { public_id, url, file, upload_preset });
+    setStore("files", { [e.name]: { public_id, url, file, upload_preset } });
     let html;
     //This conditional block just creates the appropriate preview dependent on the file type
     if (filetype === "image") {
@@ -302,6 +304,34 @@ export default () => {
     return View.refresh();
   };
 
+  //HANDLESELECTFILTER
+  const handleSelectFilter = async selectElement => {
+    console.log("IT CAME TO HANDLESELECTFILTER");
+    // View.showLoader(true);
+    const { filter_target, href } = selectElement.dataset;
+    // const response = await serverRequest({
+    //   href,
+    //   data: selectElement.value,
+    //   method: "get"
+    // });
+    const response = [
+      { id: 2, package: { package: "BASIC" } },
+      { id: 4, package: { package: "PROFESSIONAL" } },
+      { id: 1, package: { package: "SINGLE" } }
+    ];
+    const data = extractDataFromList(response, [
+      ["id"],
+      ["package", "package"]
+    ]);
+    const targetedSelectElement = View.getElement(filter_target);
+    targetedSelectElement.insertAdjacentHTML(
+      "beforeend",
+      ejs.render(OptionsTemplate, { items: data })
+    );
+    targetedSelectElement.disabled = false;
+    // return View.showLoader(false);
+  };
+
   return {
     serverRequest,
     responseHandler,
@@ -336,6 +366,7 @@ export default () => {
     handlePayment,
     queryPayment,
     submitForm,
+    handleSelectFilter,
     initialize: checkVerifyCookie
   };
 };

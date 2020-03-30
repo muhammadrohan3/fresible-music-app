@@ -255,7 +255,7 @@ router.get("/mail", (req, res) =>
 router.get(
   "/dotest",
   addToSchema(SITEDATA, {
-    page: "addMusic/index",
+    page: "addMusic/create",
     title: "Release Wizard"
   }),
   pageRender()

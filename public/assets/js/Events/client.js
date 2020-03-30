@@ -20,8 +20,14 @@ export default ({ album, Controller, flatpickr }) => {
 
   //CHANGE EVENT LISTENER GROUP
   document.body.addEventListener("change", e => {
-    const { id, type, tagName } = e.target;
-    // console.log(tagName);
+    const {
+      id,
+      type,
+      tagName,
+      dataset: { filter_target }
+    } = e.target;
+
+    if (filter_target) Controller.handleSelectFilter(e.target);
     if (["INPUT", "SELECT"].includes(tagName)) processInputIgnore(e.target);
     if (id === "hamburger") return Controller.handleMobileMenu(e.target);
     if (id === "package-select") return Controller.handlePackageSelect(e);

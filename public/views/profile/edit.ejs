@@ -1,82 +1,51 @@
 <div class="-u-page" style="max-width: 500px;">
-  <% const {firstName, lastName, stageName, label, twitter, instagram, phone,
-  bank, bankAccount, bankAccountNo} = pageData; %>
-  <div class="alert alert-info">
+  <% const {accountType} = pageData; const {stageName, label, twitter,
+  instagram, phone, bank, bankAccount, bankAccountNo, avatar} = pageData || {}
+  %>
+  <div class="alert alert-info mb-4">
     Edit the input fields that require update.
   </div>
-  <form class="form -u-form-input-spacing" id="editProfile">
-    <div class="form__input">
-      <label for="" class="form__input--label">Stage Name</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="stageName"
-        value="<%=stageName %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Record Label</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="label"
-        value="<%=label %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Twitter</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="twitter"
-        value="<%=twitter %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Instagram</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="instagram"
-        value="<%=instagram %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Phone</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="phone"
-        value="<%=phone %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Bank Name</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="bank"
-        value="<%=bank %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Account No</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="bankAccountNo"
-        value="<%=bankAccountNo %>"
-      />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Account Name</label>
-      <input
-        type="text"
-        class="form__input--element"
-        name="bankAccount"
-        value="<%=bankAccount %>"
-      />
-    </div>
+  <form class="form -u-form-input-spacing mt-3" id="editProfile">
+    <!-- STAGE NAME -->
+    <%- include("../partials/form/imageFile", {formData: {name: 'avatar', value:
+    avatar, size: '1', label: 'Account Avatar'}}) %>
+
+    <!--  -->
+
+    <% if(accountType !== 'label') { %>
+    <!-- STAGE NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'stageName', value:
+    stageName, label: 'Stage Name', required: '*required'}}) %> <% } %>
+
+    <!-- LABEL NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'label', value:
+    label, label: 'Label Name', required: '*required'}}) %>
+
+    <!--  TWITTER -->
+    <%- include("../partials/form/input", {formData: {name: 'twitter', value:
+    twitter, label: 'Twitter',}}) %>
+
+    <!--  INSTAGRAM -->
+    <%- include("../partials/form/input", {formData: {name: 'instagram', value:
+    instagram, label: 'instagram',}}) %>
+
+    <!--  PHONE -->
+    <%- include("../partials/form/input", {formData: {name: 'phone', value:
+    phone, required: '*required', label: 'Phone No.',}}) %>
+
+    <!--  BANK NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'bank', value: bank,
+    required: '*required', label: 'Bank Name',}}) %>
+
+    <!--  BANK ACCOUNT NO -->
+    <%- include("../partials/form/input", {formData: {name: 'bankAccountNo',
+    value: bankAccountNo, required: '*required', label: 'Bank Account No.',}})
+    %>
+
+    <!--  BANK ACCOUNT NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'bankAccount',
+    value: bankAccount, required: '*required', label: 'Bank Account Name',}}) %>
+
     <div class="form__submit">
       <div class="text-center">
         <a href="/profile"

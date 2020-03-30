@@ -17,6 +17,7 @@ const {
   Admin,
   Log,
   Link,
+  LabelArtist,
   sequelize,
   Sequelize
 } = require("../../database/models");
@@ -38,6 +39,7 @@ const schemaType = schema => {
   if (schema.search(/^admins?$/) >= 0) return Admin;
   if (schema.search(/^logs?$/) >= 0) return Log;
   if (schema.search(/^links?$/) >= 0) return Link;
+  if (schema.search(/^labelartists?$/) >= 0) return LabelArtist;
   return null;
 };
 

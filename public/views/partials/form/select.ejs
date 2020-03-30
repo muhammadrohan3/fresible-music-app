@@ -1,8 +1,8 @@
-<% const hashMap = {label: '', disabled: false, required: '', placeholder: '', type: 'text', name: '', value: '', classList: [], options: []} %>
+<% const hashMap = {label: '', disabled: false, required: '', placeholder: '', type: 'text', name: '', id: '', value: '', classList: [], options: [], dataAttributes: []} %>
 
 <!--  -->
 
-<% const {label, disabled, required, placeholder, type, name, value, classList, options} =
+<% const {label, disabled, required, placeholder, type, name, value, id, classList, options, dataAttributes} =
 Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc, [key]:
 formData[key] || value}) , {}) %>
 
@@ -11,7 +11,10 @@ formData[key] || value}) , {}) %>
       <span><%= label %></span>
       <span><%= required %></span>
     </label>
-    <select style="font-size: inherit;" class="form-control form__input--element" <%= value && 'data-ignore=true' %> name="<%= name %>" <%= required && 'required' %> <%= disabled && 'disabled' %> >
+    <select style="font-size: inherit;" class="form-control form__input--element" <%= value && 'data-ignore=true' %> name="<%= name %>" <%= id && `id=${id}` %> <%= required && 'required' %> <%= disabled && 'disabled'  %>
+      <% const attributes = Object.entries(dataAttributes).map(([name, value]) => name && value && `data-${name}=${value}` ) %>
+      <%= attributes.join(' ') %>
+      >
      <option value="<%= value ? value : ""%>"> <%= value ? value : `${placeholder || '-- select --'}` %></option>
      <% options.forEach((item) => { %>
         <% let [key, desc] = typeof item === 'string' ? [item, item] : item; %>

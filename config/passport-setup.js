@@ -16,13 +16,16 @@ passport.deserializeUser(async (id, done) => {
             "firstName",
             "avatar",
             "email",
-            "role"
+            "role",
+            "type"
           ]
         })
       )
     );
     if (!user) return done(null, false);
-    return done(null, user);
+    const { type: accountType } = user;
+    delete user["type"];
+    return done(null, { ...user, accountType });
   } catch (err) {
     throw new Error(err);
   }
