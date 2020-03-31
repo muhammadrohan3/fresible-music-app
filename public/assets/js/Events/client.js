@@ -76,28 +76,18 @@ export default ({ album, Controller, flatpickr }) => {
     const form = e.target;
     const { id } = form;
     //This handles add music page forms that are submitted
-    if (getElement(".view__item--body")) {
-      if (getElement("#album")) return;
-      const { type } = form.dataset;
-      //This handles the first component... The create music comp.
-      if (type === "create") return Controller.addMusic(form);
-
-      if (type === "submit-info") return Controller.handleReleaseInfo(form);
-      //This handles oridinary submit comps
-      if (type === "submit") return Controller.updateMusicSubmission(form);
-      //This handles terms and conditions comp.
-      if (type === "terms") return Controller.agreeTerms(form);
-    }
+    if (id === "initiate-release")
+      return Controller.handleInitiateRelease(form);
 
     if (id.startsWith("album-form")) return null;
 
-    //SUBMIT EVENT HANDLERS FOR NORMAL PAGES
-    // switch (id.toLowerCase()) {
-    //   // case "complete-profile":
-    //   //   return Controller.completeProfile(form);
-    //   default:
-    //     return Controller.submitForm(form, true);
-    // }
+    // SUBMIT EVENT HANDLERS FOR NORMAL PAGES
+    switch (id.toLowerCase()) {
+      // case "complete-profile":
+      //   return Controller.completeProfile(form);
+      default:
+        return Controller.submitForm(form, true);
+    }
   });
 
   // ENDED EVENT HANDLERS

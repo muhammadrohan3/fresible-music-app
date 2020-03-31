@@ -22,7 +22,7 @@ export default async ({ url, href, method, contentType, data }) => {
     });
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.log("SERVER ERROR :", err);
     throw new Error(err);
   }
 };

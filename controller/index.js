@@ -1,4 +1,5 @@
 const {
+  addMusicMiddlewares,
   addToSchema,
   schema,
   isProfileActive,
@@ -25,11 +26,15 @@ const {
   addSiteDefaultData,
   addMusicCompSwitcher,
   seeStore,
+  setStoreIf,
   smartLinkGenerator
 } = require("./middlewares/index");
 
 const wrapper = require("./wrapper");
-
+const {
+  addMusic_structureReleaseType,
+  addMusic_structureSubs
+} = addMusicMiddlewares;
 const { paystack, paystackConstructor } = paystackMiddleWare;
 const {
   getAllFromSchema,
@@ -110,6 +115,12 @@ module.exports = function() {
     paystack: wrapper(paystack, "paystack"),
     urlFormer: wrapper(urlMiddleWare, "urlFormer"),
     addUserToStore: wrapper(addUserToStore, "addUserToStore"),
-    generateSmartLink: wrapper(smartLinkGenerator, "smartLinkGenerator")
+    generateSmartLink: wrapper(smartLinkGenerator, "smartLinkGenerator"),
+    addMusic_structureReleaseType: wrapper(
+      addMusic_structureReleaseType,
+      "structureReleaseType"
+    ),
+    addMusic_structureSubs: wrapper(addMusic_structureSubs, "structureSubs"),
+    setStoreIf: wrapper(setStoreIf)
   };
 };

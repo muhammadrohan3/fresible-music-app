@@ -17,39 +17,25 @@ const View = (document => {
   };
 
   const getFormData = (form, mix) => {
-    const groupData = {};
-    const _groupHelper = (key, name, setName = "") =>
-      (groupData[key] = [
-        ...(group[key] || []),
-        key === "default" ? name : [name, setName]
-      ]);
-
     let rawFormData = {};
     let isThereFile = [];
     let isThereDate = [];
 
-    let target = "input";
-    if (mix) target = ".form__input--element";
+    let target = ".form__input--element";
     let formInputs = form.querySelectorAll(target);
     try {
       for (let i = 0; i < formInputs.length; i++) {
         const { ignore } = formInputs[i].dataset;
         //checks if form element should be ignored
         if (!ignore) {
-          let { name, value, type, required } = formInputs[i];
-          const { group_id, group_set_name } = formInputs[i].dataset;
-
-          //This checks for groupings for inputs submitting to other API endpoints
-          if (!group_id) _groupHelper("default", name);
-          else _groupHelper(group_id, name, group_set_name);
-
-          if (type === "file") isThereFile.push([name, required]);
+          let { name, value, type, required, files } = formInputs[i];
+          if (type === "file" && files[0]) isThereFile.push([name, required]);
           if (type === "hidden") isThereDate.push([name, required]);
           value = type === "checkbox" ? formInputs[i].checked : value;
-          rawFormData = { ...rawFormData, [name]: value };
+          value && (rawFormData = { ...rawFormData, [name]: value });
         }
       }
-      return { formData, rawFormData, isThereFile, isThereDate, groupData };
+      return { rawFormData, isThereFile, isThereDate };
     } catch (e) {
       throw new Error(e);
     }

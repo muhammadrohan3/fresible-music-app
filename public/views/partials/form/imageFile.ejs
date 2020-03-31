@@ -18,9 +18,10 @@ public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
     <input type="file" name="<%= name %>" id="artwork"
     class="form__input--element form__file--input"
     accept="image/jpg,image/gif,image/png,image/jpeg" data-public_id="<%=
-    public_id %>" data-url="<%= Fns.cloudinaryUrl() %>" data-upload_preset="<%=
-    Fns.cloudinaryUploadPreset %>" data-filetype="image" data-filelimit="<%=
-    size %>" <%= required && 'required' %> />
+    `music/${name}s/${name}-${token()}` %>" data-url="<%= Fns.cloudinaryUrl()
+    %>" data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
+    data-filetype="image" data-filelimit="<%= size %>" <%= required &&
+    'required' %> />
     <div class="form__file--preview">
       <% if(value) { %>
       <img src="<%= value %>" alt="" class="form__file--preview-img" />

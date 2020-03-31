@@ -5,7 +5,7 @@ module.exports = ({ getStore, req }) => (prop, source, key) => {
   if (key && Array.isArray(key)) {
     key.forEach(id => {
       let num = sourceObj[id];
-      sourceObj[id] = idLookUp(num);
+      num && (sourceObj[id] = idLookUp(num));
     });
   } else {
     let id = sourceObj[key || "id"];

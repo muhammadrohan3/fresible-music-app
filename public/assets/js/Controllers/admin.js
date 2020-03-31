@@ -412,6 +412,16 @@ export default () => {
     return View.refresh();
   };
 
+  //CONVERT ACCOUNT TO LABEL
+  const handleConvertToLabel = async () => {
+    View.showLoader(true);
+    const response = await serverRequest({
+      href: "/fmadmincp/subscriber/action/change-to-label"
+    });
+    if (!(R = responseHandler(response))) return;
+    return View.refresh();
+  };
+
   return {
     handleMobileMenu,
     handleBasicAction,
@@ -425,6 +435,7 @@ export default () => {
     handleDeclineCommentEdit,
     handleStoreLinks,
     handleStoreLinksModal,
-    prepareModal
+    prepareModal,
+    handleConvertToLabel
   };
 };

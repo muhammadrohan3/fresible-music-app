@@ -1,6 +1,6 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const labelArtists = sequelize.define(
+  const Labelartist = sequelize.define(
     "labelArtists",
     {
       firstName: DataTypes.STRING,
@@ -8,12 +8,12 @@ module.exports = (sequelize, DataTypes) => {
       stageName: DataTypes.STRING,
       twitter: DataTypes.STRING,
       instagram: DataTypes.STRING,
-      labelId: DataTypes.INTEGER
+      userId: DataTypes.INTEGER
     },
     {}
   );
-  labelArtists.associate = function(models) {
-    // associations can be defined here
+  Labelartist.associate = function({ Userprofile }) {
+    this.belongsTo(Userprofile, { foreignKey: "labelId", as: "labelArtist" });
   };
-  return labelArtists;
+  return Labelartist;
 };

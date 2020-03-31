@@ -11,7 +11,7 @@ module.exports = {
           key: "id"
         }
       }),
-      queryInterface.addColumn("submissions", "artistId", {
+      queryInterface.addColumn("releases", "artistId", {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
@@ -25,7 +25,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return Promise.all([
       queryInterface.removeColumn("userPackages", "artistId"),
-      queryInterface.removeColumn("submissions", "artistId")
+      queryInterface.removeColumn("releases", "artistId")
     ]);
   }
 };

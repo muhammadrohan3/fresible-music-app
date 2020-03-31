@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Userprofile = sequelize.define(
     "userProfiles",
     {
+      avatar: DataTypes.STRING,
       twitter: DataTypes.STRING,
       instagram: DataTypes.STRING,
       label: DataTypes.STRING,

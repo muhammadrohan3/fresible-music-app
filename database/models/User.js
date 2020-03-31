@@ -11,13 +11,13 @@ module.exports = (sequelize, DataTypes) => {
       password: DataTypes.STRING,
       token: DataTypes.STRING,
       tokenType: DataTypes.STRING,
-      avatar: DataTypes.STRING,
       profileActive: DataTypes.INTEGER,
       isVerified: DataTypes.BOOLEAN,
       role: {
         type: DataTypes.ENUM,
         values: ["subscriber", "admin", "superAdmin"]
-      }
+      },
+      type: DataTypes.STRING
     },
     {
       timestamps: true

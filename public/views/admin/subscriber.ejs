@@ -1,11 +1,11 @@
 <div class="-u-page profile">
-  <% const {avatar, firstName, lastName, email, role, profile, id} = pageData;
-  const {stageName, label, twitter, instagram, phone, bank, bankAccount,
-  bankAccountNo} = profile || {} %>
+  <% const {avatar, firstName, lastName, email, role, type, profile, id} =
+  pageData; const {stageName, label, twitter, instagram, phone, bank,
+  bankAccount, bankAccountNo} = profile || {} %>
   <div class="profile__left">
     <div class="profile__left__avatar">
       <%if(avatar) { %>
-      <img src="<%=avatar %>" alt="<%=firstName %> image" />
+      <img src="<%=avatar %>" alt="<%= firstName %> image" />
       <% }else { %>
       <span
         class="iconify icon:simple-line-icons:user icon-inline:false"
@@ -54,6 +54,14 @@
         </button>
         <% } %>
       </div>
+    </div>
+
+    <div class="">
+      <% if(type === 'label') { %>
+      <span class="badge badge-primary">Label Account</span>
+      <% } else { %>
+      <button id="convert-label" class="btn-outline">Convert to a Label</button>
+      <% } %>
     </div>
   </div>
   <div class="profile__right">

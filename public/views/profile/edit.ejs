@@ -1,7 +1,6 @@
 <div class="-u-page" style="max-width: 500px;">
-  <% const {accountType} = pageData; const {stageName, label, twitter,
-  instagram, phone, bank, bankAccount, bankAccountNo, avatar} = pageData || {}
-  %>
+  <% const {type} = pageData; const {stageName, label, twitter, instagram,
+  phone, bank, bankAccount, bankAccountNo, avatar} = pageData || {} %>
   <div class="alert alert-info mb-4">
     Edit the input fields that require update.
   </div>
@@ -12,7 +11,7 @@
 
     <!--  -->
 
-    <% if(accountType !== 'label') { %>
+    <% if(loggedInAccountType !== 'label') { %>
     <!-- STAGE NAME -->
     <%- include("../partials/form/input", {formData: {name: 'stageName', value:
     stageName, label: 'Stage Name', required: '*required'}}) %> <% } %>

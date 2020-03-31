@@ -306,30 +306,26 @@ export default () => {
 
   //HANDLESELECTFILTER
   const handleSelectFilter = async selectElement => {
-    console.log("IT CAME TO HANDLESELECTFILTER");
-    // View.showLoader(true);
-    const { filter_target, href } = selectElement.dataset;
-    // const response = await serverRequest({
-    //   href,
-    //   data: selectElement.value,
-    //   method: "get"
-    // });
-    const response = [
-      { id: 2, package: { package: "BASIC" } },
-      { id: 4, package: { package: "PROFESSIONAL" } },
-      { id: 1, package: { package: "SINGLE" } }
-    ];
-    const data = extractDataFromList(response, [
-      ["id"],
-      ["package", "package"]
-    ]);
+    View.showLoader(true);
+    const { filter_target, filter_href } = selectElement.dataset;
+    const response = await serverRequest({
+      href: `${filter_href}/${selectElement.value}`,
+      method: "get"
+    });
+    if (!(R = responseHandler(response))) return;
     const targetedSelectElement = View.getElement(filter_target);
-    targetedSelectElement.insertAdjacentHTML(
-      "beforeend",
-      ejs.render(OptionsTemplate, { items: data })
-    );
+    targetedSelectElement.innerHTML = ejs.render(OptionsTemplate, { items: R });
     targetedSelectElement.disabled = false;
-    // return View.showLoader(false);
+    return View.showLoader(false);
+  };
+
+  //HANDLE_INITIATE_RELEASE
+  const handleInitiateRelease = async form => {
+    View.showLoader(true);
+    const response = await submitForm(form);
+    if (!(R = responseHandler(response))) return;
+    console.log(R);
+    // return location.replace("/add-music?id=" + R.id);
   };
 
   return {
@@ -367,6 +363,7 @@ export default () => {
     queryPayment,
     submitForm,
     handleSelectFilter,
+    handleInitiateRelease,
     initialize: checkVerifyCookie
   };
 };

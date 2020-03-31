@@ -1,5 +1,8 @@
 export default `
+<option value=''>-- select --</option>
 <% items.forEach(([value, name]) => { %> 
-    <option value="<%= value %>"><%= name %></option>
+  <% if(name && value) { %> 
+    <option value="<%= value %>"><%= name %></option>  
+  <% } %>
   <% }) %>
 `;

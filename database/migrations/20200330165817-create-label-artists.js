@@ -23,11 +23,11 @@ module.exports = {
       instagram: {
         type: Sequelize.STRING
       },
-      labelId: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: "profiles",
+          model: "users",
           key: "id"
         }
       },
