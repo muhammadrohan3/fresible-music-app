@@ -72,13 +72,15 @@ export default () => {
     sliderInitiate,
     handleSignIn: async function(e) {
       View.showLoader(true);
-      const error = await submitForm(e, true);
-      return error && renderFormNotification(error, "#signin");
+      const { status, data } = await submitForm(e);
+      if (status === "success") return View.refresh();
+      return data && renderFormNotification(data, "#signin");
     },
     handleSignUp: async function(e) {
       View.showLoader(true);
-      const error = await submitForm(e, true);
-      return error && renderFormNotification(error, "#signup");
+      const { status, data } = await submitForm(e);
+      if (status === "success") return View.refresh();
+      return data && renderFormNotification(data, "#signup");
     },
     handleForgotPassword: async e => {
       View.showLoader(true);
