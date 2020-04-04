@@ -4,7 +4,7 @@ const webpack = require("webpack");
 const pathToFile = "./public/assets";
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
     clientAuth: pathToFile + "/js/src/clientAuth.js",
     client: pathToFile + "/js/src/client.js",

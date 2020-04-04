@@ -10,8 +10,8 @@
     "webpack": "webpack --watch",
     "webpack-web": "webpack --config ./webpack.f-config.js",
     "webpack-node": "webpack --config ./webpack.b-config.js",
-    "db:migrate": "npx sequelize db:migrate",
-    "insertData": "node ./scripts/bulkInsertData"
+    "db:migrate": "sequelize db:migrate",
+    "insert:data": "node ./scripts/bulkInsertData"
   },
   "author": "",
   "license": "ISC",
