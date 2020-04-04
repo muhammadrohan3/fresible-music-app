@@ -65,7 +65,8 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
       let table = dataHash[name];
       if (!table) {
         console.log("TABLE NOT FOUND FOR: ", name);
-        table = [{ id: 42351 }];
+        if (name === "labelartists") table = [{ id: 1 }];
+        else continue;
       }
       const idHash = {};
       const data = [];
