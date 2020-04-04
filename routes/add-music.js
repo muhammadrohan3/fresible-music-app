@@ -182,7 +182,7 @@ module.exports = Controller => {
     redirectIf(SCHEMAQUERY, false, "/add-music/set-id"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: USERPACKAGE, al: "subscription", at: ["packageId"] },
+      { m: USERPACKAGE, al: "subscription", at: ["packageId", "status"] },
       {
         m: USER,
         at: ["id"],
@@ -191,11 +191,29 @@ module.exports = Controller => {
       {
         m: LABELARTIST,
         at: ["stageName"]
+      },
+      {
+        m: TRACK
+      },
+      {
+        m: ALBUM,
+        i: [{ m: ALBUMTRACK, al: "tracks" }]
       }
     ]),
-    getOneFromSchema(RELEASE),
+    getOneFromSchema(RELEASE, [
+      "id",
+      "type",
+      "status",
+      "releaseDate",
+      "comment",
+      "subscription",
+      "user",
+      "labelArtist",
+      "track",
+      "album"
+    ]),
     redirectIf(SCHEMARESULT, false, "/add-music"),
-    copyKeyTo(SCHEMARESULT, SITEDATA, COMPDATA),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
     pageRender()
   );

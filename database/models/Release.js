@@ -14,10 +14,18 @@ module.exports = (sequelize, DataTypes) => {
       videoId: DataTypes.INTEGER,
       status: {
         type: DataTypes.ENUM,
-        values: ["incomplete", "processing", "approved", "declined", "deleted"]
+        values: [
+          "incomplete",
+          "processing",
+          "approved",
+          "pre-save",
+          "live",
+          "declined",
+          "deleted",
+          "expired"
+        ]
       },
       releaseDate: DataTypes.DATE,
-      submitStatus: DataTypes.INTEGER,
       comment: DataTypes.TEXT,
       linkId: DataTypes.INTEGER,
       artistId: DataTypes.INTEGER

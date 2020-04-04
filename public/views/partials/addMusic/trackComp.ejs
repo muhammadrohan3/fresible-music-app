@@ -1,5 +1,7 @@
 <div>
-  <% const token = Fns.token(10); %>
+  <% const token = Fns.token(10); %> <% const {artiste, featured, title, genre,
+  track: audioLink, artwork, explicit, copyrightHolder, copyrightYear} = track
+  %>
   <form
     class="music-form track-form -u-form-small_label"
     data-mixed="true"
@@ -10,43 +12,42 @@
     <div class="track-form__head">
       <!-- AUDIO UPLOAD -->
       <%- include("../form/audioFile", {formData: {required: '*required',
-      classList: ['track-form__head--1'], name: 'track', value:
-      '/audio/eben.mp3', public_id: `music/musics/music-${'token'}`, size: '50',
-      uploadTexts: [`Upload Track (.wav, .mp3)`, `file size no larger than
-      50MB`]}}) %>
+      classList: ['track-form__head--1'], name: 'track', value: audioLink,
+      public_id: `music/musics/music-${'token'}`, size: '50', uploadTexts:
+      [`Upload Track (.wav, .mp3)`, `file size no larger than 50MB`]}}) %>
 
       <!-- ARTWORK UPLOAD -->
       <%- include("../form/imageFile", {formData: {required: '*required',
-      classList: ['track-form__head--2'], name: 'artwork', value:
-      '/images/burna.jpg', public_id: `music/artworks/artwork-${'token'}`, size:
-      '2', uploadTexts: [`File format must be .jpg/.jpeg`, `File size must not
-      be larger than 1.5mb`, `Image dimensions should be at least 3000 x 3000
-      pixels`, `Design must not contain website addresses, email addresses,
-      logos, social media icons, or any other reference to other services (ie.
-      social media)`]}}) %>
+      classList: ['track-form__head--2'], name: 'artwork', value: artwork,
+      public_id: `music/artworks/artwork-${'token'}`, size: '2', uploadTexts:
+      [`File format must be .jpg/.jpeg`, `File size must not be larger than
+      1.5mb`, `Image dimensions should be at least 3000 x 3000 pixels`, `Design
+      must not contain website addresses, email addresses, logos, social media
+      icons, or any other reference to other services (ie. social media)`]}}) %>
     </div>
 
     <div class="track-form__body">
       <div class="track-form__body__1">
         <!-- TRACK TITLE -->
         <%- include("../form/input", {formData: {required: '*', name: 'title',
-        label: 'Track Title', value: 'Dance'}}) %>
+        label: 'Track Title', value: title}}) %>
 
         <!-- ARTISTE -->
         <%- include("../form/input", {formData: {required: '*', name: 'artiste',
-        label: 'Artiste', disabled: true, value: 'John', dontIgnore: true}}) %>
+        label: 'Artiste', disabled: true, value: loggedInAccountType === 'label'
+        ? labelArtist.stageName : user.stageName, dontIgnore: true}}) %>
       </div>
 
       <div class="music-form__body__2 align-items-baseline">
         <!-- EXPLICIT -->
         <%- include("../form/select", {formData: {required: '*',
-        classList:['music-form__body__2--1'], name: 'explicit', label: `Explicit
-        Content`, options: [['yes', 'Yes'], ['no', 'No']]}}) %>
+        classList:['music-form__body__2--1'], name: 'explicit', value: explicit,
+        label: `Explicit Content`, options: [['yes', 'Yes'], ['no', 'No']]}}) %>
 
         <!--  FEATURED -->
-        <%- include("../form/input", {formData: {name: 'featured',label:
-        `Featured Artist(s)`, placeholder:'each should be separated by a comma',
-        classList:['music-form__body__2--2']}}) %>
+        <%- include("../form/input", {formData: {value: featured, name:
+        'featured', label: `Featured Artist(s)`, placeholder: `each should be
+        separated by a comma`, classList:['music-form__body__2--2']}}) %>
       </div>
       <div class="music-form__body__3">
         <div class="music-form__body__3--1">

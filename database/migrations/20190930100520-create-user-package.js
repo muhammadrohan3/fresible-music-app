@@ -13,7 +13,9 @@ module.exports = {
         allowNull: false,
         references: {
           model: "users",
-          key: "id"
+          key: "id",
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE"
         }
       },
       packageId: {
@@ -21,7 +23,9 @@ module.exports = {
         allowNull: false,
         references: {
           model: "packages",
-          key: "id"
+          key: "id",
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE"
         }
       },
       paymentDate: {
@@ -31,6 +35,16 @@ module.exports = {
         type: Sequelize.ENUM,
         values: ["inactive", "active", "expired"],
         defaultValue: "inactive"
+      },
+      artistId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "labelartists",
+          key: "id",
+          onDelete: "SET NULL",
+          onUpdate: "CASCADE"
+        }
       },
       createdAt: {
         allowNull: false,

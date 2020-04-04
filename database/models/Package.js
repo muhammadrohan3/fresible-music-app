@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       package: DataTypes.STRING,
       period: DataTypes.INTEGER,
       maxTracks: DataTypes.INTEGER,
+      maxAlbums: DataTypes.INTEGER,
       price: DataTypes.INTEGER
     },
     {

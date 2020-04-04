@@ -1,4 +1,6 @@
 <section class="pb-5">
+  <% const {id, type, status, releaseDate, comment, subscription, user, track,
+  album, labelArtist} = pageData %>
   <div class="-u-page">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs custom-tab" id="myTab" role="tablist">
@@ -36,8 +38,10 @@
         role="tabpanel"
         aria-labelledby="home-tab"
       >
-        <% if(true) { %> <%- include("../partials/addMusic/trackComp") %> <% }
-        else { %> <%- include("../partials/addMusic/albumComp") %> <% } %>
+        <% if(type === 'track') { %> <%-
+        include("../partials/addMusic/trackComp", { track, labelArtist, user })
+        %> <% } else { %> <%- include("../partials/addMusic/albumComp") %> <% }
+        %>
       </div>
       <div
         class="tab-pane"

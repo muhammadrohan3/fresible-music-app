@@ -1,35 +1,36 @@
 "use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("labelArtists", {
+    return queryInterface.createTable("links", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
+      slug: {
         type: Sequelize.STRING
       },
-      lastName: {
+      spotify: {
         type: Sequelize.STRING
       },
-      stageName: {
+      apple: {
         type: Sequelize.STRING
       },
-      twitter: {
+      itunes: {
         type: Sequelize.STRING
       },
-      instagram: {
+      amazon: {
         type: Sequelize.STRING
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "users",
-          key: "id"
-        }
+      deezer: {
+        type: Sequelize.STRING
+      },
+      boomplay: {
+        type: Sequelize.STRING
+      },
+      audiomack: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -42,6 +43,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("labelArtists");
+    return queryInterface.dropTable("links");
   }
 };

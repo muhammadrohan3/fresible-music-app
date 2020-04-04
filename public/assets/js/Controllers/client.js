@@ -324,8 +324,7 @@ export default () => {
     View.showLoader(true);
     const response = await submitForm(form);
     if (!(R = responseHandler(response))) return;
-    console.log(R);
-    // return location.replace("/add-music?id=" + R.id);
+    return location.replace("/add-music?id=" + R.id);
   };
 
   return {

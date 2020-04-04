@@ -13,7 +13,9 @@ module.exports = {
         allowNull: false,
         references: {
           model: "albums",
-          key: "id"
+          key: "id",
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE"
         }
       },
       title: {
