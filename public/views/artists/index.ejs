@@ -1,0 +1,44 @@
+<div class="-u-page-s">
+  <div class="-u-page-s__icon">
+    <a href="/add-music"
+      ><button class="btn-outline icon-btn">
+        <span
+          class="iconify"
+          data-icon="ic:outline-add"
+          data-inline="false"
+        ></span
+        ><span>New Artist</span>
+      </button></a
+    >
+  </div>
+  <div class="-u-page" style="margin: 0">
+    <div class="submissions">
+      <table
+        class="table table-hover text-center submissions__table <%= pageData.length ? '' : 'hide' %>"
+      >
+        <thead class="submissions__table--head">
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Stage Name</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pageData.forEach(({id, firstName, lastName, stageName}) => { %>
+          <tr>
+            <td>
+              <a href="/artists/<%= id %>"><%= id %></a>
+            </td>
+            <td>
+              <%=firstName && lastName && firstName +' '+ lastName %>
+            </td>
+            <td><%=stageName %></td>
+            <td><a href="/artists/<%= id %>">View</a></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

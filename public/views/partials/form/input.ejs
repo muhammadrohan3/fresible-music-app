@@ -15,9 +15,9 @@ formData[key] || value}) , {}) %>
   >
   <input type='<%= type %>' name='<%= name %>' <%= inputId && 'id='+ inputId %>
   <%= value && !dontIgnore && 'data-ignore=true' %> placeholder="<%= placeholder
-  %>" class="form-control form__input--element" <%= !value && (required &&
-  'required') %> value='<%= value %>' <%= disabled ? 'disabled' : '' %> <% const
-  attributes = Object.entries(dataAttributes).map(([name, value]) => name &&
-  value && `data-${name}=${value}` ) %> <%= attributes.join(' ') %> />
+  %>" class="form-control form__input--element" <%= required && 'required' %>
+  value='<%= value %>' <%= disabled ? 'disabled' : '' %> <% const attributes =
+  Object.entries(dataAttributes).map(([name, value]) => name && value &&
+  `data-${name}=${value}` ) %> <%= attributes.join(' ') %> />
   <div class="form__input--text"><%= inputText %></div>
 </div>

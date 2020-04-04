@@ -1,5 +1,4 @@
 <div class="-u-page -u-mw-450 mt-5 mb-5">
-  <% const {USER_SUBSCRIPTIONS, } = pageData %>
   <div class="text-center -u-title">
     Create Release
   </div>
@@ -51,9 +50,8 @@
     <!-- SELECT PACKAGE -->
     <%- include('../partials/form/select', {formData: {label: 'Package', name:
     'userPackageId', id: 'artist-packages-select', required: '*required',
-    disabled: true, dataAttributes: {filter_href:
-    '/add-music/create/getPackageReleaseTypes',
-    filter_target:'#artist-release-select'}, options: USER_SUBSCRIPTIONS}}) %>
+    dataAttributes: {filter_href: '/add-music/create/getPackageReleaseTypes',
+    filter_target:'#artist-release-select'}, options: pageData}}) %>
 
     <!-- SELECT RELEASE TYPE -->
     <%- include('../partials/form/select', {formData: {label: 'Release Type',

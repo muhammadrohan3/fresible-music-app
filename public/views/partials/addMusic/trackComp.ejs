@@ -1,25 +1,27 @@
 <div>
   <% const token = Fns.token(10); %> <% const {artiste, featured, title, genre,
-  track: audioLink, artwork, explicit, copyrightHolder, copyrightYear} = track
-  %>
+  track: audioLink, id, artwork, explicit, copyrightHolder, copyrightYear} =
+  track %>
   <form
     class="music-form track-form -u-form-small_label"
+    id="addMusic-track-form"
     data-mixed="true"
-    data-submiturl="/add-music/track"
+    data-submiturl="/add-music/updateTrack"
+    data-query_include="true"
+    data-query_params="<%= JSON.stringify([{trackId: id}]) %>"
     data-type="submit-info"
-    data-submitnum="<%= 'submitStatus+1' %>"
   >
     <div class="track-form__head">
       <!-- AUDIO UPLOAD -->
       <%- include("../form/audioFile", {formData: {required: '*required',
       classList: ['track-form__head--1'], name: 'track', value: audioLink,
-      public_id: `music/musics/music-${'token'}`, size: '50', uploadTexts:
-      [`Upload Track (.wav, .mp3)`, `file size no larger than 50MB`]}}) %>
+      public_id: `music/musics/music-${token}`, size: '50', uploadTexts:
+      [`Upload Track (.wav, .mp3)`, `file size no larger than 50MB`] }}) %>
 
       <!-- ARTWORK UPLOAD -->
       <%- include("../form/imageFile", {formData: {required: '*required',
       classList: ['track-form__head--2'], name: 'artwork', value: artwork,
-      public_id: `music/artworks/artwork-${'token'}`, size: '2', uploadTexts:
+      public_id: `music/artworks/artwork-${token}`, size: '2', uploadTexts:
       [`File format must be .jpg/.jpeg`, `File size must not be larger than
       1.5mb`, `Image dimensions should be at least 3000 x 3000 pixels`, `Design
       must not contain website addresses, email addresses, logos, social media
@@ -35,7 +37,7 @@
         <!-- ARTISTE -->
         <%- include("../form/input", {formData: {required: '*', name: 'artiste',
         label: 'Artiste', disabled: true, value: loggedInAccountType === 'label'
-        ? labelArtist.stageName : user.stageName, dontIgnore: true}}) %>
+        ? labelArtist.stageName : user.profile.stageName, dontIgnore: true}}) %>
       </div>
 
       <div class="music-form__body__2 align-items-baseline">
@@ -45,25 +47,26 @@
         label: `Explicit Content`, options: [['yes', 'Yes'], ['no', 'No']]}}) %>
 
         <!--  FEATURED -->
-        <%- include("../form/input", {formData: {value: featured, name:
-        'featured', label: `Featured Artist(s)`, placeholder: `each should be
-        separated by a comma`, classList:['music-form__body__2--2']}}) %>
+        <%- include("../form/input", {formData: {name: 'featured', label:
+        `Featured Artist(s)`, placeholder: `each should be separated by a
+        comma`, classList:['music-form__body__2--2'], value: featured}}) %>
       </div>
       <div class="music-form__body__3">
         <div class="music-form__body__3--1">
           <!--  COPYRIGHT YEAR -->
-          <%- include("../form/input", {formData: {name: 'copyright', type:
-          'number', required: '*', label: `Copyright Year`}}) %>
+          <%- include("../form/input", {formData: {name: 'copyrightYear', type:
+          'number', required: '*', value: copyrightYear, label: `Copyright
+          Year`}}) %>
 
           <!--  COPYRIGHT HOLDER -->
           <%- include("../form/input", {formData: {name: 'copyrightHolder',
-          required: '*', label: `Copyright Holder`}}) %>
+          required: '*', value: copyrightHolder, label: `Copyright Holder`}}) %>
         </div>
         <% const genres = JSON.parse(Fns.genres); %>
         <!-- GENRES -->
         <%- include("../form/select", {formData: {required: '*',
         classList:['music-form__body__3--2'], name: 'genre', label: 'Genre',
-        options: genres}}) %>
+        value: genre, options: genres}}) %>
       </div>
     </div>
   </form>

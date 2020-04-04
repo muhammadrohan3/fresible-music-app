@@ -31,8 +31,7 @@ module.exports = Controller => {
   /// This GET route renders the complete-profile page
   router.get(
     "/",
-    fromReq("user", ["profileActive"], TEMPKEY),
-    sameAs("profileActive", 0, TEMPKEY),
+    sameAs("profileActive", 2, USER),
     redirectIf(SAMEAS, false, "/"),
     pageRender()
   );
@@ -43,16 +42,17 @@ module.exports = Controller => {
     schemaDataConstructor("body"),
     schemaDataConstructor("user", ["id"], ["userId"]),
     createSchemaData(USERPROFILE),
-    respondIf(
-      SCHEMARESULT,
-      false,
-      `Error occured submitting your profile... retry`
-    ),
+    respondIf(SCHEMARESULT, false, "Error: could not create profile"),
     resetKey(SCHEMADATA),
+    resetKey(SCHEMAQUERY),
     schemaQueryConstructor("user", ["id"]),
-    addToSchema(SCHEMADATA, { profileActive: 1 }),
+    addToSchema(SCHEMADATA, { profileActive: 3 }),
     updateSchemaData(USER),
-    respondIf(SCHEMAMUTATED, false, `Error occured, please retry.`),
+    respondIf(
+      SCHEMAMUTATED,
+      false,
+      "Error: could not make changes to account."
+    ),
     respond(1)
   );
 

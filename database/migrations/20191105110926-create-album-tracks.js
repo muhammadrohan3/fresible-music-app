@@ -13,10 +13,10 @@ module.exports = {
         allowNull: false,
         references: {
           model: "albums",
-          key: "id",
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE"
-        }
+          key: "id"
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       title: {
         type: Sequelize.STRING

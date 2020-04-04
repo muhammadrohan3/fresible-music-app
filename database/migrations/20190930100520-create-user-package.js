@@ -13,20 +13,20 @@ module.exports = {
         allowNull: false,
         references: {
           model: "users",
-          key: "id",
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE"
-        }
+          key: "id"
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       packageId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: "packages",
-          key: "id",
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE"
-        }
+          key: "id"
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       paymentDate: {
         type: Sequelize.DATE
@@ -41,10 +41,10 @@ module.exports = {
         allowNull: true,
         references: {
           model: "labelartists",
-          key: "id",
-          onDelete: "SET NULL",
-          onUpdate: "CASCADE"
-        }
+          key: "id"
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE"
       },
       createdAt: {
         allowNull: false,

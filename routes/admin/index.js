@@ -432,6 +432,8 @@ module.exports = Controller => {
     respondIf(SCHEMAMUTATED, false, "Error Sanitizing Label Profile Data"),
     resetKey(SCHEMADATA),
     addToSchema(SCHEMADATA, { type: "label" }),
+    resetKey(SCHEMAQUERY),
+    schemaQueryConstructor("user", ["id"]),
     updateSchemaData(USER),
     respondIf(SCHEMAMUTATED, false, "Error Setting User Account Type"),
     respond({ success: "Label Account has been setup successfully" })

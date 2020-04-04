@@ -41,4 +41,16 @@ const addMusic_structureReleaseType = ({ getStore, setStore }) => () => {
   return setStore("USER_RELEASE_TYPES", USER_RELEASE_TYPES);
 };
 
-module.exports = { addMusic_structureReleaseType, addMusic_structureSubs };
+const addMusic_checkIncompleteCreation = ({ getStore, setStore }) => () => {
+  const { type, album, track } = getStore("schemaResult");
+  const { id } = getStore("schemaQuery");
+  let key = type === "track" ? track : album;
+  if (key) return setStore("tempKey", false);
+  return setStore("tempKey", { id, type });
+};
+
+module.exports = {
+  addMusic_structureReleaseType,
+  addMusic_structureSubs,
+  addMusic_checkIncompleteCreation
+};

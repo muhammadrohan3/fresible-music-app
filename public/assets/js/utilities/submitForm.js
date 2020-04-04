@@ -1,29 +1,44 @@
-import serverRequest from "./serverRequest";
+import serverRequest, { responseHandler } from "./serverRequest";
 import Validations from "../../../Validations";
 import uploadFile from "./uploadFile";
 import { getStore } from "../Store";
 import FormErrorHandler from "./formErrorHandler";
 
-const submitForm = View => async (form, refresh) => {
+const submitForm = View => async (form, formOptions = {}) => {
   const {
-    submiturl: SubmitUrl,
+    submiturl,
     validation,
     addinfo,
     query_include,
-    mixed,
+    query_params,
     groups
   } = form.dataset;
+
+  const { refresh = false, strict = true } = formOptions;
   //if the form requires adding params to the url (query_include)
-  const submitURL =
-    SubmitUrl && query_include ? SubmitUrl + location.search : SubmitUrl;
+  let R;
+  let QueryParams = {};
+  if (query_include) {
+    const paramList = window.location.search.split("?")[1].split("&");
+    paramList.forEach(p => {
+      const [key, value] = p.split("=");
+      QueryParams[key] = value;
+    });
+  }
+  if (query_params) {
+    const params = JSON.parse(query_params);
+    params.forEach(p => (QueryParams = { ...QueryParams, ...p }));
+  }
   //Refresh means the form should handle what happens next after submission
   if (refresh) View.showLoader(true);
-  let { rawFormData, isThereFile, isThereDate } = View.getFormData(form, mixed);
+  let { rawFormData, isThereFile } = View.getFormData(form);
+
   //INITIATES THE FORM ERROR HANDLER WITH THE VIEW OBJECT
   const formErrorHandler = FormErrorHandler(View);
   const validationErrors = validation
     ? Validations[validation](rawFormData)
     : "";
+
   //CHECKS IF THERE IS ANY VALIDATION ERROR AND RETURNS FORM ERROR HANDLER
   if (validationErrors) {
     View.showLoader(false);
@@ -38,38 +53,33 @@ const submitForm = View => async (form, refresh) => {
 
   const _isEmpty = obj => !Boolean(Object.entries(obj).length);
 
-  if (_isEmpty(rawFormData)) {
+  if (_isEmpty(rawFormData) && !isThereFile.length) {
     if (refresh)
       return View.showAlert("No new values submitted, nothing changed.");
     return {
-      status: "error",
+      status: "empty",
       data: "No new values submitted, nothing changed."
     };
   }
 
-  // A WORK AROUND TO HANDLE RELEASE DATE
-  if (isThereDate.length) {
-    for (let date of isThereDate) {
-      let [name, required] = date;
-      if (required && !rawFormData[name])
-        return "Please select a date from the calendar... (on a mobile phone? try other dates)";
-    }
-  }
   // FILE TYPE HANDLER
   if (isThereFile.length) {
     for (let file of isThereFile) {
       let [name, required] = file;
-      if (required && !rawFormData[name])
+      const fileInStore = getStore("files")[name];
+      if (!strict && !fileInStore) continue;
+      if (required && !fileInStore)
         return View.showAlert("Please upload required file(s)");
     }
     for (let file of isThereFile) {
       let [name] = file;
-      if (getStore("files")[name]) {
+      const fileInStore = getStore("files")[name];
+      if (fileInStore) {
         const response = await uploadFile(name);
-        if (response) {
-          const { secure_url } = response;
-          rawFormData = { ...rawFormData, [name]: secure_url };
-        }
+        if (!(R = responseHandler(response))) return false;
+
+        const { secure_url } = R;
+        rawFormData = { ...rawFormData, [name]: secure_url };
       }
     }
   }
@@ -120,16 +130,18 @@ const submitForm = View => async (form, refresh) => {
   }
 
   //DEFAULT (THESE RUNS AFTER THE GROUP IF THERE IS ANY)... Its the default form submitter.
-  const response = await makeRequest(submitURL, rawFormData);
+  const response = await makeRequest(submiturl, rawFormData, QueryParams);
   //refresh means the submitForm function should continue and refresh the page afterwards
   if (!refresh) return response;
   if (response.status === "error") return View.showAlert(response.data, true);
   return View.refresh();
 
-  async function makeRequest(href, data) {
+  async function makeRequest(href, data, params = {}) {
+    console.log("SUBMITFORM: ", href, data, params);
     const response = await serverRequest({
       href: href || `${location.pathname}${location.search}`,
-      data: data
+      data: data,
+      params
     });
     return response;
   }

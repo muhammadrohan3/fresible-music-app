@@ -1,13 +1,12 @@
 <section class="pb-5">
   <% const {id, type, status, releaseDate, comment, subscription, user, track,
   album, labelArtist} = pageData %>
-  <div class="-u-page">
+  <div class="-u-page" data-release_type="<%= type %>" id="addMusic">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs custom-tab" id="myTab" role="tablist">
-      <li class="nav-item custom-tab__item">
+      <li class="nav-item custom-tab__item" id="addMusic-release-tab">
         <a
           class="nav-link custom-tab__item--link active"
-          id="release-tab"
           data-toggle="tab"
           href="#release-info"
           role="tab"
@@ -16,10 +15,9 @@
           >Release Info</a
         >
       </li>
-      <li class="nav-item custom-tab__item">
+      <li class="nav-item custom-tab__item" id="addMusic-other-tab">
         <a
           class="nav-link custom-tab__item--link"
-          id="other-tab"
           data-toggle="tab"
           href="#other-info"
           role="tab"
@@ -40,8 +38,8 @@
       >
         <% if(type === 'track') { %> <%-
         include("../partials/addMusic/trackComp", { track, labelArtist, user })
-        %> <% } else { %> <%- include("../partials/addMusic/albumComp") %> <% }
-        %>
+        %> <% } else { %> <%- include("../partials/addMusic/albumComp" , {album,
+        labelArtist, user, Fns}) %> <% } %>
       </div>
       <div
         class="tab-pane"
@@ -54,20 +52,31 @@
           <form
             class="form"
             data-type="submit"
-            data-submitnum="<%= 'submitStatus+1' %>"
+            id="addMusic-release-date"
+            data-submiturl="/add-music/updateReleaseDate"
+            data-query_include="true"
           >
             <%- include("../partials/form/input", {formData: {label: `Select
             Date (must be atleast 12 days time)`, required: '*required',
-            inputId: 'date-input', inputText: `Note: the timeframe depends on
-            the release subscription status`, name: 'releaseDate', type:
-            'date'}}) %>
+            inputId: 'date-input', inputText: subscription.status === 'active' ?
+            '' : `Activate the subscription for this release today to get it
+            live on stores on or before the selected date`, name: 'releaseDate',
+            type: 'date', value: Fns.dateFormat(releaseDate)}}) %>
           </form>
         </section>
       </div>
     </div>
   </div>
   <div class="-u-group mb-5">
-    <button class="btn-outline w-25 mr-sm-5 mb-4 mb-sm-0">Save</button>
-    <button class="btn-primary w-25">Publish</button>
+    <button class="btn-outline w-25 mr-sm-5 mb-4 mb-sm-0" id="addMusic-save">
+      Save
+    </button>
+    <button
+      class="btn-primary w-25"
+      id="addMusic-publish"
+      data-release_id="<%= id %>"
+    >
+      Publish
+    </button>
   </div>
 </section>

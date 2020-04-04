@@ -1,7 +1,7 @@
 const handleResponse = require("../util/handleResponse");
 
 module.exports = ({ req }) => (route, base) => {
-  const noAuth = ["/getReleaseLinks"];
+  const noAuth = ["/getReleaseLinks", "/confirm-account/vtc"];
   let baseRoute = req.baseUrl + req.path;
   route = (base && base + route) || route;
   for (let p of noAuth) {

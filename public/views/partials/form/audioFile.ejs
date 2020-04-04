@@ -1,11 +1,11 @@
 <% const hashMap = {label: '', required: '', type: 'text', name: '', value: '',
-classList: [], uploadTexts: [], size: '', public_id: ''} %>
+classList: [], uploadTexts: [], size: '', dataAttributes: []} %>
 
 <!--  -->
 
 <% const {label, required, type, name, value, classList, uploadTexts, size,
-public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
-[key]: formData[key] || value}) , {}) %>
+dataAttributes} = Object.entries(hashMap).reduce((acc, [key, value]) =>
+({...acc, [key]: formData[key] || value}) , {}) %>
 
 <!--  -->
 
@@ -17,13 +17,16 @@ public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
   </label>
   <div class="form__file">
     <label for="music" class="form__file--label btn-outline align-self-center"
-      ><%= value ? 'Change Audio' : 'Select Item' %></label
+      ><%= value ? 'Change Audio' : 'Select Audio' %></label
     >
-    <input type="file" name="<% name %>" id="music" class="form__input--element
+    <input type="file" name="<%= name %>" id="music" class="form__input--element
     form__file--input" accept="audio/wav, audio/mp3" data-filelimit="<%= size
     %>" data-filetype="audio" data-url="<%= Fns.cloudinaryUrl('video') %>"
-    data-public_id="music/musics/music-<%= token %>" data-upload_preset="<%=
-    Fns.cloudinaryUploadPreset %>" <%= required && 'required' %> />
+    data-public_id="music/musics/music-<%= token() %>" data-upload_preset="<%=
+    Fns.cloudinaryUploadPreset %>" <% const attributes =
+    Object.entries(dataAttributes).map(([name, value]) => name && value &&
+    `data-${name}=${value}` ) %> <%= attributes.join(' ') %> <%= required &&
+    'required' %> <%= value && "data-ignore=true" %> />
     <div class="form__file--preview">
       <% if(value) { %>
       <span class="form__file--preview--audio">

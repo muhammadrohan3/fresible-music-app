@@ -12,10 +12,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: {
           model: "users",
-          key: "id",
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE"
-        }
+          key: "id"
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
       },
       role: {
         type: Sequelize.ENUM,

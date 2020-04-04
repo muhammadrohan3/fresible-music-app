@@ -40,10 +40,10 @@ module.exports = {
         allowNull: false,
         references: {
           model: "users",
-          key: "id",
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE"
-        }
+          key: "id"
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       createdAt: {
         allowNull: false,

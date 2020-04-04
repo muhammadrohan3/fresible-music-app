@@ -1,4 +1,5 @@
 const mysql2 = require("mysql2");
+require("dotenv").config();
 
 module.exports = {
   development: {
@@ -12,9 +13,11 @@ module.exports = {
   test: {
     username: "root",
     password: null,
-    database: "database_test",
-    host: "127.0.0.1",
-    dialect: "mysql"
+    database: "fresible_music_test",
+    host: "localhost",
+    dialect: "mysql",
+    logging: false,
+    dialectModule: mysql2
   },
   production: {
     username: process.env.DB_USERNAME,

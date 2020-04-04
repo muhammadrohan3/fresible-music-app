@@ -8,9 +8,14 @@ import { packageInfoView } from "../templates/packageInfoView";
 import OptionsTemplate from "../templates/options";
 import uploadFile from "../utilities/uploadFile";
 import mobileMenuHandler from "../utilities/handleMobileMenu";
+import validator from "../utilities/validator";
+import albumFunction from "../utilities/album";
 import extractDataFromList from "../utilities/extractDataFromList";
+import { async } from "regenerator-runtime";
 
-export default () => {
+const Controller = () => {
+  //Initiate the albumFunction
+  const Album = albumFunction(View);
   //temporary request variable 'R'
   let R;
   //passes the view to the mobileMenuHandler
@@ -127,7 +132,8 @@ export default () => {
       href: `/profile-setup`,
       data: { profileActive }
     });
-    if (response) return View.refresh();
+    if (!responseHandler(response)) return;
+    return;
   };
 
   const updateMusicSubmission = async data =>
@@ -136,21 +142,23 @@ export default () => {
     });
 
   const selectPackage = async e => {
-    View.showLoader(true);
-    let { label } = e.dataset;
+    // View.showLoader(true);
+    let { account_type } = e.dataset;
     let artistId = null;
     //Checks if the user is a label
-    if (label) {
+    if (account_type === "label") {
       const response = await serverRequest({
-        url: "/label/getArtists",
-        data: { packageId }
+        href: "/select-package/get-artists",
+        method: "get"
       });
-      if ((R = !responseHandler(response))) return;
+      if (!(R = responseHandler(response))) return;
+
       //converts the array of artist information to an object containing the artist's ID and stageName
       const artists = R.reduce(
         (acc, { id, stageName }) => ({ ...acc, [id]: stageName }),
         {}
       );
+      View.showLoader(false);
       //fires a popup asking the user to select an artist from the list
       const { value: artist, dismiss } = await Swal.fire({
         title: "Select Label Artist",
@@ -163,97 +171,21 @@ export default () => {
       });
       //Shows an alert if the user dismisses the popup
       if (dismiss) return View.showAlert("You need to select an artist");
-      artistid = artist;
+      artistId = Number(artist);
       View.showLoader(true);
     }
     let packageId = parseInt(e.dataset.package);
-    if (isNaN(packageId)) return null;
+    if (Number.isNaN(packageId)) return null;
     const response = await serverRequest({
+      href: "/select-package",
       data: { packageId, artistId }
     });
     if (!responseHandler(response)) return;
-    await profileSetup();
     return location.replace("/add-music");
-  };
-
-  //HANDLE-PACKAGE-SELECT
-  const handlePackageSelect = e => {
-    const value = e.target.value;
-    if (!value) {
-      setStore("packageValue", false);
-      return View.hide("#package-view");
-    }
-    let textColorMap = {
-      active: "success",
-      inactive: "danger"
-    };
-    const [
-      name,
-      status,
-      trackStatus,
-      id,
-      albumStatus,
-      notApplicable
-    ] = value.split("-");
-    setStore("package", { userPackageId: parseInt(id), notApplicable });
-    $("#package-view").html(
-      ejs.render(packageInfoView, {
-        status,
-        trackStatus,
-        name,
-        textColor: textColorMap[status],
-        albumStatus
-      })
-    );
-  };
-
-  const handleReleaseInfo = async form => {
-    View.showLoader(true);
-    const response = await submitForm(form);
-    if (!(R = responseHandler(response))) return;
-    const submitStatus = parseInt(form.dataset.submitnum);
-    const serverResponse = await serverRequest({
-      data: {
-        submitStatus,
-        ...R
-      }
-    });
-    if (!responseHandler(serverResponse, "Please try again...")) return;
-    return View.refresh();
-  };
-
-  const addMusic = async function(e) {
-    View.showLoader(true);
-    //Get the packageValue from store set by handlePackageSelect function
-    const { userPackageId, notApplicable } = getStore("package");
-    if (!userPackageId)
-      return View.showAlert("Select one from your subscriptions", true);
-    const { rawFormData } = View.getFormData(e, true);
-    const { type } = rawFormData;
-    const [selectedType, full] = notApplicable.split("/");
-    if (notApplicable && selectedType === type) {
-      if (full)
-        View.showAlert(
-          `You have already exceeded the maximum number of ${selectedType}s you can add to this package`,
-          true
-        );
-      else
-        View.showAlert(
-          `This subscription is not eligibe for ${selectedType} release`,
-          true
-        );
-      return;
-    }
-    const response = await serverRequest({
-      data: { userPackageId, type, submitStatus: 1 }
-    });
-    if (!(R = responseHandler(response, "Please try again..."))) return;
-    return location.replace(`/add-music?id=${R.id}`);
   };
 
   const agreeTerms = async form => {
     View.showLoader(true);
-    const { compno } = form.dataset;
     const { rawFormData } = View.getFormData(form);
     //Checks for an unchecked input box and alerts if there is
     for (let item of Object.values(rawFormData)) {
@@ -262,22 +194,7 @@ export default () => {
           "Please agree to all terms and conditions to continue"
         );
     }
-    //Sends a post request to the server to increase submit status
-    const response = await serverRequest({
-      data: { submitStatus: parseInt(compno) }
-    });
-    if (!responseHandler(response)) return;
-    return View.refresh();
-  };
-
-  const confirmMusic = async e => {
-    View.showLoader(true);
-    const response = await serverRequest({
-      data: { status: "processing" }
-    });
-    if (!responseHandler(response)) return;
-    await profileSetup();
-    return location.replace("/submissions");
+    return (Location.pathname = "/add-music/create");
   };
 
   const handlePayment = async e => {
@@ -304,6 +221,29 @@ export default () => {
     return View.refresh();
   };
 
+  const handleSelectAccountType = async elem => {
+    const { account_type: accountType } = elem.dataset;
+    if (!accountType) return;
+    const response = await serverRequest({
+      href: "/select-account",
+      data: { accountType }
+    });
+    if (!(R = responseHandler(response))) return;
+    return View.refresh();
+  };
+
+  //HANDLE ADD-MUSIC TERMS AGREEMENT
+
+  const handleAddMusicTerms = form => {
+    const { rawFormData } = View.getFormData(form);
+    const termInputValueList = Object.values(rawFormData);
+    for (let termInputValue of termInputValueList) {
+      if (!termInputValue)
+        return View.showAlert("Please agree to all terms and conditions.");
+    }
+    return location.replace("/add-music/create");
+  };
+
   //HANDLESELECTFILTER
   const handleSelectFilter = async selectElement => {
     View.showLoader(true);
@@ -327,6 +267,125 @@ export default () => {
     return location.replace("/add-music?id=" + R.id);
   };
 
+  //HANDLE PUBLISH RELEASE
+  const handlePublishRelease = async button => {
+    View.showLoader(true);
+    const { release_id: id } = button.dataset;
+    const RELEASE_TAB = View.getElement("#addMusic-release-tab a");
+    const OTHER_TAB = View.getElement("#addMusic-other-tab a");
+    const RELEASE_DATE_FORM_ID = "#addMusic-release-date";
+    const ALBUM_FORM_ID = "#addMusic-album-form";
+    const TRACK_FORM_ID = "#addMusic-track-form";
+    const { release_type } = View.getElement("#addMusic").dataset;
+    let tabHighlighted = false;
+    let alertShown = false;
+    const _highlightTab = (tab, status = true) => {
+      status && (tabHighlighted = true);
+      tab.style.border = status ? "1px solid red" : "none";
+    };
+
+    //
+    _highlightTab(RELEASE_TAB, false);
+    _highlightTab(OTHER_TAB, false);
+    //
+    const _checkForms = formIds => {
+      const statusList = formIds.map(formId => {
+        const form = View.getElement(formId);
+        if (!form) return true;
+        const { requiredData } = View.getFormData(form);
+        const validateStatus = validator(form, requiredData);
+        return validateStatus;
+      });
+      return statusList;
+    };
+    if (release_type === "album") {
+      const res = Album.tracksNotValidated();
+
+      if (res) {
+        //checks if the response was a string
+        if (typeof res === "string") {
+          View.showAlert(res);
+          alertShown = true;
+        }
+        _highlightTab(RELEASE_TAB);
+      }
+    }
+
+    const [
+      releaseDateFormStatus,
+      albumFormStatus,
+      trackFormStatus
+    ] = _checkForms([RELEASE_DATE_FORM_ID, ALBUM_FORM_ID, TRACK_FORM_ID]);
+
+    if (!releaseDateFormStatus) _highlightTab(OTHER_TAB);
+
+    if (!albumFormStatus || !trackFormStatus) _highlightTab(RELEASE_TAB);
+
+    if (tabHighlighted) {
+      if (!alertShown)
+        View.showAlert("Error: some input fields require your action");
+      return;
+    }
+
+    const _executeAfterSave = async () => {
+      const response = await serverRequest({
+        href: "/add-music/publishRelease",
+        params: {
+          id
+        }
+      });
+      if (!(R = responseHandler(response))) return;
+      return location.replace("/submissions");
+    };
+    return await handleSaveRelease(_executeAfterSave);
+  };
+
+  //HANDLE ADD-MUSIC SAVE
+  const handleSaveRelease = async (callback = false) => {
+    !callback && View.showLoader(true);
+    const RELEASE_DATE_FORM_ID = "#addMusic-release-date";
+    const ALBUM_FORM_ID = "#addMusic-album-form";
+    const TRACK_FORM_ID = "#addMusic-track-form";
+    const { release_type } = View.getElement("#addMusic").dataset;
+
+    let Status = [];
+
+    const _analyze = async (func, params) => {
+      const { status, data } = await func.apply(null, params);
+      if (status === "error") return false;
+      return data;
+    };
+
+    //
+
+    const _submitForm = async formId => {
+      const form = View.getElement(formId);
+      if (!form) return true;
+      return await submitForm(form, { strict: callback ? true : false });
+    };
+
+    const releaseDateFormResponse = await _analyze(_submitForm, [
+      RELEASE_DATE_FORM_ID
+    ]);
+    if (!releaseDateFormResponse) Status.push(false);
+    if (release_type === "track") {
+      const response = await _analyze(_submitForm, [TRACK_FORM_ID]);
+      if (!response) Status.push(false);
+    } else {
+      const response = await _analyze(_submitForm, [ALBUM_FORM_ID]);
+      if (!response) Status.push(false);
+      const albumSubmissionResponse = await Album.handleSubmit(callback);
+      if (!albumSubmissionResponse) Status.push(false);
+    }
+    if (callback && Status.length)
+      return View.showAlert(
+        "Error: It seems your submission was not successful, check your internet connection and try again or contact admin",
+        5
+      );
+    if (!callback) return View.refresh();
+    return await callback();
+  };
+
   return {
     serverRequest,
     responseHandler,
@@ -342,27 +401,18 @@ export default () => {
       return await submitForm(e.target, true);
     },
     selectPackage,
-    handlePackageSelect,
-    handleReleaseInfo,
-    addMusic,
-    updateMusicSubmission: async function(form) {
-      View.showLoader(true);
-      const { rawFormData } = View.getFormData(form);
-      const { submitnum } = form.dataset;
-      const response = await updateMusicSubmission({
-        ...rawFormData,
-        submitStatus: submitnum
-      });
-      if (!responseHandler(response)) return;
-      return View.refresh();
-    },
     agreeTerms,
-    confirmMusic,
     handlePayment,
     queryPayment,
     submitForm,
+    handleSelectAccountType,
     handleSelectFilter,
+    handleAddMusicTerms,
     handleInitiateRelease,
+    handleSaveRelease,
+    handlePublishRelease,
     initialize: checkVerifyCookie
   };
 };
+
+export default Controller;

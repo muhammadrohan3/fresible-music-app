@@ -27,19 +27,23 @@ const {
   addMusicCompSwitcher,
   seeStore,
   setStoreIf,
+  valueIsIn,
+  isLabel,
   smartLinkGenerator
 } = require("./middlewares/index");
 
 const wrapper = require("./wrapper");
 const {
   addMusic_structureReleaseType,
-  addMusic_structureSubs
+  addMusic_structureSubs,
+  addMusic_checkIncompleteCreation
 } = addMusicMiddlewares;
 const { paystack, paystackConstructor } = paystackMiddleWare;
 const {
   getAllFromSchema,
   getOneFromSchema,
   updateSchemaData,
+  deleteSchemaData,
   bulkCreateSchema,
   createSchemaData,
   getAndCountAllFromSchema,
@@ -100,6 +104,7 @@ module.exports = function() {
     bulkCreateSchema: wrapper(bulkCreateSchema, "bulkCreateSchema"),
     createSchemaData: wrapper(createSchemaData, "createSchemaData"),
     updateSchemaData: wrapper(updateSchemaData, "updateSchemaData"),
+    deleteSchemaData: wrapper(deleteSchemaData, "deleteSchemaData"),
     encryptPassword: wrapper(encryptPassword, "encryptPassword"),
     comparePassword: wrapper(comparePassword, "comparePassword"),
     sameAs: wrapper(sameAs, "sameAs"),
@@ -115,12 +120,18 @@ module.exports = function() {
     paystack: wrapper(paystack, "paystack"),
     urlFormer: wrapper(urlMiddleWare, "urlFormer"),
     addUserToStore: wrapper(addUserToStore, "addUserToStore"),
+    isValueIn: wrapper(valueIsIn),
     generateSmartLink: wrapper(smartLinkGenerator, "smartLinkGenerator"),
     addMusic_structureReleaseType: wrapper(
       addMusic_structureReleaseType,
       "structureReleaseType"
     ),
     addMusic_structureSubs: wrapper(addMusic_structureSubs, "structureSubs"),
-    setStoreIf: wrapper(setStoreIf)
+    addMusic_checkIncompleteCreation: wrapper(
+      addMusic_checkIncompleteCreation,
+      "checkIncompleteCreation"
+    ),
+    setStoreIf: wrapper(setStoreIf),
+    isLabel: wrapper(isLabel)
   };
 };

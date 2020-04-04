@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  Labelartist.associate = function({ Userprofile }) {
-    this.belongsTo(Userprofile, { foreignKey: "labelId", as: "labelArtist" });
+  Labelartist.associate = function({ User }) {
+    this.belongsTo(User, { foreignKey: "userId", as: "labelArtist" });
   };
   return Labelartist;
 };

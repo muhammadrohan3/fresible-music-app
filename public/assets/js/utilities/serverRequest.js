@@ -2,15 +2,28 @@ import axios from "axios";
 import "regenerator-runtime/runtime";
 import View from "../View";
 
-export default async ({ url, href, method, contentType, data }) => {
+export default async ({
+  url,
+  href,
+  method = "POST",
+  contentType,
+  data,
+  params
+}) => {
+  if (url && !url.includes("localhost") && !window.navigator.onLine)
+    return {
+      status: "error",
+      data: "Your internet connection is not active, do turn it on if off"
+    };
   const trim = text => (text.startsWith("/") ? text.substr(1) : text);
+  console.log(`MAKING A ${method} REQUEST TO: `, href || url);
   try {
     const response = await axios({
       url:
         url ||
         `${location.origin}/${(href && trim(href)) ||
           trim(location.pathname + location.search)}`,
-      method: method || "post",
+      method,
       data,
       withCredentials: false,
       onUploadProgress: progressEvent => {
@@ -18,11 +31,21 @@ export default async ({ url, href, method, contentType, data }) => {
         const { loaded, total } = progressEvent;
         value = Math.floor((loaded * 100) / total) + "%";
         if (total > 1000) View.loaderText(value);
-      }
+      },
+      params
     });
     return response.data;
   } catch (err) {
     console.log("SERVER ERROR :", err);
     throw new Error(err);
   }
+};
+
+export const responseHandler = ({ status, data }, customMessage) => {
+  //
+  if (status === "error") {
+    View.showAlert(customMessage || data);
+    return false;
+  }
+  return data;
 };

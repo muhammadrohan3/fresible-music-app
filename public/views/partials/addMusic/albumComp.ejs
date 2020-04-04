@@ -1,23 +1,24 @@
-<div class="album mt-5" id="album">
+<div class="album mt-5" id="addMusic-album">
   <form
     class="album__top -u-form-input-spacing -u-form-small_label"
-    id="album-form"
-    data-submiturl="/add-music/album"
-    data-submitnum="<%= 'submitStatus+1' %>"
+    id="addMusic-album-form"
+    data-submiturl="/add-music/updateAlbum"
+    data-query_include="true"
+    data-query_params="<%= JSON.stringify([{albumId: album.id}]) %>"
   >
     <div class="album__top__name">
       <!--  ALBUM NAME -->
-      <%- include("../form/input", {formData: {name: 'name', label: `Album
-      Name`, required: '*required', value:'experience galore'}}) %>
+      <%- include("../form/input", {formData: {name: 'title', label: `Album
+      Name`, required: '*required', value: album.title}}) %>
     </div>
     <div class="album__top__artwork">
       <!-- ARTWORK UPLOAD -->
       <%- include("../form/imageFile", {formData: {required: '*required', label:
-      `Upload Album Artwork (3000 X 3000)`, value: '/images/burna.jpg',
-      classList: ['track-form__head--2'], name: 'artwork', public_id:
-      `music/artworks/artwork-${'token'}`, size: '2', uploadTexts: [`File format
-      must be .jpg/.jpeg`, `File size must not be larger than 1.5mb`, `Image
-      dimensions should be at least 3000 x 3000 pixels`, `Design must not
+      `Upload Album Artwork (3000 X 3000)`, value: album.artwork, classList:
+      ['track-form__head--2'], name: 'artwork', public_id:
+      `music/artworks/artwork-${Fns.token()}`, size: '2', uploadTexts: [`File
+      format must be .jpg/.jpeg`, `File size must not be larger than 1.5mb`,
+      `Image dimensions should be at least 3000 x 3000 pixels`, `Design must not
       contain website addresses, email addresses, logos, social media icons, or
       any other reference to other services (ie. social media)`]}}) %>
     </div>
@@ -33,12 +34,12 @@
       </div>
     </div>
     <div
-      id="track-list"
-      data-stagename="<%= 'user.profile.stageName' %>"
+      id="addMusic-album-track-list"
+      data-stagename="<%= loggedInAccountType === 'label' ? labelArtist.stageName : user.profile.stageName %>"
+      data-album_id="<%= album.id %>"
       data-url="<%= Fns.cloudinaryUrl('video') %>"
       data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
-      data-existing="<%=JSON.stringify(new Array(5).fill(0).map(() => ({title: 'New Sawn', artiste: 'waver', featured: 'dumelo, frank', copyrightYear: '2012',
-      copyrightHolder: 'Me', explicit: 'no', genre: 'R&B', track: '/audio/eben.mp3'}))) %>"
+      data-existing="<%=JSON.stringify(album.tracks) %>"
     ></div>
   </div>
 </div>

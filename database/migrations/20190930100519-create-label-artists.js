@@ -23,15 +23,18 @@ module.exports = {
       instagram: {
         type: Sequelize.STRING
       },
+      avatar: {
+        type: Sequelize.STRING
+      },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: "users",
-          key: "id",
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE"
-        }
+          key: "id"
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       createdAt: {
         allowNull: false,

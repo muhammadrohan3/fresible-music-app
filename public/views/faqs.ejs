@@ -1,8 +1,6 @@
 <div class="-u-page">
-  <% const faqs = JSON.parse(Fns.fs.readFileSync(Fns.dirs.viewsDir +
-  '/faqs.json', 'utf-8')); %>
   <div class="faq accordion" id="accordion">
-    <% faqs.forEach((q, i) => { %>
+    <% JSON.parse(locals.faqs).forEach((q, i) => { %>
     <div class="card faq__item">
       <div class="card-header faq__item__head" id="heading<%= i %>">
         <h2 class="mb-0 faq__item__head__h2">

@@ -1,11 +1,12 @@
 import View from "../View";
+import flatpickr from "flatpickr";
+import album from "../utilities/album";
 import AudioPlayer from "../utilities/audioPlayer";
 import processInputIgnore from "../utilities/processInputIgnore";
 
-export default ({ album, Controller, flatpickr }) => {
-  const { getElement } = View;
-  let t;
-  album(Controller, View);
+export default Controller => {
+  let E;
+  const Album = album(Controller, View);
   if (location.pathname.startsWith("/add-music")) {
     //This opens the bootstrap modal containing informations relevant to the add music page (Maybe I will work on a generic form of notification later)
     //You may as well work on this (GREAT).
@@ -15,7 +16,7 @@ export default ({ album, Controller, flatpickr }) => {
       minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12)
     });
     //ALBUM FUNCTIONALITY
-    // album(Controller, View);
+    Album.initiate();
   }
 
   //CHANGE EVENT LISTENER GROUP
@@ -26,25 +27,21 @@ export default ({ album, Controller, flatpickr }) => {
       tagName,
       dataset: { filter_target }
     } = e.target;
-
-    if (filter_target) Controller.handleSelectFilter(e.target);
-    if (["INPUT", "SELECT"].includes(tagName)) processInputIgnore(e.target);
     if (id === "hamburger") return Controller.handleMobileMenu(e.target);
-    if (id === "package-select") return Controller.handlePackageSelect(e);
+    if (filter_target) Controller.handleSelectFilter(e.target);
+    if (e.target.classList.contains("form__input--element"))
+      processInputIgnore(e.target);
     if (type === "file") return Controller.handleFile(e.target);
   });
 
   //CLICK EVENT LISTENER GROUP
-  getElement("body").addEventListener("click", e => {
+  document.body.addEventListener("click", e => {
     const { id, tagName, dataset } = e.target;
     //HANDLES ACCOUNT VERIFY POPUP ALERT
     if (e.target.classList.contains("page__alert--link"))
       return Controller.sendVerifyRequest();
     //CLOSES ALERT
     if (id === "alert-close") return Controller.closeAlert();
-    //SELECT PACKAGE EVENT LISTENER
-    if (id === "select-package" && tagName === "BUTTON")
-      return Controller.selectPackage(e.target);
     //CONFIRM ACCOUNT EVENT LISTENER
     if (id === "confirm-account") Controller.sendVerifyRequest();
     //PAYMENT PAGE BUTTON HANDLER
@@ -52,26 +49,29 @@ export default ({ album, Controller, flatpickr }) => {
     // PAYMENT QUERY BUTTON HANDLER
     if (id === "queryPayment") return Controller.queryPayment(e.target);
 
+    if (id === "addMusic-save") return Controller.handleSaveRelease();
+
+    if (id === "addMusic-publish")
+      return Controller.handlePublishRelease(e.target);
+
     if (id.startsWith("player-container"))
       return AudioPlayer().handle(e.target);
+
+    //SELECT PACKAGE EVENT LISTENER
+    if ((E = View.getElement("#selectPackage")) && E.contains(e.target))
+      return Controller.selectPackage(e.target);
+
+    if ((E = View.getElement("#selectAccount")) && E.contains(e.target))
+      return Controller.handleSelectAccountType(e.target);
 
     if (location.pathname === "/select-package") {
       if (tagName === "BUTTON" && dataset)
         return Controller.selectPackage(e.target);
     }
-
-    //ADD MUSIC EVENT LISTENER
-    if (location.pathname.startsWith("/add-music")) {
-      //This handles package select event on the add music page
-      if (id === "upload-media")
-        return Controller.updateMusicSubmission(e.target.parentElement);
-      //This handles final release confirmation
-      if (id === "submission") return Controller.confirmMusic(e.target);
-    }
   });
 
   //SUBMIT EVENT LISTENER GROUP
-  getElement("body").addEventListener("submit", e => {
+  document.body.addEventListener("submit", e => {
     e.preventDefault();
     const form = e.target;
     const { id } = form;
@@ -79,15 +79,19 @@ export default ({ album, Controller, flatpickr }) => {
     if (id === "initiate-release")
       return Controller.handleInitiateRelease(form);
 
-    if (id.startsWith("album-form")) return null;
+    //ADD-MUSIC TERMS PAGE BUTTON CLICK HANDLER
+    if (id === "addMusic-terms")
+      return Controller.handleAddMusicTerms(e.target);
+
+    //This holds it up for the Album functions to take over;
+    if (
+      (E = View.getElement("#addMusic-album-track-list")) &&
+      E.contains(e.target)
+    )
+      return null;
 
     // SUBMIT EVENT HANDLERS FOR NORMAL PAGES
-    switch (id.toLowerCase()) {
-      // case "complete-profile":
-      //   return Controller.completeProfile(form);
-      default:
-        return Controller.submitForm(form, true);
-    }
+    return Controller.submitForm(form, true);
   });
 
   // ENDED EVENT HANDLERS

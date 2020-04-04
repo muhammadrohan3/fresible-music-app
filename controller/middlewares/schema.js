@@ -180,18 +180,22 @@ const schemaResultHandler = async (
   actionType
 ) => {
   //Condition that checks if transaction with the DB was successful
-  if (!schemaResult || (schemaResult.length && !schemaResult[0])) return;
+  if (!schemaResult) return;
+  actionType = actionType && actionType.toLowerCase();
+  const didMutate = Array.isArray(schemaResult) && schemaResult[0] > 0;
   const data = organizeData(schemaResult, keys);
   //This condition checks if the type of action was an update or a delete
-  if (actionType === "update") setStore("schemaMutated", true);
+  if (actionType === "update") setStore("schemaMutated", didMutate);
+  else if (actionType === "delete") setStore("schemaDeleted", didMutate);
   else setStore("schemaResult", data);
-  if (actionType)
+  if (actionType) {
     logger(
       { ...getStore(), schemaResult },
       schema,
       actionType,
       req.originalUrl
     );
+  }
   return;
 };
 
@@ -314,10 +318,26 @@ const updateSchemaData = ({ getStore, setStore, req }) => async schema => {
   }
 };
 
+const deleteSchemaData = ({ getStore, setStore, req }) => async schema => {
+  try {
+    const Model = schemaType(schema, getStore);
+    const data = await Model.destroy({ ...whereGen(getStore()) });
+    return schemaResultHandler(
+      { setStore, getStore, req, schema },
+      data,
+      null,
+      "delete"
+    );
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 module.exports = {
   getAllFromSchema,
   getOneFromSchema,
   updateSchemaData,
+  deleteSchemaData,
   createSchemaData,
   bulkCreateSchema,
   getAndCountAllFromSchema,

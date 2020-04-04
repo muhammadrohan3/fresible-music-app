@@ -22,6 +22,11 @@ module.exports = {
       },
       price: {
         type: Sequelize.INTEGER
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: ["inactive", "active"],
+        defaultValue: "active"
       }
     });
   },

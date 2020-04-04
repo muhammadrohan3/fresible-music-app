@@ -30,9 +30,8 @@
     name: 'instagram', inputText: `Should contain '@' - e.g @fresible`}}) %>
 
     <!-- AVATAR UPLOAD -->
-    <%- include('./partials/form/imageFile', {formData: {label: `Upload your
-    Avatar (picture)`, name: 'avatar', size: "0.50", public_id:
-    `music/avatars/avatar-${Fns.token(5)}`}}) %>
+    <%- include("../partials/form/imageFile", {formData: {name: 'avatar', size:
+    '1', label: 'Account Avatar'}}) %>
 
     <!-- PHONE -->
     <%- include('./partials/form/input', {formData: {label: `Phone`, name:

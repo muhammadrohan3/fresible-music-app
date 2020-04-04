@@ -29,6 +29,18 @@ module.exports = {
       boomplay: {
         type: Sequelize.STRING
       },
+      youtube: {
+        type: Sequelize.STRING
+      },
+      youtubeMusic: {
+        type: Sequelize.STRING
+      },
+      tidal: {
+        type: Sequelize.STRING
+      },
+      napster: {
+        type: Sequelize.STRING
+      },
       audiomack: {
         type: Sequelize.STRING
       },

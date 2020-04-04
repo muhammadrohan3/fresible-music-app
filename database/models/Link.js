@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
       amazon: DataTypes.STRING,
       deezer: DataTypes.STRING,
       boomplay: DataTypes.STRING,
+      youtube: DataTypes.STRING,
+      youtubeMusic: DataTypes.STRING,
+      tidal: DataTypes.STRING,
+      napster: DataTypes.STRING,
       audiomack: DataTypes.STRING
     },
     {}

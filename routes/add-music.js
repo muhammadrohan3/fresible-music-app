@@ -31,6 +31,7 @@ module.exports = Controller => {
     schemaDataConstructor,
     schemaQueryConstructor,
     updateSchemaData,
+    deleteSchemaData,
     getOneFromSchema,
     getAllFromSchema,
     bulkCreateSchema,
@@ -51,9 +52,11 @@ module.exports = Controller => {
     redirect,
     urlFormer,
     sendMail,
+    isValueIn,
     setStoreIf,
     addMusic_structureReleaseType,
-    addMusic_structureSubs
+    addMusic_structureSubs,
+    addMusic_checkIncompleteCreation
   } = Controller;
 
   router.get(
@@ -79,6 +82,7 @@ module.exports = Controller => {
     redirectIf("USER_SUBSCRIPTIONS", false, "/create"),
     copyKeyTo("USER_SUBSCRIPTIONS", SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "addMusic/create", title: "Create Release" }),
+    seeStore([SITEDATA, PAGEDATA]),
     pageRender()
   );
 
@@ -213,26 +217,88 @@ module.exports = Controller => {
       "album"
     ]),
     redirectIf(SCHEMARESULT, false, "/add-music"),
+    isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
+    seeStore([SCHEMARESULT, "status"]),
+    redirectIf(SAMEAS, false, "/submission", [SCHEMAQUERY], ["id"]),
+    addMusic_checkIncompleteCreation(),
+    redirectIf(TEMPKEY, true, "/add-music/createReleaseType", [TEMPKEY]),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
+    seeStore([SITEDATA, PAGEDATA]),
     pageRender()
+  );
+
+  router.get(
+    "/createReleaseType",
+    schemaQueryConstructor("query", ["id"]),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    fromReq("query", ["type"], TEMPKEY),
+    addToSchema("schema", "album"),
+    sameAs("type", "track", TEMPKEY),
+    setStoreIf(SAMEAS, true, "schema", "track"),
+    createSchemaData(["schema"]),
+    setStoreIf(SAMEAS, true, "trackId", [SCHEMARESULT, "id"], SCHEMADATA),
+    setStoreIf(SAMEAS, false, "albumId", [SCHEMARESULT, "id"], SCHEMADATA),
+    updateSchemaData(RELEASE),
+    resetKey(TEMPKEY),
+    fromStore(SCHEMAQUERY, ["id"], TEMPKEY),
+    redirect("/add-music", [TEMPKEY])
   );
 
   /// This POST ROUTE handles submissions
   router.post(
-    "/",
-    schemaDataConstructor("body"),
+    "/updateReleaseDate",
+    schemaDataConstructor("body", ["releaseDate"]),
+    respondIf(
+      SCHEMADATA,
+      false,
+      "Error: retry or contact admin if error persist"
+    ),
     schemaQueryConstructor("query", ["id"]),
+    respondIf(
+      SCHEMAQUERY,
+      false,
+      "Error: retry or contact admin if error persist"
+    ),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    updateSchemaData(RELEASE),
+    seeStore(),
+    respondIf(SCHEMAMUTATED, false, "Not updated"),
+    respond(1)
+  );
+
+  router.post(
+    "/publishRelease",
+    schemaQueryConstructor("query", ["id"]),
+    respondIf(
+      SCHEMAQUERY,
+      false,
+      "Error: retry or contact admin if error persist"
+    ),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    addToSchema(SCHEMADATA, { status: "processing" }),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Not updated"),
+    sameAs("profileActive", 5, USER),
+    redirectIf(SAMEAS, true, "/add-music/publishRelease/proceed"),
+    respond(1)
+  );
+
+  //This route is called if the user is still activating his/her profile
+  router.get(
+    "/publishRelease/proceed",
+    sameAs("profileActive", 5, USER),
+    respondIf(SAMEAS, false, 1),
+    schemaQueryConstructor(USER, ["id"]),
+    addToSchema(SCHEMADATA, { profileActive: 6 }),
+    updateSchemaData(USER),
     respond(1)
   );
 
   /// This GET ROUTE is called internally to set current submission ID if a profile isn't active yet
   router.get(
     "/set-id",
-    fromReq("user", ["profileActive"], "tempKey"),
-    sameAs("profileActive", 2, "tempKey"),
+    sameAs("profileActive", 2, USER),
     redirectIf(SAMEAS, false, "/add-music/terms"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     getOneFromSchema(RELEASE),
@@ -241,68 +307,6 @@ module.exports = Controller => {
     fromStore(SCHEMARESULT, ["id"], "tempKey"),
     redirect("/add-music", "tempKey")
   );
-
-  /// This GET route renders the add-music confirm page with dynamic data
-  router.get(
-    "/confirm",
-    schemaQueryConstructor("query", ["id"], null, true),
-    redirectIf(SCHEMAQUERY, false, "/add-music/create"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: USERPACKAGE,
-        al: "subscription",
-        at: ["id", "status"],
-        i: [{ m: PACKAGE, al: "package", at: ["package"] }]
-      },
-      { m: VIDEO },
-      { m: TRACK },
-      { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] }
-    ]),
-    getOneFromSchema(RELEASE),
-    redirectIf(SCHEMARESULT, false, "/add-music"),
-    fromStore(SCHEMARESULT, ["id"], "tempKey"),
-    sameAs("submitStatus", 4, SCHEMARESULT),
-    redirectIf(SAMEAS, false, "/add-music", "tempKey"),
-    fromStore(SCHEMARESULT, null, COMPDATA),
-    copyKeyTo(COMPDATA, SITEDATA),
-    addToSchema(SITEDATA, {
-      page: "add-music",
-      comp: "overview"
-    }),
-    pageRender()
-  );
-
-  /// This POST route confirms the submission and sends a response back to the user
-  router.post(
-    "/confirm",
-    schemaQueryConstructor("query", ["id"], null, true),
-    respondIf(SCHEMAQUERY, false, "Id missing"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    getOneFromSchema(RELEASE),
-    respondIf(SCHEMARESULT, false, null, "record not found for user"),
-    schemaDataConstructor("body"),
-    updateSchemaData(RELEASE),
-    respondIf(SCHEMAMUTATED, false, "Error occured confirming your submission"),
-    fromStore(SCHEMARESULT, ["id"], "tempKey"),
-    urlFormer("/submissions", "tempKey"),
-    sendMail(NEWRELEASE),
-    respond(1)
-  );
-
-  //// TEST
-  // router.get(
-  //   "/:id",
-  //   fromReq("params", ["id"], SCHEMARESULT, ["submitStatus"]),
-  //   redirectIf(SCHEMARESULT, false, "/"),
-  //   schemaQueryConstructor("query", ["id"]),
-  //   addMusicCompSwitcher(),
-  //   resetKey(SCHEMARESULT),
-  //   getOneFromSchema(RELEASE),
-  //   redirectIf(SCHEMARESULT, false, "/"),
-  //   addToSchema(SITEDATA, { page: "add-music", compData: "" }),
-  //   pageRender()
-  // );
 
   //Creates a new Track release
   router.post(
@@ -315,12 +319,19 @@ module.exports = Controller => {
   );
   /////
   router.post(
-    "/track",
+    "/updateTrack",
+    schemaQueryConstructor("query", ["id"]),
+    respondIf(SCHEMAQUERY, false, "Error: could not process"),
     schemaDataConstructor("body"),
-    createSchemaData(TRACK),
-    respondIf(SCHEMARESULT, false, "Could not create track"),
-    fromStore(SCHEMARESULT, ["id"], "tempKey", ["trackId"]),
-    respond(["tempKey"])
+    respondIf(SCHEMADATA, false, "Error: Data not found in the request"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    getOneFromSchema(RELEASE),
+    respondIf(SCHEMARESULT, false, "Error: authorize access rejected"),
+    resetKey(SCHEMAQUERY),
+    fromStore(SCHEMARESULT, ["trackId"], SCHEMAQUERY, ["id"]),
+    updateSchemaData(TRACK),
+    respondIf(SCHEMAMUTATED, false, "Could not update track"),
+    respond({ success: "track updated" })
   );
 
   /////
@@ -333,31 +344,43 @@ module.exports = Controller => {
     respond(["tempKey"])
   );
 
-  //Creates a new Album
+  //Handles update new album request
   router.post(
-    "/album/create",
-    schemaDataConstructor("body", ["name"]),
-    createSchemaData(ALBUM),
-    idMiddleWare(SCHEMARESULT, true, "id"),
-    fromStore(SCHEMARESULT, ["id"], TEMPKEY, ["albumId"]),
-    respond([TEMPKEY])
-  );
-
-  //Handles create new album request
-  router.post(
-    "/album",
+    "/updateAlbum",
+    schemaQueryConstructor("query", ["id"]),
+    respondIf(SCHEMAQUERY, false, "Error: could not process"),
     schemaDataConstructor("body"),
-    schemaDataConstructor("user", ["id"], ["userId"]),
-    createSchemaData(ALBUM),
-    respondIf(SCHEMARESULT, false, "Could not create album"),
-    fromStore(SCHEMARESULT, ["id"], "tempKey", ["albumId"]),
-    seeStore(),
-    respond(["tempKey"])
+    respondIf(SCHEMADATA, false, "Error: Data not found in the request"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    getOneFromSchema(RELEASE),
+    respondIf(
+      SCHEMARESULT,
+      false,
+      "Error: authorization denied to make changes to release"
+    ),
+    resetKey(SCHEMAQUERY),
+    fromStore(SCHEMARESULT, ["albumId"], SCHEMAQUERY, ["id"]),
+    updateSchemaData(ALBUM),
+    respondIf(SCHEMAMUTATED, false, "Could not update album"),
+    respond({ success: "album updated" })
   );
 
   router.post(
     "/album-tracks",
+    schemaQueryConstructor("query", ["id"]),
+    respondIf(SCHEMAQUERY, false, "Error: could not process, id missing"),
+    schemaQueryConstructor("query", ["albumId"]),
+    seeStore([SCHEMAQUERY]),
+    sameAs("albumId", false, SCHEMAQUERY),
+    respondIf(SAMEAS, true, "Error: could not process, album id missing"),
     schemaDataConstructor("body"),
+    respondIf(SCHEMADATA, false, "Error: Data not found in the request"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    getOneFromSchema(RELEASE),
+    respondIf(SCHEMARESULT, false, "Error: Could not authorize access"),
+    resetKey(SCHEMAQUERY),
+    schemaQueryConstructor("query", ["albumId"]),
+    deleteSchemaData(ALBUMTRACK),
     bulkCreateSchema(ALBUMTRACK),
     respondIf(SCHEMARESULT, false, "Could not add album tracks"),
     respond(1)

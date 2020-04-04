@@ -169,4 +169,9 @@
     'video') { %> <%- include('partials/addMusic/videoOverview', video); %> <% }
     %>
   </div>
+  <% if(status === 'declined') { %>
+  <div class="text-center">
+    <a href="/add-music?id=<%=id %>" class="btn-outline">Edit Release</a>
+  </div>
+  <% } %>
 </div>
