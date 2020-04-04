@@ -50,6 +50,7 @@ module.exports = Controller => {
 
   router.post(
     "/login",
+    seeStore(),
     schemaQueryConstructor("body", ["email"]),
     getOneFromSchema(USER),
     respondIf(

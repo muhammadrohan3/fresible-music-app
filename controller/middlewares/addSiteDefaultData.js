@@ -6,13 +6,14 @@ module.exports = ({ req, setStore }) => () => {
   return schemaConstructor(
     { setStore },
     user,
-    ["firstName", "avatar", "role", "id"],
+    ["firstName", "avatar", "role", "id", "type"],
     "siteData",
     [
       "loggedInUserFirstName",
       "loggedInUserAvatar",
       "loggedInUserRole",
-      "loggedInUserId"
+      "loggedInUserId",
+      "loggedInAccountType"
     ]
   );
 };

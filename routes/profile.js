@@ -38,6 +38,7 @@ module.exports = Controller => {
     getOneFromSchema(USER),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "profile/index", title: "Profile" }),
+    seeStore([SITEDATA]),
     pageRender()
   );
 

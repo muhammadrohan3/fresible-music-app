@@ -13,7 +13,9 @@
       <% pageData.forEach(({id, title, featured, genre}) => { %>
       <tr>
         <td>
-          <a href="/albums/t<%=Fns.idLookUp(id) %>"><%= Fns.idLookUp(id) %></a>
+          <a href="<%= Fns.url(`/submission/album-track/${albumId}/${id}`) %>"
+            ><%= id %></a
+          >
         </td>
         <td>
           <%= title %>
@@ -23,8 +25,7 @@
           <%= genre %>
         </td>
         <td>
-          <a
-            href="<%= Fns.url(`/submission/album-track/${Fns.idLookUp(albumId)}/${Fns.idLookUp(id)}`) %>"
+          <a href="<%= Fns.url(`/submission/album-track/${id}/${id}`) %>"
             >view</a
           >
         </td>

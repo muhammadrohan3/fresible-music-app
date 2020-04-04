@@ -17,8 +17,16 @@ module.exports = {
       maxTracks: {
         type: Sequelize.INTEGER
       },
+      maxAlbums: {
+        type: Sequelize.INTEGER
+      },
       price: {
         type: Sequelize.INTEGER
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: ["inactive", "active"],
+        defaultValue: "active"
       }
     });
   },

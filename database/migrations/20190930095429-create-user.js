@@ -29,18 +29,6 @@ module.exports = {
       tokenType: {
         type: Sequelize.STRING
       },
-      avatar: {
-        type: Sequelize.STRING
-      },
-      twitter: {
-        type: Sequelize.STRING
-      },
-      instagram: {
-        type: Sequelize.STRING
-      },
-      label: {
-        type: Sequelize.STRING
-      },
       profileActive: {
         type: Sequelize.INTEGER,
         defaultValue: 0
@@ -49,19 +37,12 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
-      stageName: {
-        type: Sequelize.STRING
+      role: {
+        type: Sequelize.ENUM,
+        defaultValue: "subscriber",
+        values: ["subscriber", "admin", "superAdmin"]
       },
-      phone: {
-        type: Sequelize.STRING
-      },
-      bank: {
-        type: Sequelize.STRING
-      },
-      bankAccount: {
-        type: Sequelize.STRING
-      },
-      bankAccountNo: {
+      type: {
         type: Sequelize.STRING
       },
       createdAt: {

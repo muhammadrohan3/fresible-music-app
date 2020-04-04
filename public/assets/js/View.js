@@ -16,28 +16,32 @@ const View = (document => {
     return cookieValue;
   };
 
-  const getFormData = (form, mix) => {
-    let formData = new FormData();
+  const getFormData = (form, getAll = false) => {
     let rawFormData = {};
     let isThereFile = [];
     let isThereDate = [];
-    let target = "input";
-    if (mix) target = ".form__input--element";
+    const requiredData = {};
+    const { form_select } = form.dataset;
+    let target = form_select || ".form__input--element";
     let formInputs = form.querySelectorAll(target);
     try {
       for (let i = 0; i < formInputs.length; i++) {
         const { ignore } = formInputs[i].dataset;
-        if (!ignore) {
-          let { name, value, type, required } = formInputs[i];
-          if (type === "file") isThereFile.push([name, required]);
-          if (type === "hidden") isThereDate.push([name, required]);
-          let file = formInputs[i].files ? formInputs[i].files[0] : null;
-          value = type === "checkbox" ? formInputs[i].checked : value;
-          formData.append(name, file ? file : value);
-          rawFormData = { ...rawFormData, [name]: value };
+        //checks if form element should be ignored
+        if (ignore && !getAll) continue;
+        let { name, value, type, required, files } = formInputs[i];
+        if (!name) continue;
+        if (type === "file" && files[0]) {
+          isThereFile.push([name]);
+          continue;
         }
+        if (type === "checkbox")
+          rawFormData = { ...rawFormData, [name]: formInputs[i].checked };
+        else value && (rawFormData = { ...rawFormData, [name]: value });
+        if (required && !value) requiredData[name] = "";
       }
-      return { formData, rawFormData, isThereFile, isThereDate };
+
+      return { rawFormData, isThereFile, isThereDate, requiredData };
     } catch (e) {
       throw new Error(e);
     }
@@ -68,10 +72,10 @@ const View = (document => {
     showLoader(false);
     addContent("#page-alert-text", text, true);
     addClass("#page-alert", "page__alert--show");
-    if (stay) return;
+    if (stay && Number.isNaN(stay)) return;
     return setTimeout(
       () => removeClass("#page-alert", "page__alert--show"),
-      1500
+      (stay && stay * 1000) || 2500
     );
   };
 

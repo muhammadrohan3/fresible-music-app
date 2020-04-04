@@ -22,7 +22,8 @@ const {
   PAYMENT,
   LOG,
   LINK,
-  LINKSADDED
+  LINKSADDED,
+  LABELARTIST
 } = require("../../constants");
 module.exports = Controller => {
   const {
@@ -382,6 +383,7 @@ module.exports = Controller => {
     redirectIf(SCHEMARESULT, false, "/fmadmincp/subscribers"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "subscriber" }),
+    seeStore([SITEDATA]),
     pageRender()
   );
 
@@ -401,6 +403,40 @@ module.exports = Controller => {
     getOneFromSchema(USER),
     sendMail("roleChanged"),
     respond(1)
+  );
+
+  //CHANGES ACCOUNT TYPE TO LABEL FOR AN ALREADY EXISTING SUBSCRIBER
+  router.post(
+    "/subscriber/action/change-to-label",
+    sameAs("accountType", "label", "user"),
+    respondIf(SAMEAS, true, "This is a label account"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    getOneFromSchema(USERPROFILE, ["twitter", "instagram", "stageName", "id"]),
+    fromStore(
+      SCHEMARESULT,
+      ["id", "twitter", "instagram", "stageName"],
+      SCHEMADATA,
+      ["userId"]
+    ),
+    resetKey(SCHEMARESULT),
+    createSchemaData(LABELARTIST),
+    resetKey(SCHEMADATA),
+    fromStore(SCHEMARESULT, ["id"], SCHEMADATA, ["artistId"]),
+    updateSchemaData(USERPACKAGE),
+    respondIf(SCHEMAMUTATED, false, "Error Syncing Artist Subscriptions"),
+    updateSchemaData(RELEASE),
+    respondIf(SCHEMAMUTATED, false, "Error Syncing Artist Releases"),
+    resetKey(SCHEMADATA),
+    addToSchema(SCHEMADATA, { twitter: "", instagram: "", stageName: "" }),
+    updateSchemaData(USERPROFILE),
+    respondIf(SCHEMAMUTATED, false, "Error Sanitizing Label Profile Data"),
+    resetKey(SCHEMADATA),
+    addToSchema(SCHEMADATA, { type: "label" }),
+    resetKey(SCHEMAQUERY),
+    schemaQueryConstructor("user", ["id"]),
+    updateSchemaData(USER),
+    respondIf(SCHEMAMUTATED, false, "Error Setting User Account Type"),
+    respond({ success: "Label Account has been setup successfully" })
   );
 
   //loads/gets the list of all subscribers

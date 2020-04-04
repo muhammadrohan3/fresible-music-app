@@ -4,9 +4,9 @@ const addMusic = require("./add-music");
 const contactUs = require("./contact-us");
 const confirmAccount = require("./confirm-account");
 const payment = require("./payment");
-const selectPackage = require("./select-package");
 const profile = require("./profile");
 const account = require("./account");
+const artists = require("./artists");
 const invoice = require("./invoices");
 const wallet = require("./wallet");
 const adminIndex = require("./admin/index");
@@ -20,6 +20,7 @@ const {
   TRACK,
   SCHEMAQUERY,
   SCHEMAINCLUDE,
+  SCHEMAMUTATED,
   USERPACKAGE,
   TEMPKEY,
   SCHEMADATA,
@@ -28,8 +29,10 @@ const {
   USER,
   LINK,
   SITEDATA,
+  LABELARTIST,
   SAMEAS,
-  USERPROFILE
+  USERPROFILE,
+  NEWSUBSCRIPTION
 } = require("../constants");
 
 const Controller = require("../controller")();
@@ -42,6 +45,7 @@ const {
   updateSchemaData,
   getOneFromSchema,
   getAllFromSchema,
+  createSchemaData,
   addToSchema,
   pageRender,
   resetKey,
@@ -58,7 +62,9 @@ const {
   addSiteDefaultData,
   addUserToStore,
   fromReq,
-  fromStore
+  fromStore,
+  setStoreIf,
+  isValueIn
 } = Controller;
 
 router.use(isAuthenticated("/account"));
@@ -71,19 +77,18 @@ router.use(addSiteDefaultData());
 //This GET Route handles the main page ==> (music.fresible.com)
 router.get(
   "/",
-  seeStore(),
   addToSchema(SITEDATA, { page: "index", title: "Dashboard" }),
   pageRender()
 );
 
 router.use("/fmadmincp", adminIndex(Controller));
-router.use("/select-package", selectPackage(Controller));
 router.use("/add-music", addMusic(Controller));
 router.use("/confirm-account", confirmAccount(Controller));
 router.use("/payment", payment(Controller));
 router.use("/profile", profile(Controller));
 router.use("/contact-us", contactUs(Controller));
 router.use("/complete-profile", completeProfile(Controller));
+router.use("/artists", artists(Controller));
 router.use("/invoices", invoice(Controller));
 router.use("/wallet", wallet(Controller));
 
@@ -92,6 +97,62 @@ router.post(
   "/profile-setup",
   schemaDataConstructor("body", ["profileActive"]),
   schemaQueryConstructor("user", ["id"]),
+  updateSchemaData(USER),
+  respond(1)
+);
+
+router.get("/select-account", pageRender());
+
+router.post(
+  "/select-account",
+  sameAs("profileActive", 1, USER),
+  respondIf(SAMEAS, false, "Error: access denied"),
+  schemaDataConstructor("body", ["type"]),
+  respondIf(SCHEMADATA, false, "Error: request incomplete"),
+  addToSchema(SCHEMADATA, { profileActive: 2 }),
+  schemaQueryConstructor(USER, ["id"]),
+  updateSchemaData(USER),
+  respondIf(SCHEMAMUTATED, false, "Error: could not update data"),
+  respond(1)
+);
+
+// This GET ROUTE renders the select package page
+router.get(
+  "/select-package",
+  getAllFromSchema(PACKAGE),
+  copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+  pageRender()
+);
+
+router.get(
+  "/select-package/get-artists",
+  schemaQueryConstructor("user", ["id"], ["userId"]),
+  getAllFromSchema(LABELARTIST),
+  respond([SCHEMARESULT])
+);
+
+// This POST route creates a new package for the user
+router.post(
+  "/select-package",
+  schemaDataConstructor("body", ["packageId", "artistId"]),
+  schemaDataConstructor("user", ["id"], ["userId"]),
+  createSchemaData(USERPACKAGE),
+  respondIf(SCHEMARESULT, false, "Could not process the request, try again..."),
+  fromStore(SCHEMARESULT, ["id"], "tempKey"),
+  urlFormer("/subscription", "tempKey"),
+  sendMail(NEWSUBSCRIPTION),
+  sameAs("profileActive", 4, USER),
+  redirectIf(SAMEAS, true, "/select-package/proceed"),
+  respond(1)
+);
+
+//This route is called if the user is still activating his/her profile
+router.get(
+  "/select-package/proceed",
+  sameAs("profileActive", 4, USER),
+  respondIf(SAMEAS, false, 1),
+  schemaQueryConstructor(USER, ["id"]),
+  addToSchema(SCHEMADATA, { profileActive: 5 }),
   updateSchemaData(USER),
   respond(1)
 );
@@ -136,7 +197,7 @@ router.get(
 // This GET route renders a single user submission
 router.get(
   "/submission",
-  schemaQueryConstructor("query", ["id"], null, true),
+  schemaQueryConstructor("query", ["id"]),
   redirectIf(SCHEMAQUERY, false, "/submissions"),
   schemaQueryConstructor("user", ["id"], ["userId"]),
   addToSchema(SCHEMAINCLUDE, [
@@ -153,6 +214,8 @@ router.get(
   ]),
   getOneFromSchema(RELEASE),
   redirectIf(SCHEMARESULT, false, "/submissions"),
+  sameAs("status", "incomplete", SCHEMARESULT),
+  redirectIf(SAMEAS, true, "/add-music", [SCHEMAQUERY], ["id"]),
   sameAs("status", "deleted", SCHEMARESULT),
   redirectIf(SAMEAS, true, "/submissions"),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
@@ -164,13 +227,20 @@ router.get(
   "/submission/album",
   schemaQueryConstructor("query", ["id"]),
   redirectIf(SCHEMAQUERY, false, "/submissions"),
-  schemaQueryConstructor("user", ["id"], ["userId"]),
   addToSchema(SCHEMAINCLUDE, [
     { m: ALBUMTRACK, al: "tracks" },
-    { m: RELEASE, at: ["status", "id"] }
+    { m: RELEASE, al: "release", at: ["status", "id", "userId"] }
   ]),
   getOneFromSchema(ALBUM),
   redirectIf(SCHEMARESULT, false, "/submissions"),
+  schemaQueryConstructor("user", ["id"], ["userId"]),
+  setStoreIf(
+    [SCHEMARESULT, "release", "userId"],
+    [SCHEMAQUERY, "userId"],
+    TEMPKEY,
+    true
+  ),
+  redirectIf(TEMPKEY, false, "/submissions"),
   copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
   addToSchema(SITEDATA, { page: "album/index", title: "Album" }),
   pageRender()
@@ -179,14 +249,19 @@ router.get(
 //This way we can make sure a subscriber can only view album-track related to him/her;
 router.get(
   "/submission/album-track/:albumId/:trackId",
-  idMiddleWare("params", null, ["albumId", "trackId"]),
-  schemaQueryConstructor("params", ["albumId"], ["id"]),
+  schemaQueryConstructor("params", ["albumId"]),
   redirectIf(SCHEMAQUERY, false, "/submissions"),
   fromReq("params", ["trackId"], "trackInclude", ["id"]),
   sameAs("trackId", "", "trackInclude"),
-  fromStore(SCHEMAQUERY, ["albumId"], TEMPKEY, ["id"]),
-  redirectIf(SAMEAS, true, "/submission/album", [TEMPKEY]),
+  redirectIf(SAMEAS, true, "/submission/album", [SCHEMAQUERY]),
   schemaQueryConstructor("user", ["id"], ["userId"]),
+  getOneFromSchema(RELEASE),
+  redirectIf(SCHEMARESULT, false, "/submissions"),
+  isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
+  redirectIf(SAMEAS, false, "/add-music", [SCHEMAQUERY], ["id"]),
+  resetKey(SCHEMAQUERY),
+  schemaQueryConstructor("params", ["albumId"], ["id"]),
+  fromStore(SCHEMAQUERY, ["id"], TEMPKEY),
   addToSchema(SCHEMAINCLUDE, [
     { m: ALBUMTRACK, al: "tracks", w: "trackInclude" }
   ]),
@@ -201,6 +276,7 @@ router.get(
 router.get(
   "/subscriptions",
   schemaQueryConstructor("user", ["id"], ["userId"]),
+  schemaQueryConstructor("query", ["artistId"]),
   addToSchema(SCHEMAINCLUDE, [
     { m: RELEASE, al: "releases", at: ["id"] },
     { m: PACKAGE }
@@ -255,7 +331,7 @@ router.get("/mail", (req, res) =>
 router.get(
   "/dotest",
   addToSchema(SITEDATA, {
-    page: "addMusic/index",
+    page: "addMusic/create",
     title: "Release Wizard"
   }),
   pageRender()

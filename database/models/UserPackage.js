@@ -18,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       paymentDate: {
         type: DataTypes.DATE
-      }
+      },
+      artistId: DataTypes.INTEGER
     },
     {
       timestamps: true
@@ -30,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     User,
     Submission,
     Payment,
-    Release
+    Release,
+    Labelartist
   }) {
     //UserPackage belongsTo Package
     this.belongsTo(Package, { foreignKey: "packageId", as: "package" });
@@ -52,6 +54,8 @@ module.exports = (sequelize, DataTypes) => {
 
     //UserPackage hasMany Releases
     this.hasMany(Release, { foreignKey: "userPackageId", as: "releases" });
+
+    this.belongsTo(Labelartist, { foreignKey: "artistId", as: "labelArtist" });
   };
   return UserPackage;
 };

@@ -1,11 +1,11 @@
 <% const hashMap = {label: '', required: '', type: 'text', name: '', value: '',
-classList: [], uploadTexts: [], size: '', public_id: ''} %>
+classList: [], uploadTexts: [], size: '', public_id: '', dataAttributes: []} %>
 
 <!--  -->
 
-<% const {label, required, type, name, value, classList, uploadTexts, size,
-public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
-[key]: formData[key] || value}) , {}) %>
+<% const {label, required, type, name, value, classList, uploadTexts,
+dataAttributes, size, public_id} = Object.entries(hashMap).reduce((acc, [key,
+value]) => ({...acc, [key]: formData[key] || value}) , {}) %>
 
 <div class="form__input <%= classList && classList.join(' ') %>">
   <div class="form__input--label">
@@ -18,9 +18,12 @@ public_id} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc,
     <input type="file" name="<%= name %>" id="artwork"
     class="form__input--element form__file--input"
     accept="image/jpg,image/gif,image/png,image/jpeg" data-public_id="<%=
-    public_id %>" data-url="<%= Fns.cloudinaryUrl() %>" data-upload_preset="<%=
-    Fns.cloudinaryUploadPreset %>" data-filetype="image" data-filelimit="<%=
-    size %>" <%= required && 'required' %> />
+    `music/${name}s/${name}-${token()}` %>" data-url="<%= Fns.cloudinaryUrl()
+    %>" data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
+    data-filetype="image" data-filelimit="<%= size %>" <% const attributes =
+    Object.entries(dataAttributes).map(([name, value]) => name && value &&
+    `data-${name}=${value}` ) %> <%= attributes.join(' ') %> <%= required &&
+    'required' %> <%= value && "data-ignore='true'" %> />
     <div class="form__file--preview">
       <% if(value) { %>
       <img src="<%= value %>" alt="" class="form__file--preview-img" />

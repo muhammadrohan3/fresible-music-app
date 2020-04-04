@@ -178,7 +178,7 @@ module.exports = Controller => {
   router.get(
     "/get-sub-id",
     fromReq("user", ["profileActive"], TEMPKEY),
-    sameAs("profileActive", 4, TEMPKEY),
+    sameAs("profileActive", 6, TEMPKEY),
     redirectIf(SAMEAS, false, "/"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     getOneFromSchema(USERPACKAGE),

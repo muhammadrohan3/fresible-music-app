@@ -6,7 +6,13 @@ module.exports = (sequelize, DataTypes) => {
       package: DataTypes.STRING,
       period: DataTypes.INTEGER,
       maxTracks: DataTypes.INTEGER,
-      price: DataTypes.INTEGER
+      maxAlbums: DataTypes.INTEGER,
+      price: DataTypes.INTEGER,
+      status: {
+        type: DataTypes.ENUM,
+        values: ["inactive", "active"],
+        defaultValue: "active"
+      }
     },
     {
       timestamps: false

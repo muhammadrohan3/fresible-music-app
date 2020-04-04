@@ -164,9 +164,14 @@
     </div>
 
     <% if(type === 'album') { %> <%- include('partials/addMusic/albumOverview',
-    album, showBtn= true); %> <% } %> <% if(type === 'track') { %> <%-
+    album, showBtn = true); %> <% } %> <% if(type === 'track') { %> <%-
     include('partials/addMusic/trackOverview', track); %> <% } %> <% if(type ===
     'video') { %> <%- include('partials/addMusic/videoOverview', video); %> <% }
     %>
   </div>
+  <% if(status === 'declined') { %>
+  <div class="text-center">
+    <a href="/add-music?id=<%=id %>" class="btn-outline">Edit Release</a>
+  </div>
+  <% } %>
 </div>

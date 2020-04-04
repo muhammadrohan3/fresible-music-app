@@ -33,6 +33,7 @@ export default Controller => {
       Controller.prepareModal("links");
       return Controller.handleStoreLinksModal(e.target);
     }
+    if (id === "convert-label") return Controller.handleConvertToLabel();
     return Controller.handleBasicAction(e.target);
   });
 

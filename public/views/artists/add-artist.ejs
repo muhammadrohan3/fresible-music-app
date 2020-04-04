@@ -1,21 +1,27 @@
 <div class="complete-profile">
   <form
     class="form -u-form-input-spacing"
-    id="label-complete-profile"
-    data-validation="completeProfile"
-    data-submitUrl="/label-complete-profile"
+    id="add-artist"
+    data-submitUrl="/artist/add-artist"
   >
     <div class="form__head">
       <h2></h2>
     </div>
     <div class="alert alert-info">
-      We need more information from you to get started, please complete your
-      profile by filling the fields below
+      Provide information about the new artist to be added.
     </div>
 
-    <!-- LABEL NAME -->
+    <!-- FIRST NAME -->
     <%- include('./partials/form/input', {formData: {required: '*required',
-    label: `Label Name`, name: 'labelName'}}) %>
+    label: `Stage Name`, name: 'firstName'}}) %>
+
+    <!-- LAST NAME -->
+    <%- include('./partials/form/input', {formData: {required: '*required',
+    label: `Stage Name`, name: 'lastName'}}) %>
+
+    <!-- STAGE NAME -->
+    <%- include('./partials/form/input', {formData: {required: '*required',
+    label: `Stage Name`, name: 'stageName'}}) %>
 
     <!-- TWITTER HANDLE -->
     <%- include('./partials/form/input', {formData: {label: `Twitter handle`,
@@ -29,23 +35,6 @@
     <%- include('./partials/form/imageFile', {formData: {label: `Upload your
     Avatar (picture)`, name: 'avatar', size: "0.50", public_id:
     `music/avatars/avatar-${Fns.token(5)}`}}) %>
-
-    <!-- PHONE -->
-    <%- include('./partials/form/input', {formData: {label: `Phone`, name:
-    'phone', type: 'number', inputText: `Phone number should be in this format -
-    08030xxxxxx (11 digits)`, required: '*required'}}) %>
-
-    <!-- BANK  -->
-    <%- include('./partials/form/input', {formData: {label: `Bank`, name:
-    'bank'}}) %>
-
-    <!-- ACCOUNT NAME  -->
-    <%- include('./partials/form/input', {formData: {label: `Account Name`,
-    name: 'bankAccount'}}) %>
-
-    <!-- ACCOUNT NUMBER  -->
-    <%- include('./partials/form/input', {formData: {label: `Account Number`,
-    name: 'bankAccountNo'}}) %>
 
     <div class="form__submit">
       <div></div>

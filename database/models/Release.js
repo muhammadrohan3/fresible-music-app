@@ -14,12 +14,21 @@ module.exports = (sequelize, DataTypes) => {
       videoId: DataTypes.INTEGER,
       status: {
         type: DataTypes.ENUM,
-        values: ["incomplete", "processing", "approved", "declined", "deleted"]
+        values: [
+          "incomplete",
+          "processing",
+          "approved",
+          "pre-save",
+          "live",
+          "declined",
+          "deleted",
+          "expired"
+        ]
       },
       releaseDate: DataTypes.DATE,
-      submitStatus: DataTypes.INTEGER,
       comment: DataTypes.TEXT,
-      linkId: DataTypes.INTEGER
+      linkId: DataTypes.INTEGER,
+      artistId: DataTypes.INTEGER
     },
     {}
   );
@@ -30,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
     Track,
     Userpackage,
     User,
-    Link
+    Link,
+    Labelartist
   }) {
     this.belongsTo(Video, { foreignKey: "videoId", as: "video" });
     this.belongsTo(Album, { foreignKey: "albumId", as: "album" });
@@ -41,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     this.belongsTo(User, { foreignKey: "userId", as: "user" });
     this.belongsTo(Link, { foreignKey: "linkId", as: "link" });
+    this.belongsTo(Labelartist, { foreignKey: "artistId", as: "labelArtist" });
   };
   return Release;
 };

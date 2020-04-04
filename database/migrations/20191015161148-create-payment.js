@@ -14,23 +14,19 @@ module.exports = {
         references: {
           model: "users",
           key: "id"
-        }
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       userPackageId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "userpackages",
           key: "id"
-        }
-      },
-      packageId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "packages",
-          key: "id"
-        }
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE"
       },
       status: {
         type: Sequelize.STRING

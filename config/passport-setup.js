@@ -1,5 +1,5 @@
 const passport = require("passport");
-const { User } = require("../database/models");
+const { User, Userprofile } = require("../database/models");
 
 //USER PASSPORT CONFIGURATION;
 passport.serializeUser((user, done) => done(null, user.id));
@@ -14,15 +14,23 @@ passport.deserializeUser(async (id, done) => {
             "profileActive",
             "isVerified",
             "firstName",
-            "avatar",
             "email",
-            "role"
+            "role",
+            "type"
           ]
         })
       )
     );
     if (!user) return done(null, false);
-    return done(null, user);
+    const { avatar = "" } = JSON.parse(
+      JSON.stringify(
+        await Userprofile.findOne({
+          where: { userId: id },
+          attributes: ["avatar"]
+        })
+      )
+    );
+    return done(null, { ...user, avatar });
   } catch (err) {
     throw new Error(err);
   }

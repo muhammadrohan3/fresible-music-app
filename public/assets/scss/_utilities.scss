@@ -114,6 +114,12 @@
   border: 1px solid $red !important;
 }
 
+.-u-album-track-error {
+  & > * {
+    border: 1px solid $red !important;
+  }
+}
+
 .-u-box-center {
   display: block;
   max-width: 400px;

@@ -41,8 +41,8 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
       data-filetype="audio"
       data-url="<%= url %>"
       data-public_id="music/musics/music-<%= token %>"
-      data-upload_preset="<%= upload_preset %>"
-      data-ignore="true"
+      data-upload_preset="<%= upload_preset %>"    
+      <%= track && 'data-ignore="true"' %>
       <%= !track && 'required' %>
     />
     <div class="form__file--preview">
@@ -197,9 +197,7 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
           <span>*</span>
         </label>
         <select name="genre" required class="form__input--element"  <%= genre && 'data-ignore=true' %>>
-          <option value="<%= genre || ''%> ">
-            <%= genre || '-- select --' %>
-          </option>
+        <option value="<%= genre ? genre : ""%>"> <%= genre ? genre : '-- select --' %>
           <% genreList.forEach(item =>{ %>
           <% if(genre.toLowerCase().trim() !== item.toLowerCase()) { %>
             <option value="<%= item.toLowerCase() %>"><%= item %></option>
@@ -210,7 +208,7 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
       </div>
     </div>
     <input class="form__input--element" type="hidden" name="track" <%= track
-    && 'data-ignore=true' %> />
+    && 'data-ignore=true' %> value='<%= track %>' />
   </div>
 </div>
 <div class="music-form__done -u-flexerize">

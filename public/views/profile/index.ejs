@@ -1,12 +1,12 @@
 <div class="-u-page profile">
-  <% const {avatar, firstName, lastName, email, role, profile, id} = pageData;
+  <% const {firstName, lastName, email, role, profile, id} = pageData;
   const {stageName, label, twitter, instagram, phone, bank, bankAccount,
-  bankAccountNo} = profile || {} %>
+  bankAccountNo} = profile || labelProfile || {} %>
   <div class="profile__left">
     <div class="profile__left__avatar">
-      <%if(avatar) { %>
+      <%if(loggedInUserAvatar) { %>
       <img
-        src="<%=avatar %>"
+        src="<%=loggedInUserAvatar %>"
         alt="<%=firstName %> image"
       />
       <% }else { %>
@@ -24,6 +24,11 @@
       <div><a href="/profile/change-password">&raquo; Change password</a></div>
       <div><a href="/profile/change-email">&raquo; Change email</a></div>
     </div>
+    <% if(loggedInAccountType === 'label') { %>
+      <div class="profile__left__manage-artists">
+      <div><a href="/artists">&raquo; Manage Artists</a></div>
+    </div>
+   <% } %>
   </div>
   <div class="profile__right">
     <ul class="profile__right__list">
@@ -33,9 +38,11 @@
       <li class="profile__right__list__item">
         <span>Last Name: </span><span><%=lastName %></span>
       </li>
-      <li class="profile__right__list__item">
+      <% if(loggedInAccountType !== 'label') { %> 
+        <li class="profile__right__list__item">
         <span>Stage Name: </span><span><%=stageName %></span>
       </li>
+      <% } %>
       <li class="profile__right__list__item">
         <span>Record Label: </span><span><%=label %></span>
       </li>

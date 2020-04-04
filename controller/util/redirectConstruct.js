@@ -1,7 +1,6 @@
 const handleResponse = require("./handleResponse");
 const organizeData = require("./organizeData");
 const urlFormer = require("./urlFormer");
-
 module.exports = (route, params, useKeys) => {
   //PARAM is a key to a property in the store;
   //useKeys is an array containing the url key items;

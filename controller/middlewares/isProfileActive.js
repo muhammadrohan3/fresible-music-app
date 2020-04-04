@@ -30,15 +30,19 @@ module.exports = ({ req, res }) => () => {
   };
   switch (req.user.profileActive) {
     case 0:
-      return handle("/complete-profile", 1);
+      return handle("/confirm-account", 1);
     case 1:
-      return handle("/select-package", 2);
+      return handle("/select-account", 2);
     case 2:
-      return handle("/add-music", 3);
+      return handle("/complete-profile", 3);
     case 3:
-      return handle("/confirm-account", 4);
+      return handle("/artists/add-artist", 4);
     case 4:
-      return handle("/payment", 5);
+      return handle("/select-package", 5);
+    case 5:
+      return handle("/add-music", 6);
+    case 6:
+      return handle("/payment", 7);
     default:
       return handle(false);
   }

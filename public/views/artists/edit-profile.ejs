@@ -1,0 +1,45 @@
+<div class="-u-page" style="max-width: 500px;">
+  <% const {stageName, label, twitter, instagram, avatar='', firstName,
+  lastName} = pageData %>
+  <div class="alert alert-info mb-4">
+    Edit the input fields that require update.
+  </div>
+  <form class="form -u-form-input-spacing mt-3" id="editProfile">
+    <!-- FIRST NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'firstName', value:
+    stageName, label: 'First Name', required: '*required'}}) %> <% } %>
+
+    <!-- LAST NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'lastName', value:
+    stageName, label: 'Last Name', required: '*required'}}) %> <% } %>
+
+    <!-- STAGE NAME -->
+    <%- include("../partials/form/input", {formData: {name: 'stageName', value:
+    stageName, label: 'Stage Name', required: '*required'}}) %> <% } %>
+
+    <!-- AVATAR UPLOAD -->
+    <%- include("../partials/form/imageFile", {formData: {name: 'avatar', value:
+    avatar, size: '1', label: 'Artist Avatar'}}) %>
+
+    <!--  TWITTER -->
+    <%- include("../partials/form/input", {formData: {name: 'twitter', value:
+    twitter, label: 'Twitter'}}) %>
+
+    <!--  INSTAGRAM -->
+    <%- include("../partials/form/input", {formData: {name: 'instagram', value:
+    instagram, label: 'instagram'}}) %>
+
+    <div class="form__submit">
+      <div class="text-center">
+        <a href="/artist/<%= id %>/profile"
+          ><button type="button" class="btn-outline">
+            &larr; View Artist profile
+          </button></a
+        >
+      </div>
+      <button type="submit" class="form__submit--btn btn-primary">
+        Update profile
+      </button>
+    </div>
+  </form>
+</div>

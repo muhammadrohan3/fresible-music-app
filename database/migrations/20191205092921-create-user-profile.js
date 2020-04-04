@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      avatar: {
+        type: Sequelize.STRING
+      },
       twitter: {
         type: Sequelize.STRING
       },
@@ -38,7 +41,9 @@ module.exports = {
         references: {
           model: "users",
           key: "id"
-        }
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       createdAt: {
         allowNull: false,

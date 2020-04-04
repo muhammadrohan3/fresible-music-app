@@ -6,6 +6,7 @@ const {
   SCHEMAQUERY,
   SCHEMAMUTATED,
   SAMEAS,
+  TEMPKEY,
   ACCOUNTVERIFY
 } = require("../constants");
 
@@ -31,23 +32,22 @@ module.exports = Controller => {
   // This GET route renders the confirm-account page
   router.get(
     "/",
-    fromReq("user", null, "tempKey"),
-    sameAs("isVerified", true, "tempKey"),
+    sameAs("isVerified", true, USER),
     redirectIf(SAMEAS, true, "/confirm-account/proceed"),
-    fromReq("user", ["email"], "siteData"),
+    fromReq(USER, ["email"], "siteData"),
     pageRender()
   );
 
   // This POST route creates a token in the DB and send a mail containing the token to the user to verify their email address
   router.post(
     "/",
-    fromReq("user", null, "tempKey"),
-    sameAs("isVerified", true, "tempKey"),
+    fromReq(USER, null, TEMPKEY),
+    sameAs("isVerified", true, TEMPKEY),
     respondIf(SAMEAS, true, "User already verified"),
     generateToken(10, SCHEMADATA),
-    schemaQueryConstructor("user", ["email"]),
+    schemaQueryConstructor(USER, ["email"]),
     addToSchema(SCHEMADATA, { tokenType: "verify" }),
-    updateSchemaData("user"),
+    updateSchemaData(USER),
     respondIf(SCHEMAMUTATED, false, "Could not set token, retry..."),
     urlFormer("/confirm-account/vtc", SCHEMADATA),
     sendMail(ACCOUNTVERIFY),
@@ -56,7 +56,7 @@ module.exports = Controller => {
 
   router.get(
     "/vtc",
-    schemaQueryConstructor("query", ["token"], null, 1),
+    schemaQueryConstructor("query", ["token"]),
     redirectIf(SCHEMAQUERY, false, "/"),
     addToSchema(SCHEMADATA, { isVerified: 1 }),
     updateSchemaData(USER),
@@ -67,12 +67,11 @@ module.exports = Controller => {
   // This GET route is internally called to do some checks and update the DB if necessary
   router.get(
     "/proceed",
-    fromReq("user", ["profileActive"], "tempKey"),
-    sameAs("profileActive", 3, "tempKey"),
+    sameAs("profileActive", 0, USER),
     redirectIf(SAMEAS, false, "/"),
-    addToSchema(SCHEMADATA, { profileActive: 4 }),
-    schemaQueryConstructor("user", ["id"]),
-    updateSchemaData("user"),
+    addToSchema(SCHEMADATA, { profileActive: 1 }),
+    schemaQueryConstructor(USER, ["id"]),
+    updateSchemaData(USER),
     redirect("/")
   );
 

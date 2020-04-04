@@ -1,12 +1,13 @@
 <% const hashMap = {label: '', disabled: false, required: '', type: 'text',
 name: '', placeholder: '', inputText: '', inputId: '', value: '', classList: [],
-dontIgnore: ''} %>
+dontIgnore: '', dataAttributes: []} %>
 
 <!--  -->
 
 <% const {label, disabled, inputId, required, type, name, placeholder,
-inputText, value, classList, dontIgnore} = Object.entries(hashMap).reduce((acc,
-[key, value]) => ({...acc, [key]: formData[key] || value}) , {}) %>
+inputText, value, classList, dontIgnore, dataAttributes} =
+Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc, [key]:
+formData[key] || value}) , {}) %>
 
 <div class="form__input <%= classList.join(' ') %>">
   <label for="" class="form__input--label"
@@ -14,7 +15,9 @@ inputText, value, classList, dontIgnore} = Object.entries(hashMap).reduce((acc,
   >
   <input type='<%= type %>' name='<%= name %>' <%= inputId && 'id='+ inputId %>
   <%= value && !dontIgnore && 'data-ignore=true' %> placeholder="<%= placeholder
-  %>" class="form-control form__input--element" <% !value && (required &&
-  'required') %> value='<%= value %>' <%= disabled ? 'disabled' : '' %> />
+  %>" class="form-control form__input--element" <%= required && 'required' %>
+  value='<%= value %>' <%= disabled ? 'disabled' : '' %> <% const attributes =
+  Object.entries(dataAttributes).map(([name, value]) => name && value &&
+  `data-${name}=${value}` ) %> <%= attributes.join(' ') %> />
   <div class="form__input--text"><%= inputText %></div>
 </div>

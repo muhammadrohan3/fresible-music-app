@@ -40,7 +40,7 @@ module.exports = () => ({
     `https://api.cloudinary.com/v1_1/${
       process.env.CLOUDINARY_CLOUD_NAME
     }/${type || "image"}/upload`,
-  token: n => {
+  token: (n = 5) => {
     let token = "";
     for (let i = 1; i <= n; i++) {
       token += Math.floor(Math.random() * 9);

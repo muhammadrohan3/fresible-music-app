@@ -14,7 +14,9 @@ module.exports = {
         references: {
           model: "albums",
           key: "id"
-        }
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       title: {
         type: Sequelize.STRING
