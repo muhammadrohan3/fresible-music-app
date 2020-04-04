@@ -52,7 +52,7 @@ const jsonData = JSON.parse(
 
 const dataHash = jsonData.reduce((acc, { type, name, data }) => {
   if (type !== "table") return acc;
-  return { ...acc, [name]: data };
+  return { ...acc, [name.toLowerCase()]: data };
 }, {});
 
 //
