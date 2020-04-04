@@ -1,5 +1,4 @@
 const crypto = require("crypto");
-const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
 const idLookUp = require("./util/idLookUp");
@@ -13,7 +12,7 @@ module.exports = () => ({
       .randomBytes(size)
       .toString("base64")
       .slice(0, size),
-  idLookUp,
+  idLookUp: num => num,
   colorText: text => {
     let textColorMap = {
       processing: "info",
@@ -55,7 +54,6 @@ module.exports = () => ({
       .add(1, "year")
       .format("YYYY-MM-DD"),
   dateTimeFormat: date => date && moment(date).format("YYYY-MM-DD h:mma"),
-  fs,
   dirs: { viewsDir },
   filter: (list, key) => list.filter(item => item !== key),
   packageSelectHandler: ({

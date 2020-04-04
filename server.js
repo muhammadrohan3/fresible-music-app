@@ -9,13 +9,10 @@ const PORT = process.env.PORT || 7777;
 const siteFns = require("./controller/siteFns");
 const passport = require("./config/passport-setup");
 const routeIndex = require("./routes/index");
-const { Package } = require("./database/models");
 
 //This async functions fetches the list of packages from the db on server initialization to be in sync with the latest.
 (async () => {
-  const packages = JSON.stringify(await Package.findAll({}));
   const baseLocation = __dirname + "/public/serverData";
-  fs.writeFileSync(baseLocation + "/packages.json", packages, "utf-8");
   fs.readdir(__dirname + "/public/serverData", (err, files) => {
     if (err) throw new Error(err);
     const data = files.reduce(

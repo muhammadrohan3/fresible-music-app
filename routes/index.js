@@ -168,6 +168,7 @@ router.get(
   getAllFromSchema(RELEASE),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
   addToSchema(SITEDATA, { title: "Your Releases" }),
+  seeStore(),
   pageRender()
 );
 
