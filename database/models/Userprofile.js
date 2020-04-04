@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Userprofile = sequelize.define(
-    "userProfiles",
+    "userprofiles",
     {
       avatar: DataTypes.STRING,
       twitter: DataTypes.STRING,

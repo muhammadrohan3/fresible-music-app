@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Albumtrack = sequelize.define(
-    "albumTracks",
+    "albumtracks",
     {
       albumId: DataTypes.INTEGER,
       title: DataTypes.STRING,
