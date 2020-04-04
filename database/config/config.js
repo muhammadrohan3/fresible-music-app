@@ -8,7 +8,8 @@ module.exports = {
     database: "fresible_music",
     host: "localhost",
     dialect: "mysql",
-    dialectModule: mysql2
+    dialectModule: mysql2,
+    logging: false
   },
   test: {
     username: "root",
@@ -25,6 +26,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: process.env.DB_TYPE,
+    dialectModule: mysql2,
     logging: false
   }
 };
