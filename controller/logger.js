@@ -18,6 +18,8 @@ const actionCompleter = (action) => {
       return "declined a";
     case "approved":
       return "approved a";
+    case "in stores":
+      return "added store links to";
     case "activated":
       return "activated a";
     default:
@@ -46,21 +48,13 @@ const handleAdminLog = ({ schemaQuery, user, schemaData }, schema, action) => {
   if (action === "update") {
     const { id: userId } = user;
     const { id } = schemaQuery;
-    const { status, linkId } = schemaData;
+    const { status } = schemaData;
     if (schema === "release" || schema === "releases") {
       schema = "release";
       if (status)
         return logIt({
           userId,
           action: actionCompleter(status),
-          type: schema,
-          link: linker(schema, id),
-          role: "admin",
-        });
-      if (linkId)
-        return logIt({
-          userId,
-          action: "added store links to",
           type: schema,
           link: linker(schema, id),
           role: "admin",

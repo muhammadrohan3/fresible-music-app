@@ -89,7 +89,7 @@ export default () => {
     if (type === "edit") {
       //Makes a get request to the server for links associated with the linkId in the db
       const response = await serverRequest({
-        url: `/fmadmincp/submission/store-links?id=${linkId}`,
+        href: `/fmadmincp/submission/store-links?id=${linkId}`,
         method: "get",
       });
       //handles the response, emits the error "links not found" if there is an error,
@@ -106,6 +106,7 @@ export default () => {
         `/fmadmincp/submission/store-links/update?id=${linkId}`
       );
       form.setAttribute("data-type", "edit");
+      form.removeAttribute("data-query_include");
     }
 
     View.showLoader(false);
@@ -118,31 +119,31 @@ export default () => {
     View.showLoader(true);
     const { type, details } = form.dataset;
     if (type === "add") {
+      const _slugify = (text) => text.trim().replace(/ /g, "-");
       //Parses the JSON encoded details object
       const { stageName, title } = JSON.parse(details);
       //Slugifies the stageName and title.
-      let slug = [title, stageName]
-        .map((item) => item.replace(/ /g, "-"))
-        .join("-")
-        .toLowerCase();
+      let slugList = [_slugify(title), _slugify(stageName)];
       //A while loop with the stop boolean
       let stop = false;
-      let index = 0;
+      let index = 1;
+      let endingNumber = 1;
+      let slug = slugList[0];
       while (!stop) {
-        //This condition checks if the loop already ran before in order to remove the added number.
-
-        //Makes a server request that checks for thee
+        //Makes a server request that checks for the slug
+        slug = slug.toLowerCase();
         const { status } = await serverRequest({
           url: `/fmadmincp/submission/store-links/slug?slug=${slug}`,
           method: "get",
         });
         if (status === "success") {
-          if (index > 0) {
-            let arr = (slug = slug.split("-"));
-            arr.pop();
-            slug = arr.join("-");
+          if (index >= 2) {
+            slug = slug.concat(`-${endingNumber}`);
+            endingNumber++;
+          } else {
+            index = index + 1;
+            slug = slug.concat(`-${slugList[1]}`);
           }
-          slug = slug + `-${++index}`;
         } else {
           stop = true;
         }
@@ -152,12 +153,6 @@ export default () => {
       const submitResponse = await SubmitForm(form);
       // A conditional check that assigns the result to the variable R if there is no error in the server response
       if (!(R = responseHandler(submitResponse))) return;
-      const { id: linkId } = R;
-      const response = await serverRequest({
-        url: `/fmadmincp/submission/update-linkid${location.search}`,
-        data: { linkId: parseInt(linkId) - 42351 },
-      });
-      if (!(R = responseHandler(response))) return;
     } else if (type === "edit") {
       await SubmitForm(form);
     }

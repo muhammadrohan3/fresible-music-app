@@ -276,7 +276,7 @@ module.exports = (Controller) => {
       "Error: retry or contact admin if error persist"
     ),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMADATA, { status: "processing" }),
+    addToSchema(SCHEMADATA, { status: "processing", comment: null }),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Not updated"),
     resetKey(TEMPKEY),

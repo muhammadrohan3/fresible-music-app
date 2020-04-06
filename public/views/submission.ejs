@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="submission__alert">
-    <% if(comment) { %>
+    <% if(status === 'declined' && comment) { %>
     <div class="alert alert-danger text-center">
       <%= comment %>
     </div>
@@ -45,7 +45,7 @@
 
   <% if(linkId) { %>
   <div class="alert alert-info submission--link">
-    This release is now <strong>live</strong> on stores,
+    This release is now <strong>live</strong> in stores,
     <a
       href="https://fresible.link/<%= link.slug %>"
       class="alert-link"

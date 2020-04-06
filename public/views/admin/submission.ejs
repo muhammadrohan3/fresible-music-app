@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
   <% const {id, type, status, comment, subscription, user, createdAt,
-  releaseDate, approvedDate, album, track, video, linkId} = pageData; const profile = user.profile %>
+  releaseDate, approvedDate, album, track, video, linkId, labelArtist} = pageData; const profile = user.profile %>
   <div class="single-head">
     <a class="single-head__back" href="/fmadmincp/submissions">
       <span
@@ -14,7 +14,7 @@
     <div class="single-head__title -u-id-head">
       <span>Submission</span>
       <span>&mdash;</span>
-      <span><%= Fns.idLookUp(id) %></span>
+      <span><%= id %></span>
     </div>
   </div>
   <div class="submission__alert">
@@ -23,7 +23,7 @@
       <% if(Fns.isAdminPage) { %>
       <div
         class="submission__alert__comment--pen"
-        data-id="<%= Fns.idLookUp(id) %>"
+        data-id="<%= id %>"
         id="decline-comment-edit"
       >
         <span
@@ -239,37 +239,30 @@
   <% } else { %>
   <div class="admin-submission">
     <div class="row admin-submission__action__btns text-center">
+      <% if(['incomplete', 'processing', 'declined'].includes(status)) { %>
       <div class="col-xs-12 col-md">
-        <% if(status === 'approved') { %>
-        <button class="btn btn-secondary" disabled>
-          Approved
-        </button>
-        <% } else { %>
         <button
           class="btn btn-success"
-          data-url="/fmadmincp/submission/action/approve?id=<%=Fns.idLookUp(id) %>"
+          data-url="/fmadmincp/submission/action/approve?id=<%=id %>"
         >
           Approve
         </button>
-        <% } %>
       </div>
+   <% } %>
+   <% if(['incomplete', 'processing'].includes(status)) { %>
       <div class="col-xs-12 col-md">
-        <% if(status === 'declined') { %>
-        <button class="btn btn-secondary" disabled>
-          Declined
-        </button>
-        <% } else { %>
         <button
           id="decline"
           class="btn btn-danger"
-          data-url="/fmadmincp/submission/action/decline?id=<%=Fns.idLookUp(id) %>"
+          data-url="/fmadmincp/submission/action/decline?id=<%=id %>"
         >
           Decline
         </button>
-        <% } %>
       </div>
+      <% } %>
+      <% if(!(['incomplete', 'processing', 'declined'].includes(status))) { %>
       <div class="col-xs-12 col-md">
-        <% if(status === 'approved') { %> <% if(linkId) { %>
+        <% if(status === 'in stores') { %>
         <button
           id="store-link"
           class="btn-outline"
@@ -283,25 +276,22 @@
           id="store-link"
           class="btn btn-primary"
           data-type="add"
-          data-submission_id="<%=Fns.idLookUp(id) %>"
-          data-details="<%=JSON.stringify({stageName: profile.stageName, title: type === "album" ? album.name : track.title}) %>"
+          data-submission_id="<%=id %>"
+          data-details="<%=JSON.stringify({stageName: user.type === 'label' ? labelArtist.stageName : profile.stageName, title: type === "album" ? album.title : track.title}) %>"
         >
           Add Links
         </button>
-        <% } %> <% } %>
+        <% } %>
       </div>
+      <% } %>
     </div>
   </div>
   <% } %>
   <div class="mt-3 text-center">
-    <% if(status === 'deleted') { %>
-    <button class="btn btn-secondary" disabled>
-      Deleted
-    </button>
-    <% } else { %>
+    <% if(['incomplete', 'processing', 'declined'].includes(status)) { %>
     <button
       class="btn btn-danger"
-      data-url="/fmadmincp/submission/action/delete?id=<%=Fns.idLookUp(id) %>"
+      data-url="/fmadmincp/submission/action/delete?id=<%=id %>"
     >
       Delete
     </button>

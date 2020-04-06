@@ -188,8 +188,12 @@ module.exports = (Controller) => {
         i: [{ m: PACKAGE, at: ["package"] }],
       },
       {
+        m: LABELARTIST,
+        at: ["stageName"],
+      },
+      {
         m: USER,
-        at: ["id", "firstName", "lastName"],
+        at: ["id", "firstName", "lastName", "type"],
         i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
       { m: VIDEO },
@@ -200,6 +204,7 @@ module.exports = (Controller) => {
     redirectIf(SCHEMARESULT, false, null, "/fmadmincp/submissions"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "submission" }),
+    seeStore([SITEDATA]),
     pageRender()
   );
 
@@ -209,7 +214,7 @@ module.exports = (Controller) => {
     redirectIf(SCHEMAQUERY, false, "/fmadmincp/submissions"),
     addToSchema(SCHEMAINCLUDE, [
       { m: ALBUMTRACK, al: "tracks" },
-      { m: RELEASE, at: ["status", "id"] },
+      { m: RELEASE, al: "release", at: ["status", "id"] },
     ]),
     getOneFromSchema(ALBUM),
     redirectIf(SCHEMARESULT, false, "/submissions"),
@@ -220,18 +225,17 @@ module.exports = (Controller) => {
 
   router.get(
     "/submission/album-track/:albumId/:trackId",
-    idMiddleWare("params", null, ["albumId", "trackId"]),
     schemaQueryConstructor("params", ["albumId"], ["id"]),
-    redirectIf(SCHEMAQUERY, false, "/submissions"),
+    redirectIf(SCHEMAQUERY, false, "/fmadmincp/submissions"),
     fromReq("params", ["trackId"], "trackWhere", ["id"]),
     sameAs("trackId", "", "trackWhere"),
     fromStore(SCHEMAQUERY, ["albumId"], TEMPKEY, ["id"]),
-    redirectIf(SAMEAS, true, "/submission/album", [TEMPKEY]),
+    redirectIf(SAMEAS, true, "/fmadmincp/submission/album", [TEMPKEY]),
     addToSchema(SCHEMAINCLUDE, [
       { m: ALBUMTRACK, al: "tracks", w: ["trackWhere"] },
     ]),
     getOneFromSchema(ALBUM),
-    redirectIf(SCHEMARESULT, false, "/submission/album", [TEMPKEY]),
+    redirectIf(SCHEMARESULT, false, "/fmadmincp/submission/album", [TEMPKEY]),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "../album/track", title: "Album Track" }),
     pageRender()
@@ -298,46 +302,43 @@ module.exports = (Controller) => {
     respond(1)
   );
 
-  //THIS POST ROUTE UPDATES THE RELEASE LINK ID
-  router.post(
-    "/submission/update-linkid",
-    schemaQueryConstructor("query", ["id"]),
-    respondIf(SCHEMAQUERY, false, { error: "link id missing" }),
-    schemaDataConstructor("body"),
-    respondIf(SCHEMADATA, false, { error: "no data to update found" }),
-    addToSchema(SCHEMADATA, { status: "live" }),
-    updateSchemaData(RELEASE),
-    respondIf(SCHEMAMUTATED, false, "release linkId not updated"),
-    fromStore(SCHEMADATA, ["linkId"], SCHEMAQUERY, ["id"]),
-    getOneFromSchema(LINK, ["slug"]),
-    generateSmartLink(SCHEMARESULT),
-    schemaQueryConstructor("query", ["id"]),
-    addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email"] }]),
-    getOneFromSchema(RELEASE),
-    sendMail(LINKSADDED),
-    respond(1)
-  );
-
-  //CREATES NEW STORE LINK FOR SUBMISSION
+  //CREATES NEW STORE LINK FOR A RELEASE AND UPDATES THE RELEASE WITH LINK ID
   router.post(
     "/submission/store-links/create",
     schemaDataConstructor("body"),
+    respondIf(SCHEMADATA, false, "Error: request body missing"),
+    schemaQueryConstructor("query", ["id"]),
+    respondIf(SCHEMAQUERY, false, "Error: release ID missing from request"),
     createSchemaData(LINK),
-    respond([SCHEMARESULT])
+    respondIf(SCHEMARESULT, false, "Error: Could not create store links"),
+    fromStore(SCHEMARESULT, ["slug"], TEMPKEY),
+    resetKey(SCHEMADATA),
+    fromStore(SCHEMARESULT, ["id"], SCHEMADATA, ["linkId"]),
+    addToSchema(SCHEMADATA, { status: "in stores" }),
+    updateSchemaData(RELEASE),
+    respondIf(
+      SCHEMAMUTATED,
+      false,
+      "Error: Could not update release with link ID"
+    ),
+    addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email"] }]),
+    getOneFromSchema(RELEASE, ["user"]),
+    generateSmartLink(TEMPKEY),
+    sendMail(LINKSADDED),
+    respond(1)
   );
 
   //THIS GET ROUTE FETCHES THE LINKS ASSOCIATED WITH THE LINK ID PASSED
   router.get(
     "/submission/store-links",
     schemaQueryConstructor("query", ["id"]),
-    seeStore(),
     respondIf(SCHEMAQUERY, false, { error: "link id missing" }),
     getOneFromSchema(LINK),
     respondIf(SCHEMARESULT, false, "Link not found"),
     respond([SCHEMARESULT])
   );
 
-  //THIS GET ROUTE FETCHES THE LINKS ASSOCIATED WITH THE LINK ID PASSED
+  //THIS GET ROUTE FETCHES THE LINKS ASSOCIATED WITH THE LINK SLUG PASSED
   router.get(
     "/submission/store-links/slug",
     schemaQueryConstructor("query", ["slug"]),
