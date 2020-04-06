@@ -23,9 +23,10 @@ const {
   LOG,
   LINK,
   LINKSADDED,
-  LABELARTIST
+  LABELARTIST,
+  ACCOUNTTYPECHANGED,
 } = require("../../constants");
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     isAdmin,
     addSiteDefaultData,
@@ -52,7 +53,7 @@ module.exports = Controller => {
     runSql,
     resetKey,
     deepKeyExtractor,
-    generateSmartLink
+    generateSmartLink,
   } = Controller;
 
   router.use(isAdmin());
@@ -77,18 +78,18 @@ module.exports = Controller => {
 
   router.get(
     "/subscriptions",
-    schemaQueryConstructor("query", ["t", "s"]),
+    schemaQueryConstructor("query", ["t", "s", "artistId"]),
     fromReq("query", ["p"], "schemaOptions"),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
       { m: PACKAGE, at: ["package"] },
-      { m: RELEASE, al: "releases", at: ["id"], r: false }
+      { m: RELEASE, al: "releases", at: ["id"], r: false },
     ]),
     getAndCountAllFromSchema(USERPACKAGE, null, { distinct: true }),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "subscriptions",
-      title: "All Subscriptions"
+      title: "All Subscriptions",
     }),
     pageRender()
   );
@@ -103,13 +104,13 @@ module.exports = Controller => {
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
       { m: PACKAGE, at: ["package"] },
-      { m: RELEASE, al: "releases", at: ["id"] }
+      { m: RELEASE, al: "releases", at: ["id"] },
     ]),
     getAndCountAllFromSchema(USERPACKAGE),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "subscriptions",
-      title: "Subscriber Subscriptions"
+      title: "Subscriber Subscriptions",
     }),
     pageRender()
   );
@@ -117,7 +118,7 @@ module.exports = Controller => {
   router.get(
     "/subscription",
     schemaQueryConstructor("query", ["id"]),
-    redirectIf(SCHEMAQUERY, false, null, "/fmadmincp/subscriptions"),
+    redirectIf(SCHEMAQUERY, false, "/fmadmincp/subscriptions"),
     addToSchema(SCHEMAINCLUDE, [
       {
         m: RELEASE,
@@ -126,18 +127,18 @@ module.exports = Controller => {
           {
             m: USER,
             at: ["firstName", "lastName"],
-            i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }]
-          }
-        ]
+            i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
+          },
+        ],
       },
-      { m: PACKAGE, at: ["package", "maxTracks"] }
+      { m: PACKAGE, at: ["package", "maxTracks"] },
     ]),
     getOneFromSchema(USERPACKAGE),
     redirectIf(SCHEMARESULT, false, null, "/fmadmincp/subscriptions"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "subscription",
-      title: "Subscription"
+      title: "Subscription",
     }),
     pageRender()
   );
@@ -146,7 +147,7 @@ module.exports = Controller => {
   router.post(
     "/subscription/action/activate",
     schemaQueryConstructor("query", ["id"]),
-    addToSchema(SCHEMADATA, { status: "active" }),
+    addToSchema(SCHEMADATA, { status: "active", paymentDate: new Date() }),
     updateSchemaData(USERPACKAGE),
     respondIf(SCHEMAMUTATED, false, "Error occured activating subscription"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email", "id"] }]),
@@ -157,21 +158,20 @@ module.exports = Controller => {
     deepKeyExtractor("store", [SCHEMARESULT, "user", "id"], "id"),
     copyKeyTo("id", SCHEMAQUERY),
     addToSchema(SCHEMADATA, { profileActive: 1000 }),
-    seeStore(),
     updateSchemaData(USER),
     respond(1)
   );
 
   router.get(
     "/submissions",
-    schemaQueryConstructor("query", ["t", "s"]),
+    schemaQueryConstructor("query", ["t", "s", "artistId"]),
     fromReq("query", ["p"], "schemaOptions"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "lastName"] }]),
     getAndCountAllFromSchema(RELEASE),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "submissions",
-      title: "All Submissions"
+      title: "All Submissions",
     }),
     pageRender()
   );
@@ -185,16 +185,16 @@ module.exports = Controller => {
         m: USERPACKAGE,
         al: "subscription",
         at: ["id", "status"],
-        i: [{ m: PACKAGE, at: ["package"] }]
+        i: [{ m: PACKAGE, at: ["package"] }],
       },
       {
         m: USER,
         at: ["id", "firstName", "lastName"],
-        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }]
+        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
       { m: VIDEO },
       { m: TRACK },
-      { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] }
+      { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] },
     ]),
     getOneFromSchema(RELEASE),
     redirectIf(SCHEMARESULT, false, null, "/fmadmincp/submissions"),
@@ -209,7 +209,7 @@ module.exports = Controller => {
     redirectIf(SCHEMAQUERY, false, "/fmadmincp/submissions"),
     addToSchema(SCHEMAINCLUDE, [
       { m: ALBUMTRACK, al: "tracks" },
-      { m: RELEASE, at: ["status", "id"] }
+      { m: RELEASE, at: ["status", "id"] },
     ]),
     getOneFromSchema(ALBUM),
     redirectIf(SCHEMARESULT, false, "/submissions"),
@@ -228,7 +228,7 @@ module.exports = Controller => {
     fromStore(SCHEMAQUERY, ["albumId"], TEMPKEY, ["id"]),
     redirectIf(SAMEAS, true, "/submission/album", [TEMPKEY]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: ALBUMTRACK, al: "tracks", w: ["trackWhere"] }
+      { m: ALBUMTRACK, al: "tracks", w: ["trackWhere"] },
     ]),
     getOneFromSchema(ALBUM),
     redirectIf(SCHEMARESULT, false, "/submission/album", [TEMPKEY]),
@@ -241,7 +241,11 @@ module.exports = Controller => {
   router.post(
     "/submission/action/approve",
     schemaQueryConstructor("query", ["id"]),
-    addToSchema(SCHEMADATA, { status: "approved", comment: null }),
+    addToSchema(SCHEMADATA, {
+      status: "approved",
+      comment: null,
+      approvedDate: new Date(),
+    }),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured updating submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
@@ -301,7 +305,8 @@ module.exports = Controller => {
     respondIf(SCHEMAQUERY, false, { error: "link id missing" }),
     schemaDataConstructor("body"),
     respondIf(SCHEMADATA, false, { error: "no data to update found" }),
-    updateSchemaData("release"),
+    addToSchema(SCHEMADATA, { status: "live" }),
+    updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "release linkId not updated"),
     fromStore(SCHEMADATA, ["linkId"], SCHEMAQUERY, ["id"]),
     getOneFromSchema(LINK, ["slug"]),
@@ -362,13 +367,13 @@ module.exports = Controller => {
     fromReq("query", ["p"], "schemaOptions"),
     schemaQueryConstructor("params", ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: USER, al: "user", at: ["firstName", "lastName"] }
+      { m: USER, al: "user", at: ["firstName", "lastName"] },
     ]),
     getAndCountAllFromSchema(RELEASE),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "submissions",
-      title: "Subscriber Submissions"
+      title: "Subscriber Submissions",
     }),
     pageRender()
   );
@@ -408,10 +413,19 @@ module.exports = Controller => {
   //CHANGES ACCOUNT TYPE TO LABEL FOR AN ALREADY EXISTING SUBSCRIBER
   router.post(
     "/subscriber/action/change-to-label",
-    sameAs("accountType", "label", "user"),
+    schemaQueryConstructor("query", ["subscriberId"], ["id"]),
+    respondIf(SCHEMAQUERY, false, "Subscriber ID missing in the request"),
+    getOneFromSchema(USER),
+    respondIf(SCHEMARESULT, false, "Error: Subscriber not found"),
+    sameAs("type", "label", SCHEMARESULT),
     respondIf(SAMEAS, true, "This is a label account"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
+    //Grabs the subscriber's firstName & email for sendMail
+    fromStore(SCHEMARESULT, ["firstName", "email"], TEMPKEY),
+    resetKey(SCHEMARESULT),
+    resetKey(SCHEMAQUERY),
+    schemaQueryConstructor("query", ["subscriberId"], ["userId"]),
     getOneFromSchema(USERPROFILE, ["twitter", "instagram", "stageName", "id"]),
+    seeStore(),
     fromStore(
       SCHEMARESULT,
       ["id", "twitter", "instagram", "stageName"],
@@ -431,12 +445,38 @@ module.exports = Controller => {
     updateSchemaData(USERPROFILE),
     respondIf(SCHEMAMUTATED, false, "Error Sanitizing Label Profile Data"),
     resetKey(SCHEMADATA),
-    addToSchema(SCHEMADATA, { type: "label" }),
     resetKey(SCHEMAQUERY),
-    schemaQueryConstructor("user", ["id"]),
+    schemaQueryConstructor("query", ["subscriberId"], ["id"]),
+    addToSchema(SCHEMADATA, { type: "label" }),
     updateSchemaData(USER),
     respondIf(SCHEMAMUTATED, false, "Error Setting User Account Type"),
+    sendMail(ACCOUNTTYPECHANGED),
     respond({ success: "Label Account has been setup successfully" })
+  );
+
+  router.get(
+    "/subscriber/:id/artists",
+    schemaQueryConstructor("params", ["id"], ["userId"]),
+    getAllFromSchema(LABELARTIST),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, {
+      page: "subscriberArtists",
+      title: "Subscriber Artists",
+    }),
+    pageRender()
+  );
+
+  router.get(
+    "/subscriber/:id/artist/:artistId",
+    schemaQueryConstructor("params", ["id", "artistId"], ["userId", "id"]),
+    getOneFromSchema(LABELARTIST),
+    redirectIf(SCHEMARESULT, false, "/artists"),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, {
+      page: "subscriberArtistProfile",
+      title: "Subscriber Artist Profile",
+    }),
+    pageRender()
   );
 
   //loads/gets the list of all subscribers
@@ -458,7 +498,7 @@ module.exports = Controller => {
     fromReq("query", ["p"], "schemaOptions"),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
-      { m: PACKAGE, at: ["package"] }
+      { m: PACKAGE, at: ["package"] },
     ]),
     getAndCountAllFromSchema(PAYMENT),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
@@ -474,17 +514,17 @@ module.exports = Controller => {
       {
         m: USER,
         at: ["id", "firstName", "lastName"],
-        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }]
+        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
       { m: PACKAGE },
-      { m: USERPACKAGE, al: "subscription", at: ["id"] }
+      { m: USERPACKAGE, al: "subscription", at: ["id"] },
     ]),
     getOneFromSchema(PAYMENT),
     redirectIf(SCHEMARESULT, false, "/fmadmincp/payments"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "paymentOverview",
-      title: "Payment Details"
+      title: "Payment Details",
     }),
     pageRender()
   );
@@ -497,14 +537,14 @@ module.exports = Controller => {
     schemaQueryConstructor("params", ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
-      { m: PACKAGE, at: ["package"] }
+      { m: PACKAGE, at: ["package"] },
     ]),
     getAndCountAllFromSchema(PAYMENT),
     respondIf(SCHEMARESULT, false, "HELLO"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "paymentHistory",
-      title: "Payment History"
+      title: "Payment History",
     }),
     pageRender()
   );

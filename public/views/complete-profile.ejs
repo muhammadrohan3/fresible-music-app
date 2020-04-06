@@ -8,14 +8,15 @@
     <div class="form__head">
       <h2></h2>
     </div>
-    <div class="alert alert-info">
+    <div class="alert alert-info mb-4">
       We need more information from you to get started, please complete your
       profile by filling the fields below
     </div>
 
+    <% if(loggedInAccountType !== 'label') { %>
     <!-- STAGE NAME -->
     <%- include('./partials/form/input', {formData: {required: '*required',
-    label: `Stage Name`, name: 'stageName'}}) %>
+    label: `Stage Name`, name: 'stageName'}}) %> <% } %>
 
     <!-- RECORD LABEL -->
     <%- include('./partials/form/input', {formData: { label: `Record Label`,
@@ -30,7 +31,7 @@
     name: 'instagram', inputText: `Should contain '@' - e.g @fresible`}}) %>
 
     <!-- AVATAR UPLOAD -->
-    <%- include("../partials/form/imageFile", {formData: {name: 'avatar', size:
+    <%- include("./partials/form/imageFile", {formData: {name: 'avatar', size:
     '1', label: 'Account Avatar'}}) %>
 
     <!-- PHONE -->

@@ -1,0 +1,35 @@
+<%- include partials/header %>
+<body>
+  <div class="mail">
+    <div class="action">
+      <div class="action__head">
+        <h1 class="action__head--text">ACCOUNT TYPE CHANGED</h1>
+      </div>
+      <div class="action__body">
+        <div class="">
+          <p>Hi <b><%= firstName %>,</b></p>
+        </div>
+        <div>
+          <p>
+            This is to notify you of a change that was initiated on your
+            account.
+          </p>
+        </div>
+        <div>
+          <p>
+            Your account has been changed to a label account.
+          </p>
+        </div>
+        <div>
+          <p>
+            Thanks.
+          </p>
+        </div>
+        <button class="mail-btn">
+          <a href="https://music.fresible.com">Go to Dashboard</a>
+        </button>
+      </div>
+    </div>
+    <%- include partials/footer.ejs %>
+  </div>
+</body>

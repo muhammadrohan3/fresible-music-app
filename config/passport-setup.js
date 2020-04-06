@@ -16,20 +16,21 @@ passport.deserializeUser(async (id, done) => {
             "firstName",
             "email",
             "role",
-            "type"
-          ]
+            "type",
+          ],
         })
       )
     );
     if (!user) return done(null, false);
-    const { avatar = "" } = JSON.parse(
-      JSON.stringify(
-        await Userprofile.findOne({
-          where: { userId: id },
-          attributes: ["avatar"]
-        })
-      )
-    );
+    const { avatar = "" } =
+      JSON.parse(
+        JSON.stringify(
+          await Userprofile.findOne({
+            where: { userId: id },
+            attributes: ["avatar"],
+          })
+        )
+      ) || {};
     return done(null, { ...user, avatar });
   } catch (err) {
     throw new Error(err);

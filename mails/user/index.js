@@ -11,5 +11,6 @@ module.exports = {
   newSubmission: require("./newSubmission"),
   roleChanged: require("./roleChanged"),
   submissionDeleted: require("./submissionDeleted"),
-  linksAdded: require("./linksAdded")
+  linksAdded: require("./linksAdded"),
+  accountTypeChanged: require("./accountTypeChanged"),
 };

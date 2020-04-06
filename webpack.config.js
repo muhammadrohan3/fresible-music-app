@@ -4,16 +4,16 @@ const webpack = require("webpack");
 const pathToFile = "./public/assets";
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
     clientAuth: pathToFile + "/js/src/clientAuth.js",
     client: pathToFile + "/js/src/client.js",
-    admin: pathToFile + "/js/src/admin.js"
+    admin: pathToFile + "/js/src/admin.js",
   },
   output: {
     path: path.join(__dirname + "/public/assets", "dist"),
     filename: "[name].bundle.js",
-    publicPath: "/dist/"
+    publicPath: "/dist/",
   },
 
   module: {
@@ -21,7 +21,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: "babel-loader"
+        use: "babel-loader",
       },
       {
         test: /\.s?css$/,
@@ -33,35 +33,35 @@ module.exports = {
             options: {
               plugins: [
                 require("autoprefixer")({
-                  overrideBrowserslist: ["> 1%", "last 2 versions"]
+                  overrideBrowserslist: ["> 1%", "last 2 versions"],
                 }),
-                require("cssnano")()
-              ]
-            }
+                require("cssnano")(),
+              ],
+            },
           },
           {
             loader: "sass-loader",
             options: {
-              implementation: require("node-sass")
-            }
-          }
-        ]
+              implementation: require("node-sass"),
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpe?g|svg|gif)/,
-        use: "file-loader"
-      }
-    ]
+        use: "file-loader",
+      },
+    ],
   },
 
   plugins: [
     new miniCssExtractPlugin({
-      filename: "bundle.css"
+      filename: "bundle.css",
     }),
     new webpack.ProvidePlugin({
       $: require.resolve("jquery"),
-      jQuery: "jquery"
-    })
+      jQuery: "jquery",
+    }),
   ],
 
   devServer: {
@@ -69,7 +69,7 @@ module.exports = {
     compress: true,
     port: 9000,
     proxy: {
-      "/hi": "localhost:7777"
-    }
-  }
+      "/hi": "localhost:7777",
+    },
+  },
 };

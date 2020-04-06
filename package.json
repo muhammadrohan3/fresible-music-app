@@ -11,7 +11,9 @@
     "webpack-web": "webpack --config ./webpack.f-config.js",
     "webpack-node": "webpack --config ./webpack.b-config.js",
     "db:migrate": "sequelize db:migrate",
-    "insert:data": "node ./scripts/bulkInsertData"
+    "insert:data": "node ./scripts/bulkInsertData",
+    "modify:releases": "node ./scripts/modifyReleases",
+    "modify:subscriptions": "node ./scripts/modifySubscriptions"
   },
   "author": "",
   "license": "ISC",

@@ -1,42 +1,42 @@
 <div class="complete-profile">
   <form
     class="form -u-form-input-spacing"
-    id="add-artist"
-    data-submitUrl="/artist/add-artist"
+    id="artists-add-artist"
+    data-submiturl="/artists/add-artist"
   >
     <div class="form__head">
       <h2></h2>
     </div>
-    <div class="alert alert-info">
+    <div class="alert alert-info mb-5">
       Provide information about the new artist to be added.
     </div>
 
     <!-- FIRST NAME -->
-    <%- include('./partials/form/input', {formData: {required: '*required',
-    label: `Stage Name`, name: 'firstName'}}) %>
+    <%- include('../partials/form/input', {formData: {required: '*required',
+    label: `First Name`, name: 'firstName'}}) %>
 
     <!-- LAST NAME -->
-    <%- include('./partials/form/input', {formData: {required: '*required',
-    label: `Stage Name`, name: 'lastName'}}) %>
+    <%- include('../partials/form/input', {formData: {required: '*required',
+    label: `Last Name`, name: 'lastName'}}) %>
 
     <!-- STAGE NAME -->
-    <%- include('./partials/form/input', {formData: {required: '*required',
+    <%- include('../partials/form/input', {formData: {required: '*required',
     label: `Stage Name`, name: 'stageName'}}) %>
 
     <!-- TWITTER HANDLE -->
-    <%- include('./partials/form/input', {formData: {label: `Twitter handle`,
+    <%- include('../partials/form/input', {formData: {label: `Twitter handle`,
     name: 'twitter', inputText: `Should contain '@' - e.g @fresible`}}) %>
 
     <!-- INSTAGRAM HANDLE -->
-    <%- include('./partials/form/input', {formData: {label: `Instagram handle`,
+    <%- include('../partials/form/input', {formData: {label: `Instagram handle`,
     name: 'instagram', inputText: `Should contain '@' - e.g @fresible`}}) %>
 
     <!-- AVATAR UPLOAD -->
-    <%- include('./partials/form/imageFile', {formData: {label: `Upload your
+    <%- include('../partials/form/imageFile', {formData: {label: `Upload Artist
     Avatar (picture)`, name: 'avatar', size: "0.50", public_id:
     `music/avatars/avatar-${Fns.token(5)}`}}) %>
 
-    <div class="form__submit">
+    <div class="form__submit mt-4">
       <div></div>
       <button type="submit" class="form__submit--btn btn-primary">
         Submit

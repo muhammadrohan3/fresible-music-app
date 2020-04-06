@@ -2,18 +2,44 @@ const Validator = require("validator");
 
 const { isEmail, equals, isEmpty, isAlphanumeric, isLength } = Validator;
 
+const keyList = [
+  "firstName",
+  "lastName",
+  "email",
+  "password",
+  "confirmPassword",
+  "twitter",
+  "instagram",
+  "phone",
+  "bankAccountNo",
+  "stageName",
+  "title",
+  "artist",
+  "genre",
+  "artiste",
+];
+
 const valEmpty = (key, value, errorObj) => {
   if (isEmpty(value)) errorObj[key] = `field should not be empty`;
   return;
 };
 
-const register = ({
-  firstName,
-  lastName,
-  email,
-  password,
-  confirmPassword
-}) => {
+const _aggregateValues = (data) => {
+  const newData = keyList.reduce(
+    (acc, curr) => ({ ...acc, [curr]: data[curr] || "" }),
+    {}
+  );
+  return newData;
+};
+
+const register = (data) => {
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmPassword,
+  } = _aggregateValues(data);
   const errors = {};
   if (!isEmail(email)) errors["email"] = "This is not a valid email address";
   if (isEmpty(firstName))
@@ -36,7 +62,7 @@ const login = ({ email }) => {
   return false;
 };
 
-const completeProfile = data => {
+const completeProfile = (data) => {
   const errors = {};
   const {
     twitter,
@@ -44,19 +70,11 @@ const completeProfile = data => {
     phone,
     bankAccountNo,
     stageName,
-    bank,
-    bankAccount
-  } = data;
-  Object.entries({ stageName }).forEach(([key, value]) => {
-    valEmpty(key, value, errors);
-  });
-  if (!isEmpty(twitter) && !twitter.startsWith("@") && twitter.length <= 1)
+  } = _aggregateValues(data);
+
+  if (!isEmpty(twitter) && !twitter.startsWith("@") && twitter.length)
     errors["twitter"] = "@ should be at the start of the input";
-  if (
-    !isEmpty(instagram) &&
-    !instagram.startsWith("@") &&
-    instagram.length <= 1
-  )
+  if (!isEmpty(instagram) && !instagram.startsWith("@") && instagram.length)
     errors["instagram"] = "@ should be at the start of the input";
   if (!isLength(phone, { min: 11, max: 11 }))
     errors["phone"] =
@@ -85,7 +103,8 @@ const emailValidator = ({ email }) => {
   return false;
 };
 
-const passValidator = ({ password, confirmPassword }) => {
+const passValidator = (data) => {
+  const { password, confirmPassword } = _aggregateValues(data);
   const errors = {};
   if (!/(?=.*\d)(?=.*[a-zA-Z]).{6,20}/.test(password))
     errors["password"] =
@@ -102,5 +121,5 @@ module.exports = {
   completeProfile,
   musicInfo,
   emailValidator,
-  passValidator
+  passValidator,
 };

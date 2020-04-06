@@ -19,7 +19,7 @@ const {
   Link,
   Labelartist,
   sequelize,
-  Sequelize
+  Sequelize,
 } = require("../../database/models");
 const logger = require("../logger");
 
@@ -45,9 +45,9 @@ const schemaType = (schema, getStore) => {
   return "hi";
 };
 
-const valueGetter = attributes =>
+const valueGetter = (attributes) =>
   attributes &&
-  attributes.map(item => {
+  attributes.map((item) => {
     if (typeof item !== "object") return item;
     const [fn, col, alias] = item;
     return [sequelize.fn(fn, col), alias];
@@ -58,7 +58,7 @@ const includeGen = (getStore, includes) => {
   //FORMAT OF PARAM => [[model, as, attributes, innerInclude], [model, as]]
   try {
     if (!includes) return;
-    const include = includes.map(include => {
+    const include = includes.map((include) => {
       if (typeof include !== "object")
         throw new Error(
           `INCLUDEGEN: ${include} includes param must be an object`
@@ -69,7 +69,7 @@ const includeGen = (getStore, includes) => {
         at: attributes,
         i: innerInclude,
         w: where,
-        r: required
+        r: required,
       } = include;
       if (!alias) alias = model;
       const Model = schemaType(model);
@@ -78,7 +78,10 @@ const includeGen = (getStore, includes) => {
         throw new Error("INCLUDEGEN: attributes must be an array");
       if (where) {
         const [whereKey, whereOp] = where;
-        where = whereGen(getStore(), whereKey, whereOp, true);
+        where = whereGen(getStore(), {
+          queryKey: whereKey,
+          queryMainOp: whereOp,
+        });
       }
       return {
         model: Model,
@@ -86,7 +89,7 @@ const includeGen = (getStore, includes) => {
         ...(where || {}),
         ...(schemaAttributes(attributes) || {}),
         ...includeGen(getStore, innerInclude),
-        required
+        required,
       };
       // if (where)
     });
@@ -106,12 +109,13 @@ const schemaOptionsGen = (schemaOptions, options) => {
   return Obj;
 };
 
-const schemaAttributes = attributes => ({
-  attributes: valueGetter(attributes)
+const schemaAttributes = (attributes) => ({
+  attributes: valueGetter(attributes),
 });
 
 //GENERATES THE WHEN ATTRIBUTE
-const whereGen = (store, queryKey, queryMainOp) => {
+const whereGen = (store, data = {}) => {
+  const { queryKey, queryMainOp, mutation = false } = data;
   //destructures the OP functions provided by sequelize
   const { Op } = Sequelize;
   //Gets the where query in the store
@@ -121,14 +125,16 @@ const whereGen = (store, queryKey, queryMainOp) => {
   if (!schemaQuery) return;
   //Loops through the schemaQuery object to generate the where object array.
   for (let prop in schemaQuery) {
-    if (/^(t|s|r|e|uid|ps)$/.test(prop)) continue;
     if (schemaQuery.hasOwnProperty(prop)) {
+      let tempData = Number(schemaQuery[prop]);
+      schemaQuery[prop] = Number.isNaN(tempData) ? schemaQuery[prop] : tempData;
+      if (/^(t|s|r|e|uid|ps)$/.test(prop)) continue;
       const propVal = schemaQuery[prop];
       if (Array.isArray(propVal)) {
         let [operator, vals] = propVal;
         if (Array.isArray(vals)) {
           vals = vals.map(
-            item => item
+            (item) => item
             // Array.isArray(item) ? { [item]: store[item] } : item
           );
         }
@@ -145,7 +151,7 @@ const whereGen = (store, queryKey, queryMainOp) => {
     s: status,
     r: role,
     e: email,
-    uid: userId
+    uid: userId,
     // ps: status
   } = schemaQuery;
   const { schema } = store;
@@ -166,10 +172,13 @@ const whereGen = (store, queryKey, queryMainOp) => {
   email && items.push({ email });
   userId && items.push({ userId: idLookUp(userId) });
 
+  if (mutation && !items.length)
+    throw new Error("ERROR: WHEREGEN, where items empty ");
+
   return {
     where: {
-      [Op[queryMainOp || "and"]]: items
-    }
+      [Op[queryMainOp || "and"]]: items,
+    },
   };
 };
 
@@ -189,8 +198,9 @@ const schemaResultHandler = async (
   else if (actionType === "delete") setStore("schemaDeleted", didMutate);
   else setStore("schemaResult", data);
   if (actionType) {
+    if (Array.isArray(schema)) schema = getStore(schema[0]);
     logger(
-      { ...getStore(), schemaResult },
+      { ...getStore(), schemaResult: data, didMutate },
       schema,
       actionType,
       req.originalUrl
@@ -205,7 +215,7 @@ const runSql = ({ getStore, setStore }) => async (model, type, args) => {
     query = `SELECT COUNT(*) as 'count', DATE(${model}.createdAt) as 'date' FROM ${model} WHERE createdAt >= date_sub(now(), interval 7 day) GROUP BY DAY(${model}.createdAt)`;
   if (!query) return handleResponse("error", "RUNSQL: NO QUERY TO EXECUTE");
   const data = await sequelize.query(query, {
-    type: sequelize.QueryTypes.SELECT
+    type: sequelize.QueryTypes.SELECT,
   });
   return setStore(SCHEMARESULT, data);
 };
@@ -222,7 +232,7 @@ const getAllFromSchema = ({ getStore, setStore, req }) => async (
       ...whereGen({ ...getStore(), schema }),
       ...includeGen(getStore, schemaInclude),
       ...schemaOptionsGen(schemaOptions, options),
-      ...schemaAttributes(attributes)
+      ...schemaAttributes(attributes),
     });
     return schemaResultHandler({ setStore, getStore }, data);
   } catch (err) {
@@ -242,7 +252,7 @@ const getAndCountAllFromSchema = ({ getStore, setStore, req }) => async (
       ...whereGen({ ...getStore(), schema }),
       ...includeGen(getStore, schemaInclude),
       ...schemaOptionsGen(schemaOptions, options),
-      ...schemaAttributes(attributes)
+      ...schemaAttributes(attributes),
     });
     return schemaResultHandler({ setStore, getStore, schema }, data);
   } catch (err) {
@@ -262,7 +272,7 @@ const getOneFromSchema = ({ getStore, setStore }) => async (
     const data = await Model.findOne({
       ...whereGen(getStore()),
       ...includeGen(getStore, schemaInclude),
-      ...schemaAttributes(attributes)
+      ...schemaAttributes(attributes),
     });
     return schemaResultHandler({ setStore, getStore, schema }, data, keys);
   } catch (err) {
@@ -270,7 +280,7 @@ const getOneFromSchema = ({ getStore, setStore }) => async (
   }
 };
 
-const bulkCreateSchema = ({ getStore, setStore }) => async schema => {
+const bulkCreateSchema = ({ getStore, setStore }) => async (schema) => {
   try {
     const Model = schemaType(schema, getStore);
     const { schemaData } = getStore();
@@ -280,7 +290,7 @@ const bulkCreateSchema = ({ getStore, setStore }) => async schema => {
     throw new Error(err);
   }
 };
-const createSchemaData = ({ getStore, setStore, req }) => async schema => {
+const createSchemaData = ({ getStore, setStore, req }) => async (schema) => {
   try {
     const Model = schemaType(schema, getStore);
     const { schemaData } = getStore();
@@ -296,7 +306,7 @@ const createSchemaData = ({ getStore, setStore, req }) => async schema => {
   }
 };
 
-const updateSchemaData = ({ getStore, setStore, req }) => async schema => {
+const updateSchemaData = ({ getStore, setStore, req }) => async (schema) => {
   try {
     const Model = schemaType(schema, getStore);
     const { schemaQuery, schemaData } = getStore();
@@ -304,7 +314,7 @@ const updateSchemaData = ({ getStore, setStore, req }) => async schema => {
     if (id && typeof id === "string") schemaQuery.id = parseInt(id);
     const data = await Model.update(
       { ...schemaData },
-      { ...whereGen(getStore()) }
+      { ...whereGen(getStore(), { mutation: true }) }
     );
     console.log("UPDATE: ", data);
     return schemaResultHandler(
@@ -318,10 +328,12 @@ const updateSchemaData = ({ getStore, setStore, req }) => async schema => {
   }
 };
 
-const deleteSchemaData = ({ getStore, setStore, req }) => async schema => {
+const deleteSchemaData = ({ getStore, setStore, req }) => async (schema) => {
   try {
     const Model = schemaType(schema, getStore);
-    const data = await Model.destroy({ ...whereGen(getStore()) });
+    const data = await Model.destroy({
+      ...whereGen(getStore(), { mutation: true }),
+    });
     return schemaResultHandler(
       { setStore, getStore, req, schema },
       data,
@@ -341,5 +353,5 @@ module.exports = {
   createSchemaData,
   bulkCreateSchema,
   getAndCountAllFromSchema,
-  runSql
+  runSql,
 };

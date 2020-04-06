@@ -32,7 +32,7 @@ const {
   LABELARTIST,
   SAMEAS,
   USERPROFILE,
-  NEWSUBSCRIPTION
+  NEWSUBSCRIPTION,
 } = require("../constants");
 
 const Controller = require("../controller")();
@@ -64,7 +64,7 @@ const {
   fromReq,
   fromStore,
   setStoreIf,
-  isValueIn
+  isValueIn,
 } = Controller;
 
 router.use(isAuthenticated("/account"));
@@ -101,13 +101,23 @@ router.post(
   respond(1)
 );
 
+router.get(
+  "/profile-setup/skip-add-artist",
+  sameAs("profileActive", 3, USER),
+  redirectIf(SAMEAS, false, "/"),
+  addToSchema(SCHEMADATA, { profileActive: 4 }),
+  schemaQueryConstructor("user", ["id"]),
+  updateSchemaData(USER),
+  redirect("/")
+);
+
 router.get("/select-account", pageRender());
 
 router.post(
   "/select-account",
   sameAs("profileActive", 1, USER),
   respondIf(SAMEAS, false, "Error: access denied"),
-  schemaDataConstructor("body", ["type"]),
+  schemaDataConstructor("body", ["accountType"], ["type"]),
   respondIf(SCHEMADATA, false, "Error: request incomplete"),
   addToSchema(SCHEMADATA, { profileActive: 2 }),
   schemaQueryConstructor(USER, ["id"]),
@@ -160,10 +170,11 @@ router.get(
 // This GET route renders all user submissions
 router.get(
   "/submissions",
+  schemaQueryConstructor("query", ["artistId"]),
   schemaQueryConstructor("user", ["id"], ["userId"]),
   addToSchema(SCHEMAQUERY, { status: ["not", "deleted"] }),
   addToSchema(SCHEMAINCLUDE, [
-    { m: USERPACKAGE, al: "subscription", at: ["status"] }
+    { m: USERPACKAGE, al: "subscription", at: ["status"] },
   ]),
   getAllFromSchema(RELEASE),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
@@ -185,10 +196,10 @@ router.get(
         {
           m: USER,
           at: ["id"],
-          i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }]
-        }
-      ]
-    }
+          i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
+        },
+      ],
+    },
   ]),
   getOneFromSchema(LINK),
   respondIf(SCHEMARESULT, false, { error: true }),
@@ -206,12 +217,12 @@ router.get(
       m: USERPACKAGE,
       al: "subscription",
       at: ["id", "status"],
-      i: [{ m: PACKAGE, al: "package", at: ["package"] }]
+      i: [{ m: PACKAGE, al: "package", at: ["package"] }],
     },
     { m: VIDEO },
     { m: TRACK },
     { m: "link", at: ["slug"] },
-    { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] }
+    { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] },
   ]),
   getOneFromSchema(RELEASE),
   redirectIf(SCHEMARESULT, false, "/submissions"),
@@ -230,7 +241,7 @@ router.get(
   redirectIf(SCHEMAQUERY, false, "/submissions"),
   addToSchema(SCHEMAINCLUDE, [
     { m: ALBUMTRACK, al: "tracks" },
-    { m: RELEASE, al: "release", at: ["status", "id", "userId"] }
+    { m: RELEASE, al: "release", at: ["status", "id", "userId"] },
   ]),
   getOneFromSchema(ALBUM),
   redirectIf(SCHEMARESULT, false, "/submissions"),
@@ -264,7 +275,7 @@ router.get(
   schemaQueryConstructor("params", ["albumId"], ["id"]),
   fromStore(SCHEMAQUERY, ["id"], TEMPKEY),
   addToSchema(SCHEMAINCLUDE, [
-    { m: ALBUMTRACK, al: "tracks", w: "trackInclude" }
+    { m: ALBUMTRACK, al: "tracks", w: "trackInclude" },
   ]),
   getOneFromSchema(ALBUM),
   redirectIf(SCHEMARESULT, false, "/submission/album", [TEMPKEY]),
@@ -280,7 +291,7 @@ router.get(
   schemaQueryConstructor("query", ["artistId"]),
   addToSchema(SCHEMAINCLUDE, [
     { m: RELEASE, al: "releases", at: ["id"] },
-    { m: PACKAGE }
+    { m: PACKAGE },
   ]),
   getAllFromSchema(USERPACKAGE),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
@@ -299,9 +310,9 @@ router.get(
       m: RELEASE,
       al: "releases",
       w: [{ status: "deleted" }, "not"],
-      r: false
+      r: false,
     },
-    { m: PACKAGE, at: ["package", "maxTracks", "maxAlbums"] }
+    { m: PACKAGE, at: ["package", "maxTracks", "maxAlbums"] },
   ]),
   getOneFromSchema(USERPACKAGE),
   redirectIf(SCHEMARESULT, false, "/subscriptions"),
@@ -325,7 +336,7 @@ router.get("/mail", (req, res) =>
     url: "h",
     email: "h",
     content: "g",
-    subject: "j"
+    subject: "j",
   })
 );
 
@@ -333,7 +344,7 @@ router.get(
   "/dotest",
   addToSchema(SITEDATA, {
     page: "addMusic/create",
-    title: "Release Wizard"
+    title: "Release Wizard",
   }),
   pageRender()
   // addToSchema("tempKey", { token: "464646fg" }),

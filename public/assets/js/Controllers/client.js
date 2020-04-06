@@ -23,7 +23,7 @@ const Controller = () => {
   //passes the view to the submit form function
   const submitForm = SubmitForm(View);
 
-  const handleFile = e => {
+  const handleFile = (e) => {
     //Gets the parent container of the input="file" element
     let container = View.getElement(e).parentElement;
     //Gets the label element of the container
@@ -33,14 +33,21 @@ const Controller = () => {
     //Gets the necessary data from the container
     const { filelimit, filetype, public_id, url, upload_preset } = e.dataset;
     const [file] = e.files;
-    //Comparing the actual file size to the limit set for the file
-    if (file.size / 1000000 > filelimit) {
+    if (!file) return;
+
+    const _nullFileInput = (errorMessage) => {
       //nulls the file and output an error of filesize larger than the limit specified
-      View.addContent(preview, `File is larger than ${filelimit}mb`);
+      View.addContent(preview, errorMessage);
       e.value = null;
       View.addContent(label, `Select ${filetype}`);
-      return;
-    }
+    };
+    if (filetype === "image" && !file.type.includes("image"))
+      return _nullFileInput("Image format not supported");
+    if (filetype === "audio" && !["audio/mp3", "audio/wav"].includes(file.type))
+      return _nullFileInput("Audio format not supported");
+    //Comparing the actual file size to the limit set for the file
+    if (file.size / 1000000 > filelimit)
+      return _nullFileInput(`File is larger than ${filelimit}mb`);
     //Changes the label to indicate the file was successfully selected
     View.addContent(label, `Change ${filetype}`);
     //Saves the file details to the store
@@ -111,7 +118,7 @@ const Controller = () => {
   const sendVerifyRequest = async () => {
     View.showLoader(true);
     const response = await serverRequest({
-      href: `/confirm-account`
+      href: `/confirm-account`,
     });
     R = responseHandler(response);
     return (
@@ -130,26 +137,26 @@ const Controller = () => {
     if (isNaN(profileActive)) return;
     const response = await serverRequest({
       href: `/profile-setup`,
-      data: { profileActive }
+      data: { profileActive },
     });
     if (!responseHandler(response)) return;
     return;
   };
 
-  const updateMusicSubmission = async data =>
+  const updateMusicSubmission = async (data) =>
     await serverRequest({
-      data
+      data,
     });
 
-  const selectPackage = async e => {
-    // View.showLoader(true);
+  const selectPackage = async (e) => {
+    View.showLoader(true);
     let { account_type } = e.dataset;
     let artistId = null;
     //Checks if the user is a label
     if (account_type === "label") {
       const response = await serverRequest({
         href: "/select-package/get-artists",
-        method: "get"
+        method: "get",
       });
       if (!(R = responseHandler(response))) return;
 
@@ -166,8 +173,8 @@ const Controller = () => {
         inputOptions: artists,
         inputPlaceholder: "-- select --",
         showCancelButton: true,
-        inputValidator: value =>
-          Promise.resolve(value ? null : "You need to select an artist")
+        inputValidator: (value) =>
+          Promise.resolve(value ? null : "You need to select an artist"),
       });
       //Shows an alert if the user dismisses the popup
       if (dismiss) return View.showAlert("You need to select an artist");
@@ -178,13 +185,13 @@ const Controller = () => {
     if (Number.isNaN(packageId)) return null;
     const response = await serverRequest({
       href: "/select-package",
-      data: { packageId, artistId }
+      data: { packageId, artistId },
     });
     if (!responseHandler(response)) return;
     return location.replace("/add-music");
   };
 
-  const agreeTerms = async form => {
+  const agreeTerms = async (form) => {
     View.showLoader(true);
     const { rawFormData } = View.getFormData(form);
     //Checks for an unchecked input box and alerts if there is
@@ -197,36 +204,37 @@ const Controller = () => {
     return (Location.pathname = "/add-music/create");
   };
 
-  const handlePayment = async e => {
+  const handlePayment = async (e) => {
     View.showLoader(true);
     let { id } = e.target.dataset;
     id = parseInt(id);
     const response = await serverRequest({
       href: `/payment`,
-      data: { id }
+      data: { id },
     });
     if (!(R = responseHandler(response))) return;
     const { authorization_url } = R;
     return location.replace(authorization_url);
   };
 
-  const queryPayment = async e => {
+  const queryPayment = async (e) => {
     View.showLoader(true);
     const { reference } = e.dataset;
     const response = await serverRequest({
       href: "/payment/verify",
-      data: { reference }
+      data: { reference },
     });
     if (!responseHandler(response)) return;
     return View.refresh();
   };
 
-  const handleSelectAccountType = async elem => {
+  const handleSelectAccountType = async (elem) => {
     const { account_type: accountType } = elem.dataset;
     if (!accountType) return;
+    View.showLoader(true);
     const response = await serverRequest({
       href: "/select-account",
-      data: { accountType }
+      data: { accountType },
     });
     if (!(R = responseHandler(response))) return;
     return View.refresh();
@@ -234,7 +242,7 @@ const Controller = () => {
 
   //HANDLE ADD-MUSIC TERMS AGREEMENT
 
-  const handleAddMusicTerms = form => {
+  const handleAddMusicTerms = (form) => {
     const { rawFormData } = View.getFormData(form);
     const termInputValueList = Object.values(rawFormData);
     for (let termInputValue of termInputValueList) {
@@ -245,12 +253,12 @@ const Controller = () => {
   };
 
   //HANDLESELECTFILTER
-  const handleSelectFilter = async selectElement => {
+  const handleSelectFilter = async (selectElement) => {
     View.showLoader(true);
     const { filter_target, filter_href } = selectElement.dataset;
     const response = await serverRequest({
       href: `${filter_href}/${selectElement.value}`,
-      method: "get"
+      method: "get",
     });
     if (!(R = responseHandler(response))) return;
     const targetedSelectElement = View.getElement(filter_target);
@@ -259,8 +267,16 @@ const Controller = () => {
     return View.showLoader(false);
   };
 
+  //handleAddNewArtist
+  const handleAddNewArtist = async (form) => {
+    View.showLoader(true);
+    const res = await submitForm(form);
+    if (!responseHandler(res)) return;
+    return location.replace("/artists");
+  };
+
   //HANDLE_INITIATE_RELEASE
-  const handleInitiateRelease = async form => {
+  const handleInitiateRelease = async (form) => {
     View.showLoader(true);
     const response = await submitForm(form);
     if (!(R = responseHandler(response))) return;
@@ -268,9 +284,9 @@ const Controller = () => {
   };
 
   //HANDLE PUBLISH RELEASE
-  const handlePublishRelease = async button => {
+  const handlePublishRelease = async (button) => {
     View.showLoader(true);
-    const { release_id: id } = button.dataset;
+    const { release_id: id, release_status: oldStatus } = button.dataset;
     const RELEASE_TAB = View.getElement("#addMusic-release-tab a");
     const OTHER_TAB = View.getElement("#addMusic-other-tab a");
     const RELEASE_DATE_FORM_ID = "#addMusic-release-date";
@@ -288,8 +304,8 @@ const Controller = () => {
     _highlightTab(RELEASE_TAB, false);
     _highlightTab(OTHER_TAB, false);
     //
-    const _checkForms = formIds => {
-      const statusList = formIds.map(formId => {
+    const _checkForms = (formIds) => {
+      const statusList = formIds.map((formId) => {
         const form = View.getElement(formId);
         if (!form) return true;
         const { requiredData } = View.getFormData(form);
@@ -314,7 +330,7 @@ const Controller = () => {
     const [
       releaseDateFormStatus,
       albumFormStatus,
-      trackFormStatus
+      trackFormStatus,
     ] = _checkForms([RELEASE_DATE_FORM_ID, ALBUM_FORM_ID, TRACK_FORM_ID]);
 
     if (!releaseDateFormStatus) _highlightTab(OTHER_TAB);
@@ -331,11 +347,14 @@ const Controller = () => {
       const response = await serverRequest({
         href: "/add-music/publishRelease",
         params: {
-          id
-        }
+          id,
+        },
+        data: {
+          oldStatus,
+        },
       });
       if (!(R = responseHandler(response))) return;
-      return location.replace("/submissions");
+      return location.replace(`/submission?id=${R.id}`);
     };
     return await handleSaveRelease(_executeAfterSave);
   };
@@ -358,14 +377,14 @@ const Controller = () => {
 
     //
 
-    const _submitForm = async formId => {
+    const _submitForm = async (formId) => {
       const form = View.getElement(formId);
       if (!form) return true;
       return await submitForm(form, { strict: callback ? true : false });
     };
 
     const releaseDateFormResponse = await _analyze(_submitForm, [
-      RELEASE_DATE_FORM_ID
+      RELEASE_DATE_FORM_ID,
     ]);
     if (!releaseDateFormResponse) Status.push(false);
     if (release_type === "track") {
@@ -377,7 +396,7 @@ const Controller = () => {
       const albumSubmissionResponse = await Album.handleSubmit(callback);
       if (!albumSubmissionResponse) Status.push(false);
     }
-    if (callback && Status.length)
+    if (Status.length)
       return View.showAlert(
         "Error: It seems your submission was not successful, check your internet connection and try again or contact admin",
         5
@@ -396,7 +415,7 @@ const Controller = () => {
     checkVerifyCookie,
     sendVerifyRequest,
     handleFile,
-    completeProfile: async e => {
+    completeProfile: async (e) => {
       View.showLoader(true);
       return await submitForm(e.target, true);
     },
@@ -405,13 +424,14 @@ const Controller = () => {
     handlePayment,
     queryPayment,
     submitForm,
+    handleAddNewArtist,
     handleSelectAccountType,
     handleSelectFilter,
     handleAddMusicTerms,
     handleInitiateRelease,
     handleSaveRelease,
     handlePublishRelease,
-    initialize: checkVerifyCookie
+    initialize: checkVerifyCookie,
   };
 };
 

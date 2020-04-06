@@ -1,16 +1,4 @@
 <div class="-u-page-s">
-  <div class="-u-page-s__icon">
-    <a href="/artists/add-artist"
-      ><button class="btn-outline icon-btn">
-        <span
-          class="iconify"
-          data-icon="ic:outline-add"
-          data-inline="false"
-        ></span
-        ><span>New Artist</span>
-      </button></a
-    >
-  </div>
   <div class="-u-page" style="margin: 0">
     <div class="submissions">
       <table class="table table-hover text-center submissions__table">
@@ -23,16 +11,23 @@
           </tr>
         </thead>
         <tbody>
-          <% pageData.forEach(({id, firstName, lastName, stageName}) => { %>
+          <% pageData.forEach(({id, userId, firstName, lastName, stageName}) =>
+          { %>
           <tr>
             <td>
-              <a href="/artists/<%= id %>"><%= id %></a>
+              <a href="/fmadmincp/subscriber/<%= userId %>/artist/<%= id %>"
+                ><%= id %></a
+              >
             </td>
             <td>
               <%=firstName && lastName && firstName +' '+ lastName %>
             </td>
             <td><%=stageName %></td>
-            <td><a href="/artists/<%= id %>">View</a></td>
+            <td>
+              <a href="/fmadmincp/subscriber/<%= userId %>/artist/<%= id %>"
+                >View</a
+              >
+            </td>
           </tr>
           <% }) %>
         </tbody>

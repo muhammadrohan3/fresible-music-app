@@ -8,10 +8,10 @@ const {
   USER,
   USERPROFILE,
   SAMEAS,
-  TEMPKEY
+  TEMPKEY,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     seeStore,
     fromReq,
@@ -25,7 +25,7 @@ module.exports = Controller => {
     sameAs,
     respond,
     respondIf,
-    resetKey
+    resetKey,
   } = Controller;
 
   /// This GET route renders the complete-profile page

@@ -8,35 +8,35 @@ export default async ({
   method = "POST",
   contentType,
   data,
-  params
+  params,
 }) => {
   if (url && !url.includes("localhost") && !window.navigator.onLine)
     return {
       status: "error",
-      data: "Your internet connection is not active, do turn it on if off"
+      data: "Your internet connection is not active, do turn it on if off",
     };
-  const trim = text => (text.startsWith("/") ? text.substr(1) : text);
-  console.log(`MAKING A ${method} REQUEST TO: `, href || url);
+  const trim = (text) => (text.startsWith("/") ? text.substr(1) : text);
+
   try {
     const response = await axios({
       url:
         url ||
-        `${location.origin}/${(href && trim(href)) ||
-          trim(location.pathname + location.search)}`,
+        `${location.origin}/${
+          (href && trim(href)) || trim(location.pathname + location.search)
+        }`,
       method,
       data,
       withCredentials: false,
-      onUploadProgress: progressEvent => {
+      onUploadProgress: (progressEvent) => {
         let value = 0;
         const { loaded, total } = progressEvent;
         value = Math.floor((loaded * 100) / total) + "%";
         if (total > 1000) View.loaderText(value);
       },
-      params
+      params,
     });
     return response.data;
   } catch (err) {
-    console.log("SERVER ERROR :", err);
     throw new Error(err);
   }
 };

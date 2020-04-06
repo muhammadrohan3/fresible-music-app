@@ -73,17 +73,6 @@ module.exports = Controller => {
   );
 
   router.get(
-    "/:id",
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    schemaQueryConstructor("params", ["id"]),
-    getOneFromSchema(LABELARTIST),
-    redirectIf(SCHEMARESULT, false, "/artists"),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { page: "artists/profile", title: "Artist Profile" }),
-    pageRender()
-  );
-
-  router.get(
     "/add-artist",
     addToSchema(SITEDATA, { page: "artists/add-artist", title: "Add Artist" }),
     pageRender()
@@ -116,6 +105,17 @@ module.exports = Controller => {
   );
 
   router.get(
+    "/:id",
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    schemaQueryConstructor("params", ["id"]),
+    getOneFromSchema(LABELARTIST),
+    redirectIf(SCHEMARESULT, false, "/artists"),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, { page: "artists/profile", title: "Artist Profile" }),
+    pageRender()
+  );
+
+  router.get(
     "/:id/edit-profile",
     schemaQueryConstructor("user", ["id"], ["userId"]),
     schemaQueryConstructor("params", ["id"]),
@@ -126,6 +126,7 @@ module.exports = Controller => {
       page: "artists/edit-profile",
       title: "Edit Artist Profile"
     }),
+    seeStore([SITEDATA]),
     pageRender()
   );
 
@@ -133,37 +134,38 @@ module.exports = Controller => {
     "/:id/edit-profile",
     schemaDataConstructor("body"),
     respondIf(SCHEMADATA, false, "Error: request incomplete, try again"),
+    schemaQueryConstructor("params", ["id"]),
     schemaDataConstructor("user", ["id"], ["userId"]),
     updateSchemaData(LABELARTIST),
     respondIf(SCHEMAMUTATED, false, "Error: could not update artist"),
     respond(1)
   );
 
-  router.get(
-    "/:id/releases",
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    schemaQueryConstructor("params", ["id"], ["artistId"]),
-    getAllFromSchema(RELEASE),
-    redirectIf(SCHEMARESULT, false, "/{id}", [SCHEMAQUERY]),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { page: "submissions", title: "Artist Releases" }),
-    pageRender()
-  );
+  // router.get(
+  //   "/:id/releases",
+  //   schemaQueryConstructor("user", ["id"], ["userId"]),
+  //   schemaQueryConstructor("params", ["id"], ["artistId"]),
+  //   getAllFromSchema(RELEASE),
+  //   redirectIf(SCHEMARESULT, false, "/{id}", [SCHEMAQUERY]),
+  //   copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+  //   addToSchema(SITEDATA, { page: "submissions", title: "Artist Releases" }),
+  //   pageRender()
+  // );
 
-  router.get(
-    "/:id/subscriptions",
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    schemaQueryConstructor("params", ["id"], ["artistId"]),
-    getAllFromSchema(USERPACKAGE),
-    redirectIf(SCHEMARESULT, false, "/{id}", [SCHEMAQUERY]),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, {
-      page: "subscriptions",
-      title: "Artist Subscriptions"
-    }),
-    seeStore([SITEDATA, PAGEDATA]),
-    pageRender()
-  );
+  // router.get(
+  //   "/:id/subscriptions",
+  //   schemaQueryConstructor("user", ["id"], ["userId"]),
+  //   schemaQueryConstructor("params", ["id"], ["artistId"]),
+  //   getAllFromSchema(USERPACKAGE),
+  //   redirectIf(SCHEMARESULT, false, "/{id}", [SCHEMAQUERY]),
+  //   copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+  //   addToSchema(SITEDATA, {
+  //     page: "subscriptions",
+  //     title: "Artist Subscriptions"
+  //   }),
+  //   seeStore([SITEDATA, PAGEDATA]),
+  //   pageRender()
+  // );
 
   return router;
 };

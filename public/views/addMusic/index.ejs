@@ -2,6 +2,11 @@
   <% const {id, type, status, releaseDate, comment, subscription, user, track,
   album, labelArtist} = pageData %>
   <div class="-u-page" data-release_type="<%= type %>" id="addMusic">
+    <% if(status === 'declined' && comment) { %>
+    <div class="alert alert-danger w-75 mx-auto text-center mb-5">
+      <%= comment %>
+    </div>
+    <% } %>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs custom-tab" id="myTab" role="tablist">
       <li class="nav-item custom-tab__item" id="addMusic-release-tab">
@@ -67,16 +72,27 @@
       </div>
     </div>
   </div>
-  <div class="-u-group mb-5">
-    <button class="btn-outline w-25 mr-sm-5 mb-4 mb-sm-0" id="addMusic-save">
-      Save
+  <div class="-u-group mb-5 btn-group">
+    <button class="btn-outline" id="addMusic-save">
+      <span
+        class="iconify"
+        data-icon="ic:outline-save-alt"
+        data-inline="false"
+      ></span>
+      <span>Save Draft</span>
     </button>
     <button
-      class="btn-primary w-25"
+      class="btn-primary"
       id="addMusic-publish"
       data-release_id="<%= id %>"
+      data-release_status="<%= status %>"
     >
-      Publish
+      <span
+        class="iconify"
+        data-icon="ic:baseline-done"
+        data-inline="false"
+      ></span>
+      Submit
     </button>
   </div>
 </section>

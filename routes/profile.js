@@ -63,7 +63,7 @@ module.exports = Controller => {
       false,
       "An error occured updating your profile, please try again."
     ),
-    respond("Profile successfully edited, Refresh to see changes.")
+    respond(1)
   );
 
   // This GET route renders the profile change password page

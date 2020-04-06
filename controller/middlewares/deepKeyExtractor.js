@@ -12,11 +12,7 @@ module.exports = ({ req, setStore, getStore }) => (
   // store = { schemaResult: { package: {id: 1}}}, you want the id, keyRoute should be ['schemaResult','package']
   //keys set to null will return the whole props, alias should be an array like the keys and its optional
   try {
-    if (!Array.isArray(keyRoute))
-      return handleResponse(
-        "error",
-        "deepKeyExtractor: KEYROUTE SHOULD BE AN ARRAY"
-      );
+    if (!Array.isArray(keyRoute)) keyRoute = [keyRoute];
     source = source.toLowerCase();
     let sourceObj = "";
     if (source === "store") sourceObj = getStore();

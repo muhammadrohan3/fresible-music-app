@@ -6,62 +6,62 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: "users",
-          key: "id"
+          key: "id",
         },
         onDelete: "CASCADE",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       userPackageId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: "userpackages",
-          key: "id"
+          key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       type: {
         type: Sequelize.ENUM,
         allowNull: true,
-        values: ["track", "album", "video"]
+        values: ["track", "album", "video"],
       },
       albumId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: "albums",
-          key: "id"
+          key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       trackId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: "tracks",
-          key: "id"
+          key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       videoId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: "videos",
-          key: "id"
+          key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       status: {
         type: Sequelize.ENUM,
@@ -72,53 +72,56 @@ module.exports = {
           "processing",
           "approved",
           "pre-save",
-          "live",
+          "in stores",
           "declined",
           "deleted",
-          "expired"
-        ]
+          "expired",
+        ],
       },
       submitStatus: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
       releaseDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+      },
+      approvedDate: {
+        type: Sequelize.DATE,
       },
       comment: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       artistId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: "labelartists",
-          key: "id"
+          key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       linkId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: "links",
-          key: "id"
+          key: "id",
         },
         onDelete: "SET NULL",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable("releases");
-  }
+  },
 };

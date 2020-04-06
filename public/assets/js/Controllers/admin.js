@@ -20,15 +20,15 @@ export default () => {
 
   const prepareModal = modalPrepare(AdminModals);
 
-  const timeFunc = date => {
-    const todayTimeHandler = date => {
+  const timeFunc = (date) => {
+    const todayTimeHandler = (date) => {
       let t;
       if ((t = moment().diff(moment(date), "s")) < 60) return `${t}s`;
       if ((t = moment().diff(moment(date), "m")) < 60) return `${t}m`;
       if ((t = moment().diff(moment(date), "h")) < 24) return `${t}h`;
     };
 
-    const daysHandler = date => {
+    const daysHandler = (date) => {
       if (moment().diff(moment(date), "w") > 0)
         return moment(date).format("YYYY-MM-DD");
       return `${moment().diff(moment(date), "d")}d`;
@@ -47,7 +47,7 @@ export default () => {
     return data;
   };
 
-  const handleBasicAction = async elem => {
+  const handleBasicAction = async (elem) => {
     const { url: href } = elem.dataset;
     if (!href) return;
     const shouldProceed = await View.confirmAction();
@@ -58,7 +58,7 @@ export default () => {
     return View.refresh();
   };
 
-  const handleDecline = async elem => {
+  const handleDecline = async (elem) => {
     const { url: href } = elem.dataset;
     if (!href) return;
     const shouldProceed = await View.confirmAction();
@@ -67,9 +67,9 @@ export default () => {
       input: "textarea",
       inputPlaceholder: "Comment on why the submission is declined here...",
       inputAttributes: {
-        "aria-label": "Comment on why the submission is declined"
+        "aria-label": "Comment on why the submission is declined",
       },
-      showCancelButton: true
+      showCancelButton: true,
     });
     if (!comment) return View.showAlert("Decline comment is required");
     View.showLoader(true);
@@ -79,7 +79,7 @@ export default () => {
   };
 
   //This handles the store links modal.
-  const handleStoreLinksModal = async elem => {
+  const handleStoreLinksModal = async (elem) => {
     View.showLoader(true);
     const form = View.getElement("#links-form");
     //destructures the needed values from the element already set
@@ -90,12 +90,12 @@ export default () => {
       //Makes a get request to the server for links associated with the linkId in the db
       const response = await serverRequest({
         url: `/fmadmincp/submission/store-links?id=${linkId}`,
-        method: "get"
+        method: "get",
       });
       //handles the response, emits the error "links not found" if there is an error,
       if (!(R = responseHandler(response, "Links not found"))) return;
       //Pre-fills the information to the input boxes, to show its being edited.
-      form.querySelectorAll("input").forEach(input => {
+      form.querySelectorAll("input").forEach((input) => {
         input.value = R[input.name];
       });
       const storeLink = View.getElement(".store-link", form);
@@ -114,7 +114,7 @@ export default () => {
   };
 
   //This function handles the submit and edit functions of the release links form.
-  const handleStoreLinks = async form => {
+  const handleStoreLinks = async (form) => {
     View.showLoader(true);
     const { type, details } = form.dataset;
     if (type === "add") {
@@ -122,7 +122,7 @@ export default () => {
       const { stageName, title } = JSON.parse(details);
       //Slugifies the stageName and title.
       let slug = [title, stageName]
-        .map(item => item.replace(/ /g, "-"))
+        .map((item) => item.replace(/ /g, "-"))
         .join("-")
         .toLowerCase();
       //A while loop with the stop boolean
@@ -134,7 +134,7 @@ export default () => {
         //Makes a server request that checks for thee
         const { status } = await serverRequest({
           url: `/fmadmincp/submission/store-links/slug?slug=${slug}`,
-          method: "get"
+          method: "get",
         });
         if (status === "success") {
           if (index > 0) {
@@ -155,7 +155,7 @@ export default () => {
       const { id: linkId } = R;
       const response = await serverRequest({
         url: `/fmadmincp/submission/update-linkid${location.search}`,
-        data: { linkId: parseInt(linkId) - 42351 }
+        data: { linkId: parseInt(linkId) - 42351 },
       });
       if (!(R = responseHandler(response))) return;
     } else if (type === "edit") {
@@ -165,13 +165,13 @@ export default () => {
   };
 
   //This function handles user role changes
-  const handleChangeRole = async elem => {
+  const handleChangeRole = async (elem) => {
     const { user_role, url } = elem.dataset;
     if (!user_role) return;
     const roles = {
       subscriber: "Subscriber",
       admin: "Admin",
-      superAdmin: "Super Admin"
+      superAdmin: "Super Admin",
     };
     delete roles[user_role];
     const { value: role, dismiss } = await Swal.fire({
@@ -180,11 +180,11 @@ export default () => {
       inputOptions: roles,
       inputPlaceholder: "-- select --",
       showCancelButton: true,
-      inputValidator: value =>
+      inputValidator: (value) =>
         new Promise(
-          resolve =>
+          (resolve) =>
             (value && resolve()) || resolve("You need to select a value")
-        )
+        ),
     });
     if (dismiss) return;
     View.showLoader(true);
@@ -199,9 +199,9 @@ export default () => {
       "dash-graph",
       "dash-doughnut",
       "dash-adminlog",
-      "dash-subscriberslog"
+      "dash-subscriberslog",
     ];
-    return comps.forEach(item =>
+    return comps.forEach((item) =>
       View.addContent(`#${item}`, ejs.render(loader), true)
     );
   };
@@ -211,13 +211,13 @@ export default () => {
       "totalSubscribers",
       "totalReleases",
       "paidSubscribers",
-      "approvedReleases"
+      "approvedReleases",
     ];
     return await Promise.all(
-      boxes.map(async box => {
+      boxes.map(async (box) => {
         const { data } = await serverRequest({
           href: `/fmadmincp/dashboard/${box}`,
-          method: "get"
+          method: "get",
         });
         let { count } = data;
         if (Array.isArray(count)) count = count.length;
@@ -230,7 +230,7 @@ export default () => {
   const buildMainChart = async () => {
     const { data: response } = await serverRequest({
       href: "/fmadmincp/dashboard/get-graph-data",
-      method: "get"
+      method: "get",
     });
     if (!response) return;
     const dates = [];
@@ -238,7 +238,7 @@ export default () => {
     const dateObj = {
       releases: Array(7).fill(0),
       subscribers: Array(7).fill(0),
-      subscriptions: Array(7).fill(0)
+      subscriptions: Array(7).fill(0),
     };
 
     for (let i = 6; i >= 0; --i) {
@@ -271,7 +271,7 @@ export default () => {
       pointRadius: 1,
       pointHitRadius: 10,
       fill: false,
-      lineTension: 0.1
+      lineTension: 0.1,
     };
 
     const options = {};
@@ -284,30 +284,30 @@ export default () => {
           backgroundColor: "rgb(86, 12, 104)",
           borderColor: "rgb(86, 12, 104)",
           data: dateObj.subscribers,
-          ...addedObj
+          ...addedObj,
         },
         {
           label: "Subscriptions",
           backgroundColor: "#91b252",
           borderColor: "#91b252",
           data: dateObj.subscriptions,
-          ...addedObj
+          ...addedObj,
         },
         {
           label: "Releases",
           backgroundColor: "#6262af",
           borderColor: "#6262af",
           data: dateObj.releases,
-          ...addedObj
-        }
-      ]
+          ...addedObj,
+        },
+      ],
     };
 
     View.addContent("#dash-graph", ejs.render(mainChart), true);
     new Chart(View.getElement("#main-chart"), {
       type: "line",
       data,
-      options
+      options,
     });
   };
 
@@ -315,7 +315,7 @@ export default () => {
   const buildSubChart = async () => {
     const { data: response } = await serverRequest({
       href: "/fmadmincp/dashboard/get-packages-sub-count",
-      method: "get"
+      method: "get",
     });
     //COUNTING THE PACKAGE IDS ARE SERIALIZED [1,2,3,4]
     const hashMap = {
@@ -324,7 +324,7 @@ export default () => {
       basic: 2,
       professional: 3,
       "world class": 4,
-      legendary: 5
+      legendary: 5,
     };
 
     const dataValues = [0, 0, 0, 0, 0, 0];
@@ -333,8 +333,6 @@ export default () => {
       ({ count, package: { package: packageName } }) =>
         (dataValues[hashMap[packageName.toLowerCase()]] = count)
     );
-
-    console.log("RESPONSE: ", response);
 
     let data = {
       datasets: [
@@ -346,9 +344,9 @@ export default () => {
             "#1e1e2c",
             "rgb(86, 12, 104)",
             "#91b252",
-            "#6262af"
-          ]
-        }
+            "#6262af",
+          ],
+        },
       ],
       labels: [
         "Single",
@@ -356,14 +354,14 @@ export default () => {
         "Basic",
         "Professional",
         "World Class",
-        "Legendary"
-      ]
+        "Legendary",
+      ],
     };
     View.addContent("#dash-doughnut", ejs.render(subChart), true);
     new Chart(View.getElement("#sub-chart"), {
       type: "doughnut",
       data: data,
-      options: {}
+      options: {},
     });
   };
 
@@ -373,7 +371,7 @@ export default () => {
       logs.map(async (log, i) => {
         const { data } = await serverRequest({
           href: `/fmadmincp/dashboard/${log}`,
-          method: "get"
+          method: "get",
         });
 
         data &&
@@ -387,7 +385,7 @@ export default () => {
   };
 
   //DECLINE COMMENT EDIT
-  const handleDeclineCommentEdit = async elem => {
+  const handleDeclineCommentEdit = async (elem) => {
     const { id } = elem.dataset;
     const declineComment = View.getElement(
       "#decline-comment"
@@ -395,7 +393,7 @@ export default () => {
     const { value: comment, dismiss } = await Swal.fire({
       input: "textarea",
       inputValue: declineComment,
-      showCancelButton: true
+      showCancelButton: true,
     });
     if (dismiss || comment.toLowerCase() === declineComment.toLowerCase())
       return;
@@ -406,17 +404,21 @@ export default () => {
     View.showLoader(true);
     const response = await serverRequest({
       href: `/fmadmincp/submission/action/edit-comment?id=${id}`,
-      data: { comment }
+      data: { comment },
     });
     if (!(R = responseHandler(response))) return;
     return View.refresh();
   };
 
   //CONVERT ACCOUNT TO LABEL
-  const handleConvertToLabel = async () => {
+  const handleConvertToLabel = async (btn) => {
     View.showLoader(true);
+    const { subscriber_id } = btn.dataset;
+    if (!subscriber_id) return;
     const response = await serverRequest({
-      href: "/fmadmincp/subscriber/action/change-to-label"
+      href: `/fmadmincp/subscriber/action/change-to-label?subscriberId=${Number(
+        subscriber_id
+      )}`,
     });
     if (!(R = responseHandler(response))) return;
     return View.refresh();
@@ -436,6 +438,6 @@ export default () => {
     handleStoreLinks,
     handleStoreLinksModal,
     prepareModal,
-    handleConvertToLabel
+    handleConvertToLabel,
   };
 };

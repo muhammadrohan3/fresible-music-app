@@ -1,0 +1,44 @@
+<div class="-u-page profile">
+  <% const {id, stageName, label, twitter, instagram, firstName, lastName,
+  avatar} = pageData %>
+  <div class="profile__left">
+    <div class="profile__left__avatar">
+      <%if(avatar) { %>
+      <img src="<%=avatar %>" alt="<%=firstName %> image" />
+      <% }else { %>
+      <span
+        class="iconify icon:simple-line-icons:user icon-inline:false"
+      ></span>
+      <% } %>
+    </div>
+    <div class="profile__left__links">
+      <div>
+        <a href="/fmadmincp/subscriptions?artistId=<%= id %>"
+          >&raquo; Subscriptions</a
+        >
+      </div>
+      <div>
+        <a href="/fmadmincp/submissions?artistId=<%= id %>">&raquo; Releases</a>
+      </div>
+    </div>
+  </div>
+  <div class="profile__right">
+    <ul class="profile__right__list">
+      <li class="profile__right__list__item">
+        <span>First Name: </span><span><%=firstName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Last Name: </span><span><%=lastName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Stage Name: </span><span><%=stageName %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Twitter: </span><span><%=twitter %></span>
+      </li>
+      <li class="profile__right__list__item">
+        <span>Instagram: </span><span><%=instagram %></span>
+      </li>
+    </ul>
+  </div>
+</div>

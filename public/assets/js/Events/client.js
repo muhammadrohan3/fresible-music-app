@@ -4,7 +4,7 @@ import album from "../utilities/album";
 import AudioPlayer from "../utilities/audioPlayer";
 import processInputIgnore from "../utilities/processInputIgnore";
 
-export default Controller => {
+export default (Controller) => {
   let E;
   const Album = album(Controller, View);
   if (location.pathname.startsWith("/add-music")) {
@@ -13,19 +13,19 @@ export default Controller => {
     // if (location.pathname === "/add-music/create") $("#modal").modal();
     //Flatpickr date component
     flatpickr("input[type=date]", {
-      minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12)
+      minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12),
     });
     //ALBUM FUNCTIONALITY
     Album.initiate();
   }
 
   //CHANGE EVENT LISTENER GROUP
-  document.body.addEventListener("change", e => {
+  document.body.addEventListener("change", (e) => {
     const {
       id,
       type,
       tagName,
-      dataset: { filter_target }
+      dataset: { filter_target },
     } = e.target;
     if (id === "hamburger") return Controller.handleMobileMenu(e.target);
     if (filter_target) Controller.handleSelectFilter(e.target);
@@ -35,7 +35,7 @@ export default Controller => {
   });
 
   //CLICK EVENT LISTENER GROUP
-  document.body.addEventListener("click", e => {
+  document.body.addEventListener("click", (e) => {
     const { id, tagName, dataset } = e.target;
     //HANDLES ACCOUNT VERIFY POPUP ALERT
     if (e.target.classList.contains("page__alert--link"))
@@ -54,15 +54,16 @@ export default Controller => {
     if (id === "addMusic-publish")
       return Controller.handlePublishRelease(e.target);
 
+    //SELECT ACCOUNT TYPE EVENT LISTENER
+    if (id.startsWith("selectAccount-"))
+      return Controller.handleSelectAccountType(e.target);
+
     if (id.startsWith("player-container"))
       return AudioPlayer().handle(e.target);
 
     //SELECT PACKAGE EVENT LISTENER
     if ((E = View.getElement("#selectPackage")) && E.contains(e.target))
       return Controller.selectPackage(e.target);
-
-    if ((E = View.getElement("#selectAccount")) && E.contains(e.target))
-      return Controller.handleSelectAccountType(e.target);
 
     if (location.pathname === "/select-package") {
       if (tagName === "BUTTON" && dataset)
@@ -71,7 +72,7 @@ export default Controller => {
   });
 
   //SUBMIT EVENT LISTENER GROUP
-  document.body.addEventListener("submit", e => {
+  document.body.addEventListener("submit", (e) => {
     e.preventDefault();
     const form = e.target;
     const { id } = form;
@@ -83,6 +84,9 @@ export default Controller => {
     if (id === "addMusic-terms")
       return Controller.handleAddMusicTerms(e.target);
 
+    if (id === "artists-add-artist")
+      return Controller.handleAddNewArtist(e.target);
+
     //This holds it up for the Album functions to take over;
     if (
       (E = View.getElement("#addMusic-album-track-list")) &&
@@ -91,11 +95,12 @@ export default Controller => {
       return null;
 
     // SUBMIT EVENT HANDLERS FOR NORMAL PAGES
-    return Controller.submitForm(form, true);
+
+    return Controller.submitForm(form, { refresh: true });
   });
 
   // ENDED EVENT HANDLERS
-  document.body.addEventListener("ended", e => {
+  document.body.addEventListener("ended", (e) => {
     const { id } = e.target;
     if (id.startsWith("player-track")) return AudioPlayer().ended(e.target);
   });

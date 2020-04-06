@@ -10,10 +10,10 @@ const {
   TEMPKEY,
   WELCOME,
   PASSWORDCHANGED,
-  PASSWORDRESET
+  PASSWORDRESET,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     generateToken,
     schemaQueryConstructor,
@@ -38,7 +38,7 @@ module.exports = Controller => {
     urlFormer,
     copyKeyTo,
     sendMail,
-    resetKey
+    resetKey,
   } = Controller;
 
   router.get(
@@ -64,9 +64,6 @@ module.exports = Controller => {
     loginUser(),
     respondIf("loggedIn", false, "Error logging you in... try again"),
     sameAs("isVerified", false, SCHEMARESULT),
-    fromStore(SCHEMARESULT, ["email"], TEMPKEY, ["isVerified"]),
-    cookieClearer("isVerified"),
-    redirectIf(SAMEAS, true, "/auth/login/set-cookie", TEMPKEY),
     respond(1)
   );
 

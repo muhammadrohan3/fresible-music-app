@@ -1,21 +1,21 @@
 <div class="-u-page" style="max-width: 500px;">
   <% const {stageName, label, twitter, instagram, avatar='', firstName,
-  lastName} = pageData %>
+  lastName, id} = pageData %>
   <div class="alert alert-info mb-4">
     Edit the input fields that require update.
   </div>
   <form class="form -u-form-input-spacing mt-3" id="editProfile">
     <!-- FIRST NAME -->
     <%- include("../partials/form/input", {formData: {name: 'firstName', value:
-    stageName, label: 'First Name', required: '*required'}}) %> <% } %>
+    firstName, label: 'First Name', required: '*required'}}) %>
 
     <!-- LAST NAME -->
     <%- include("../partials/form/input", {formData: {name: 'lastName', value:
-    stageName, label: 'Last Name', required: '*required'}}) %> <% } %>
+    lastName, label: 'Last Name', required: '*required'}}) %>
 
     <!-- STAGE NAME -->
     <%- include("../partials/form/input", {formData: {name: 'stageName', value:
-    stageName, label: 'Stage Name', required: '*required'}}) %> <% } %>
+    stageName, label: 'Stage Name', required: '*required'}}) %>
 
     <!-- AVATAR UPLOAD -->
     <%- include("../partials/form/imageFile", {formData: {name: 'avatar', value:
@@ -31,7 +31,7 @@
 
     <div class="form__submit">
       <div class="text-center">
-        <a href="/artist/<%= id %>/profile"
+        <a href="/artists/<%= id %>"
           ><button type="button" class="btn-outline">
             &larr; View Artist profile
           </button></a

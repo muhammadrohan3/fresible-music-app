@@ -4,14 +4,14 @@ import uploadFile from "./uploadFile";
 import { getStore } from "../Store";
 import FormErrorHandler from "./formErrorHandler";
 
-const submitForm = View => async (form, formOptions = {}) => {
+const submitForm = (View) => async (form, formOptions = {}) => {
   const {
     submiturl,
     validation,
     addinfo,
     query_include,
     query_params,
-    groups
+    groups,
   } = form.dataset;
 
   const { refresh = false, strict = true } = formOptions;
@@ -20,14 +20,14 @@ const submitForm = View => async (form, formOptions = {}) => {
   let QueryParams = {};
   if (query_include) {
     const paramList = window.location.search.split("?")[1].split("&");
-    paramList.forEach(p => {
+    paramList.forEach((p) => {
       const [key, value] = p.split("=");
       QueryParams[key] = value;
     });
   }
   if (query_params) {
     const params = JSON.parse(query_params);
-    params.forEach(p => (QueryParams = { ...QueryParams, ...p }));
+    params.forEach((p) => (QueryParams = { ...QueryParams, ...p }));
   }
   //Refresh means the form should handle what happens next after submission
   if (refresh) View.showLoader(true);
@@ -51,14 +51,14 @@ const submitForm = View => async (form, formOptions = {}) => {
   //THIS CLEARS THE FORM... (OPTIONAL)
   formErrorHandler(form, validation);
 
-  const _isEmpty = obj => !Boolean(Object.entries(obj).length);
+  const _isEmpty = (obj) => !Boolean(Object.entries(obj).length);
 
   if (_isEmpty(rawFormData) && !isThereFile.length) {
     if (refresh)
       return View.showAlert("No new values submitted, nothing changed.");
     return {
       status: "empty",
-      data: "No new values submitted, nothing changed."
+      data: "No new values submitted, nothing changed.",
     };
   }
 
@@ -137,11 +137,10 @@ const submitForm = View => async (form, formOptions = {}) => {
   return View.refresh();
 
   async function makeRequest(href, data, params = {}) {
-    console.log("SUBMITFORM: ", href, data, params);
     const response = await serverRequest({
       href: href || `${location.pathname}${location.search}`,
       data: data,
-      params
+      params,
     });
     return response;
   }

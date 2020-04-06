@@ -22,10 +22,10 @@ const {
   NEWRELEASE,
   PAGEDATA,
   LABELARTIST,
-  TEMPKEY
+  TEMPKEY,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     seeStore,
     schemaDataConstructor,
@@ -56,12 +56,12 @@ module.exports = Controller => {
     setStoreIf,
     addMusic_structureReleaseType,
     addMusic_structureSubs,
-    addMusic_checkIncompleteCreation
+    addMusic_checkIncompleteCreation,
   } = Controller;
 
   router.get(
     "/terms",
-    addToSchema(SITEDATA, { page: "addMusic/terms", title: "Terms" }),
+    addToSchema(SITEDATA, { page: "addMusic/terms", title: "Add Release" }),
     pageRender()
   );
 
@@ -74,8 +74,8 @@ module.exports = Controller => {
       { m: RELEASE, at: ["type"] },
       {
         m: PACKAGE,
-        at: ["package", "maxAlbums", "maxTracks"]
-      }
+        at: ["package", "maxAlbums", "maxTracks"],
+      },
     ]),
     getAllFromSchema(USERPACKAGE, ["id", "status"]),
     addMusic_structureSubs(),
@@ -93,14 +93,14 @@ module.exports = Controller => {
       "userPackageId",
       "trackId",
       "albumId",
-      "type"
+      "type",
     ]),
     respondIf(SCHEMADATA, false, "Form data not received"),
     idMiddleWare(SCHEMADATA, true, [
       "artistId",
       "userPackageId",
       "trackId",
-      "albumId"
+      "albumId",
     ]),
     schemaDataConstructor("user", ["id"], ["userId"]),
     createSchemaData(RELEASE),
@@ -110,7 +110,6 @@ module.exports = Controller => {
       "Error: Could not create release, try again"
     ),
     fromStore(SCHEMARESULT, ["id"], TEMPKEY),
-    seeStore(),
     respond([TEMPKEY])
   );
 
@@ -134,8 +133,8 @@ module.exports = Controller => {
       { m: RELEASE, at: ["type"] },
       {
         m: PACKAGE,
-        at: ["package", "maxAlbums", "maxTracks"]
-      }
+        at: ["package", "maxAlbums", "maxTracks"],
+      },
     ]),
     getAllFromSchema(USERPACKAGE, ["id", "status"]),
     addMusic_structureSubs(),
@@ -152,8 +151,8 @@ module.exports = Controller => {
       { m: RELEASE, at: ["type"] },
       {
         m: PACKAGE,
-        at: ["package", "maxAlbums", "maxTracks"]
-      }
+        at: ["package", "maxAlbums", "maxTracks"],
+      },
     ]),
     getOneFromSchema(USERPACKAGE, ["id", "status", "releases", "package"]),
     addMusic_structureReleaseType(),
@@ -190,19 +189,19 @@ module.exports = Controller => {
       {
         m: USER,
         at: ["id"],
-        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }]
+        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
       {
         m: LABELARTIST,
-        at: ["stageName"]
+        at: ["stageName"],
       },
       {
-        m: TRACK
+        m: TRACK,
       },
       {
         m: ALBUM,
-        i: [{ m: ALBUMTRACK, al: "tracks" }]
-      }
+        i: [{ m: ALBUMTRACK, al: "tracks" }],
+      },
     ]),
     getOneFromSchema(RELEASE, [
       "id",
@@ -214,7 +213,7 @@ module.exports = Controller => {
       "user",
       "labelArtist",
       "track",
-      "album"
+      "album",
     ]),
     redirectIf(SCHEMARESULT, false, "/add-music"),
     isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
@@ -269,6 +268,7 @@ module.exports = Controller => {
 
   router.post(
     "/publishRelease",
+    fromReq("body", ["oldStatus"], TEMPKEY),
     schemaQueryConstructor("query", ["id"]),
     respondIf(
       SCHEMAQUERY,
@@ -279,26 +279,31 @@ module.exports = Controller => {
     addToSchema(SCHEMADATA, { status: "processing" }),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Not updated"),
+    resetKey(TEMPKEY),
+    fromStore(SCHEMAQUERY, ["id"], TEMPKEY),
+    urlFormer("/submission", TEMPKEY),
+    sendMail(NEWRELEASE),
     sameAs("profileActive", 5, USER),
-    redirectIf(SAMEAS, true, "/add-music/publishRelease/proceed"),
-    respond(1)
+    redirectIf(SAMEAS, true, "/add-music/publishRelease/proceed", [TEMPKEY]),
+    respond([TEMPKEY])
   );
 
   //This route is called if the user is still activating his/her profile
   router.get(
     "/publishRelease/proceed",
+    fromReq("query", ["id"], TEMPKEY),
     sameAs("profileActive", 5, USER),
-    respondIf(SAMEAS, false, 1),
+    respondIf(SAMEAS, false, [TEMPKEY]),
     schemaQueryConstructor(USER, ["id"]),
     addToSchema(SCHEMADATA, { profileActive: 6 }),
     updateSchemaData(USER),
-    respond(1)
+    respond([TEMPKEY])
   );
 
   /// This GET ROUTE is called internally to set current submission ID if a profile isn't active yet
   router.get(
     "/set-id",
-    sameAs("profileActive", 2, USER),
+    sameAs("profileActive", 5, USER),
     redirectIf(SAMEAS, false, "/add-music/terms"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     getOneFromSchema(RELEASE),

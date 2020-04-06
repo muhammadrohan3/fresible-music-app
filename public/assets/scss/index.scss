@@ -13,6 +13,11 @@ $font-size-base: 1.5rem !default;
 $table-cell-padding: 1rem !default;
 $table-cell-padding-sm: 0.4rem !default;
 
+//SWEETALERT
+.swal2-popup {
+  font-size: 1.6rem !important;
+}
+
 @import "custom";
 @import "mixins";
 @import "utilities";

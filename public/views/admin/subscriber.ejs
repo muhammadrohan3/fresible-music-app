@@ -28,6 +28,13 @@
           >&raquo; Payment History</a
         >
       </div>
+      <% if(type === 'label') { %>
+      <div>
+        <a href="/fmadmincp/subscriber/<%= Fns.idLookUp(id) %>/artists"
+          >&raquo; View Label Artists</a
+        >
+      </div>
+      <% } %>
     </div>
     <div class="container">
       <div class="row">
@@ -60,7 +67,13 @@
       <% if(type === 'label') { %>
       <span class="badge badge-primary">Label Account</span>
       <% } else { %>
-      <button id="convert-label" class="btn-outline">Convert to a Label</button>
+      <button
+        id="convert-label"
+        class="btn-outline"
+        data-subscriber_id="<%= id %>"
+      >
+        Convert to a Label
+      </button>
       <% } %>
     </div>
   </div>

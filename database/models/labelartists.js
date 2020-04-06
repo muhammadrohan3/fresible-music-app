@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       stageName: DataTypes.STRING,
       twitter: DataTypes.STRING,
       instagram: DataTypes.STRING,
+      avatar: DataTypes.STRING,
       userId: DataTypes.INTEGER
     },
     {}

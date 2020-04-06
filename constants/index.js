@@ -39,6 +39,7 @@ module.exports = {
   RELEASEDECLINED: "submissionDeclined",
   SUBSCRIPTIONACTIVATED: "subscriptionActivated",
   USERCONTACT: "userContact",
+  ACCOUNTTYPECHANGED: "accountTypeChanged",
   WELCOME: "welcome",
-  LINKSADDED: "linksAdded"
+  LINKSADDED: "linksAdded",
 };

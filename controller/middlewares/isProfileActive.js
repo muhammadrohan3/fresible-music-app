@@ -9,7 +9,7 @@ module.exports = ({ req, res }) => () => {
     }
     res.cookie("profileSetup", param, {
       maxAge: 1000 * 60 * 60 * 24,
-      httpOnly: false
+      httpOnly: false,
     });
     const allowedRoutes = [
       "/favicon.ico",
@@ -18,8 +18,16 @@ module.exports = ({ req, res }) => () => {
       "/faqs",
       "/contact-us",
       "/profile",
-      "/logout"
+      "/logout",
     ];
+
+    //CONDITION TO CALL AN HANDLER IF THE SUBSCRIBER IS NOT A LABEL ON THE COMPULSORY ADD ARTIST ROUTE
+    if (req.user.profileActive === 3 && req.user.type !== "label") {
+      return req.path === "/profile-setup/skip-add-artist"
+        ? null
+        : handleResponse("redirect", "/profile-setup/skip-add-artist");
+    }
+
     if (
       allowedRoutes.includes(req.path) ||
       req.path.startsWith(route) ||
