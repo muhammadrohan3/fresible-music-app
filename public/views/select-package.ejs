@@ -1,7 +1,13 @@
 
 <div class="select-package -u-mobile-default" id="selectPackage">
   <% const packages = {} %> 
-  <% pageData.forEach(({package, ...others}) => packages[package.toLowerCase().replace(/ /g, "")] = others) %>
+  <% pageData.forEach(({package, ...others}) => {
+    let T;
+    //IF THERE ARE MORE THAN 1 PACKAGE, THE ACTIVE ON WILL BE FAVOURED
+    let packageName = package.toLowerCase().replace(/ /g, "");
+    if(T = packages[packageName]) packages[packageName] = T.status === 'inactive' ? others : T;
+    else packages[packageName] = others;
+  }) %>
   <% const {single, album, basic, professional, worldclass, legendary} = packages; %> 
   <div class="select-package__packages -u-grid-mobile">
     <% if(single.status === 'active') { %>
@@ -15,7 +21,7 @@
           <li class="package__list--item">
             <span class="iconify" data-icon="ei:check" data-inline="false"></span>
             <span
-              >Quickly Distribute your Single Track on 100+ Music Streaming Platform like
+              >Quickly Distribute your Single Track on 60+ Music Streaming Platform like
               Spotify, Apple Music, Boomplay Music, iTunes, Deezer, Amazon Music,
               etc.</span
             >
@@ -37,7 +43,7 @@
         <li class="package__list--item">
           <span class="iconify" data-icon="ei:check" data-inline="false"></span>
           <span
-            >Quickly Distribute your Single Album on 100+ Music Streaming Platform like
+            >Quickly Distribute your Single Album on 60+ Music Streaming Platform like
             Spotify, Apple Music, Boomplay Music, iTunes, Deezer, Amazon Music,
             etc.</span
           >
@@ -59,14 +65,14 @@
           <li class="package__list--item">
             <span class="iconify" data-icon="ei:check" data-inline="false"></span>
             <span
-              >Distribution for 1 Artist on 100+ Music Streaming Platform like
+              >Distribution for 1 Artist on 60+ Music Streaming Platform like
               Spotify, Apple Music, Boomplay Music, iTunes, Deezer, Amazon Music,
               etc.</span
             >
           </li>
           <li class="package__list--item">
             <span class="iconify" data-icon="ei:check" data-inline="false"></span>
-            <span>3 Separate Tracks for a year</span>
+            <span>2 Separate Tracks for a year</span>
           </li>
           <li class="package__list--item">
             <span class="iconify" data-icon="ei:check" data-inline="false"></span>
@@ -105,13 +111,6 @@
             <li class="package__list--item">
               <span class="iconify" data-icon="ei:check" data-inline="false"></span>
               <span>Album Distribution</span>
-            </li>
-            <li class="package__list--item">
-              <span class="iconify" data-icon="ei:check" data-inline="false"></span>
-              <span
-                >Music Shoutout on twitter via @manlikepolsa (over 100,000+
-                followers) for a day</span
-              >
             </li>
             <li class="package__list--item">
               <span class="iconify" data-icon="ei:check" data-inline="false"></span>
@@ -160,7 +159,7 @@
               </li>
               <li class="package__list--item">
                 <span class="iconify" data-icon="ei:check" data-inline="false"></span>
-                <span>Playlist Pitching</span>
+                <span>1 Playlist Pitching</span>
               </li>
               <li class="package__list--item">
                 <span class="iconify" data-icon="ei:check" data-inline="false"></span>
@@ -194,7 +193,7 @@
                 </li>
                 <li class="package__list--item">
                   <span class="iconify" data-icon="ei:check" data-inline="false"></span>
-                  <span> Instagram sponsored ads for one week for one song/video*</span>
+                  <span> Instagram sponsored ads for one day for one song/video*</span>
                 </li>
                 <li class="package__list--item">
                   <span class="iconify" data-icon="ei:check" data-inline="false"></span>

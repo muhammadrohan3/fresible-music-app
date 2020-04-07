@@ -60,7 +60,10 @@
             ></span>
             <span>Max Tracks:</span>
           </div>
-          <span><%=package.maxTracks %></span>
+          <span
+            ><%=package.maxTracks > 100 ? 'unlimited' : package.maxTracks
+            %></span
+          >
         </li>
         <li class="overview__cat__list__item">
           <div class="u-flex-middle">

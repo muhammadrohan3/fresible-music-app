@@ -9,11 +9,7 @@
     "scss": "node-sass --watch public/assets/scss/mail.scss -o public/assets/css",
     "webpack": "webpack --watch",
     "webpack-web": "webpack --config ./webpack.f-config.js",
-    "webpack-node": "webpack --config ./webpack.b-config.js",
-    "db:migrate": "sequelize db:migrate",
-    "insert:data": "node ./scripts/bulkInsertData",
-    "modify:releases": "node ./scripts/modifyReleases",
-    "modify:subscriptions": "node ./scripts/modifySubscriptions"
+    "webpack-node": "webpack --config ./webpack.b-config.js"
   },
   "author": "",
   "license": "ISC",
