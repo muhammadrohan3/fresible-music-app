@@ -175,6 +175,8 @@ const whereGen = (store, data = {}) => {
   if (mutation && !items.length)
     throw new Error("ERROR: WHEREGEN, where items empty ");
 
+  console.log("WHERE: ", items);
+
   return {
     where: {
       [Op[queryMainOp || "and"]]: items,

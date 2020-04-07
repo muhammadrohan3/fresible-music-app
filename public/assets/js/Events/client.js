@@ -62,11 +62,8 @@ export default (Controller) => {
       return AudioPlayer().handle(e.target);
 
     //SELECT PACKAGE EVENT LISTENER
-    if ((E = View.getElement("#selectPackage")) && E.contains(e.target))
-      return Controller.selectPackage(e.target);
-
     if (location.pathname === "/select-package") {
-      if (tagName === "BUTTON" && dataset)
+      if (tagName === "BUTTON" && e.target.classList.contains("package__btn"))
         return Controller.selectPackage(e.target);
     }
   });

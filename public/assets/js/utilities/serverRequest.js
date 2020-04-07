@@ -16,7 +16,12 @@ export default async ({
       data: "Your internet connection is not active, do turn it on if off",
     };
   const trim = (text) => (text.startsWith("/") ? text.substr(1) : text);
-
+  if (location.host.includes("localhost"))
+    console.log(
+      `MAKING A ${method} REQUEST TO ${href || url}, params - data `,
+      params,
+      data
+    );
   try {
     const response = await axios({
       url:

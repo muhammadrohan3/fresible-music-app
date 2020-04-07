@@ -35,16 +35,31 @@ const Controller = () => {
     const [file] = e.files;
     if (!file) return;
 
+    //GET THE UPLOADED FILE EXTENSION
+    const splittedFileName = file.name.split(".");
+    const uploadedFileType = splittedFileName[
+      splittedFileName.length - 1
+    ].toLowerCase();
+
     const _nullFileInput = (errorMessage) => {
       //nulls the file and output an error of filesize larger than the limit specified
       View.addContent(preview, errorMessage);
       e.value = null;
       View.addContent(label, `Select ${filetype}`);
     };
-    if (filetype === "image" && !file.type.includes("image"))
+
+    if (
+      filetype === "image" &&
+      !["jpg", "jpeg", "png"].includes(uploadedFileType)
+    )
       return _nullFileInput("Image format not supported");
-    if (filetype === "audio" && !["audio/mp3", "audio/wav"].includes(file.type))
+    if (
+      file.type &&
+      filetype === "audio" &&
+      !["mp3", "wav", "mpeg"].includes(uploadedFileType)
+    ) {
       return _nullFileInput("Audio format not supported");
+    }
     //Comparing the actual file size to the limit set for the file
     if (file.size / 1000000 > filelimit)
       return _nullFileInput(`File is larger than ${filelimit}mb`);
@@ -148,10 +163,14 @@ const Controller = () => {
       data,
     });
 
+  /////////////////////////////////// SELECT PACKAGE
+  // @param e - target element
   const selectPackage = async (e) => {
     View.showLoader(true);
     let { account_type } = e.dataset;
+    let packageId = parseInt(e.dataset.package);
     let artistId = null;
+
     //Checks if the user is a label
     if (account_type === "label") {
       const response = await serverRequest({
@@ -159,7 +178,6 @@ const Controller = () => {
         method: "get",
       });
       if (!(R = responseHandler(response))) return;
-
       //converts the array of artist information to an object containing the artist's ID and stageName
       const artists = R.reduce(
         (acc, { id, stageName }) => ({ ...acc, [id]: stageName }),
@@ -177,12 +195,11 @@ const Controller = () => {
           Promise.resolve(value ? null : "You need to select an artist"),
       });
       //Shows an alert if the user dismisses the popup
-      if (dismiss) return View.showAlert("You need to select an artist");
+      if (!artist) return View.showAlert("You need to select an artist");
       artistId = Number(artist);
-      View.showLoader(true);
     }
-    let packageId = parseInt(e.dataset.package);
-    if (Number.isNaN(packageId)) return null;
+
+    View.showLoader(true);
     const response = await serverRequest({
       href: "/select-package",
       data: { packageId, artistId },

@@ -8,10 +8,10 @@ const {
   SCHEMAINCLUDE,
   SCHEMARESULT,
   SCHEMAQUERY,
-  LOG
+  LOG,
 } = require("../../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     copyKeyTo,
     addToSchema,
@@ -21,7 +21,7 @@ module.exports = Controller => {
     fromStore,
     runSql,
     resetKey,
-    seeStore
+    seeStore,
   } = Controller;
 
   //   router.use(addToSchema(SCHEMAQUERY, {}))
@@ -31,14 +31,13 @@ module.exports = Controller => {
     addToSchema(SCHEMAQUERY, { role: "subscriber" }),
     getAndCountAllFromSchema(USER, ["id"]),
     fromStore(SCHEMARESULT, ["count"], TEMPKEY),
-    seeStore([SCHEMARESULT]),
     respond([TEMPKEY])
   );
 
   router.get(
     "/totalReleases",
     addToSchema(SCHEMAINCLUDE, [
-      { m: USER, at: ["id"], w: [{ role: "subscriber" }] }
+      { m: USER, at: ["id"], w: [{ role: "subscriber" }] },
     ]),
     getAndCountAllFromSchema(RELEASE, ["id"]),
     fromStore(SCHEMARESULT, ["count"], TEMPKEY),
@@ -49,10 +48,10 @@ module.exports = Controller => {
     "/paidSubscribers",
     addToSchema(SCHEMAQUERY, { status: "active" }),
     addToSchema(SCHEMAINCLUDE, [
-      { m: USER, at: ["id"], w: [{ role: "subscriber" }] }
+      { m: USER, at: ["id"], w: [{ role: "subscriber" }] },
     ]),
     getAndCountAllFromSchema(USERPACKAGE, ["id"], {
-      group: ["userId"]
+      group: ["userId"],
     }),
     fromStore(SCHEMARESULT, ["count"], TEMPKEY),
     respond([TEMPKEY])
@@ -60,9 +59,9 @@ module.exports = Controller => {
 
   router.get(
     "/approvedReleases",
-    addToSchema(SCHEMAQUERY, { status: "approved" }),
+    addToSchema(SCHEMAQUERY, { status: "in stores" }),
     addToSchema(SCHEMAINCLUDE, [
-      { m: USER, at: ["id"], w: [{ role: "subscriber" }] }
+      { m: USER, at: ["id"], w: [{ role: "subscriber" }] },
     ]),
     getAndCountAllFromSchema(RELEASE, ["id"]),
     fromStore(SCHEMARESULT, ["count"], TEMPKEY),
@@ -73,13 +72,13 @@ module.exports = Controller => {
     "/get-packages-sub-count",
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["id"], w: [{ role: "subscriber" }] },
-      { m: PACKAGE, at: ["package"] }
+      { m: PACKAGE, at: ["package"] },
     ]),
     getAllFromSchema(
       USERPACKAGE,
       ["packageId", ["COUNT", "packageId", "count"]],
       {
-        group: ["packageId"]
+        group: ["packageId"],
       }
     ),
     respond([SCHEMARESULT])
