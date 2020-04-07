@@ -47,7 +47,7 @@ const route = [
 ];
 
 const jsonData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, "../", "/blueoqom_music.json"), {
+  fs.readFileSync(path.join(__dirname, "../", "/blueoqom_music.json"), {
     encoding: "utf-8",
   })
 );
