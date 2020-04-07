@@ -1,3 +1,4 @@
+require("dotenv").config();
 const fs = require("fs");
 const {
   User,
@@ -12,7 +13,7 @@ const {
   Release,
   Log,
   Link,
-  Labelartist
+  Labelartist,
 } = require("../database/models/index");
 
 const route = [
@@ -38,15 +39,15 @@ const route = [
       "trackId",
       "videoId",
       "artistId",
-      "linkId"
-    ]
+      "linkId",
+    ],
   ],
-  ["logs", Log, ["id", "userId"]]
+  ["logs", Log, ["id", "userId"]],
 ];
 
 const jsonData = JSON.parse(
   fs.readFileSync("../blueoqom_music.json", {
-    encoding: "utf-8"
+    encoding: "utf-8",
   })
 );
 
@@ -70,16 +71,16 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
       }
       const idHash = {};
       const data = [];
-      table.map(item => {
+      table.map((item) => {
         if (idHash[item.id]) {
           console.error("CULPRIT FOUND: ", item.id);
           return;
         }
-        toChange.forEach(change => {
+        toChange.forEach((change) => {
           let value = parseInt(item[change]);
           if (!Number.isNaN(value)) item[change] = value + 42351;
         });
-        toRemove && toRemove.forEach(tR => delete item[tR]);
+        toRemove && toRemove.forEach((tR) => delete item[tR]);
         data.push(item);
         idHash[item.id] = 1;
         toRename.forEach(([key, newKey]) => {

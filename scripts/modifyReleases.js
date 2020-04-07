@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Release } = require("../database/models/index");
 
 (async () => {

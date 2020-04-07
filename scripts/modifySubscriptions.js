@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Userpackage } = require("../database/models/index");
 
 (async () => {
