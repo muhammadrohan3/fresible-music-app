@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fs = require("fs");
+const path = require("path");
 const {
   User,
   Userprofile,
@@ -46,7 +46,7 @@ const route = [
 ];
 
 const jsonData = JSON.parse(
-  fs.readFileSync(__dirname + "../blueoqom_music.json", {
+  fs.readFileSync(path.resolve(__dirname, "../", "/blueoqom_music.json"), {
     encoding: "utf-8",
   })
 );
