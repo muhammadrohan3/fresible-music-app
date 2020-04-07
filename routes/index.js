@@ -190,9 +190,10 @@ router.get(
   addToSchema(SCHEMAINCLUDE, [
     {
       m: RELEASE,
+      al: "release",
       i: [
         { m: TRACK, at: ["artwork", "title", "featured"] },
-        { m: ALBUM, at: ["artwork", "name"] },
+        { m: ALBUM, at: ["artwork", "title"] },
         {
           m: USER,
           at: ["id"],
