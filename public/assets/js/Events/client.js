@@ -3,6 +3,8 @@ import flatpickr from "flatpickr";
 import album from "../utilities/album";
 import AudioPlayer from "../utilities/audioPlayer";
 import processInputIgnore from "../utilities/processInputIgnore";
+import injectLoader from "../utilities/injectLoader";
+import loadRoyaltiesChart from "../utilities/loadRoyaltiesChart";
 
 export default (Controller) => {
   let E;
@@ -17,6 +19,11 @@ export default (Controller) => {
     });
     //ALBUM FUNCTIONALITY
     Album.initiate();
+  }
+
+  if (location.pathname === "/royalties") {
+    injectLoader(["royalties-graph-container"]);
+    loadRoyaltiesChart();
   }
 
   //CHANGE EVENT LISTENER GROUP

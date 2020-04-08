@@ -1,28 +1,34 @@
 import View from "../View";
+import injectLoader from "../utilities/injectLoader";
 
-export default Controller => {
+export default (Controller) => {
   const { getElement } = View;
   let t;
 
   if (location.pathname === "/fmadmincp") {
     (async () => {
-      Controller.injectDashboardLoader();
+      injectLoader([
+        "dash-graph",
+        "dash-doughnut",
+        "dash-adminlog",
+        "dash-subscriberslog",
+      ]);
       //I SHOULD HAVE USED PROMISE.ALL HERE BUT THERE IS A REASON ITS LIKE THIS
       await Promise.all([
         Controller.getTopBoxesData(),
         Controller.buildMainChart(),
         Controller.buildSubChart(),
-        Controller.renderLogs()
+        Controller.renderLogs(),
       ]);
     })();
   }
 
-  getElement("body").addEventListener("change", e => {
+  getElement("body").addEventListener("change", (e) => {
     const { id } = e.target;
     if (id === "hamburger") return Controller.handleMobileMenu(e.target);
   });
 
-  getElement("body").addEventListener("click", e => {
+  getElement("body").addEventListener("click", (e) => {
     // e.preventDefault();
     const { id } = e.target;
     if (id === "decline") return Controller.handleDecline(e.target);
@@ -38,7 +44,7 @@ export default Controller => {
     return Controller.handleBasicAction(e.target);
   });
 
-  getElement("body").addEventListener("submit", e => {
+  getElement("body").addEventListener("submit", (e) => {
     if (e.target.dataset.ignore) return;
     e.preventDefault();
     const { id } = e.target;

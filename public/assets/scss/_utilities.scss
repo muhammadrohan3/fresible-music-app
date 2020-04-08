@@ -11,6 +11,26 @@
   font-weight: normal !important;
 }
 
+.-u-font-bold {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.-u-font-big {
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.-u-font-small-light {
+  font-size: 1.2rem;
+  color: #111;
+  font-weight: 300;
+}
+
+.-u-color-primary {
+  color: $color-primary;
+}
+
 .-u-text-underline {
   text-decoration: underline;
 }

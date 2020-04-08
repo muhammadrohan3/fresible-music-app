@@ -7,7 +7,6 @@ import "../../../../node_modules/chart.js/dist/Chart";
 import View from "../View";
 import serverRequest from "../utilities/serverRequest";
 import mobileMenu from "../utilities/handleMobileMenu";
-import loader from "../templates/loader";
 import Log from "../templates/log";
 import { mainChart, subChart } from "../templates/dashboardCanvas";
 import submitForm from "../utilities/submitForm";
@@ -186,19 +185,6 @@ export default () => {
     const response = await serverRequest({ data: { role }, href: url });
     if (!(R = responseHandler(response))) return;
     return View.refresh();
-  };
-
-  //// INJECTS THE LOADERS TO THE COMP DATA TO BE FETCHED.
-  const injectDashboardLoader = () => {
-    const comps = [
-      "dash-graph",
-      "dash-doughnut",
-      "dash-adminlog",
-      "dash-subscriberslog",
-    ];
-    return comps.forEach((item) =>
-      View.addContent(`#${item}`, ejs.render(loader), true)
-    );
   };
 
   const getTopBoxesData = async () => {
@@ -427,7 +413,6 @@ export default () => {
     getTopBoxesData,
     buildMainChart,
     buildSubChart,
-    injectDashboardLoader,
     renderLogs,
     handleDeclineCommentEdit,
     handleStoreLinks,
