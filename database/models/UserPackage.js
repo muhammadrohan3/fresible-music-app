@@ -7,32 +7,32 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       userId: DataTypes.INTEGER,
       packageId: DataTypes.INTEGER,
       status: {
         type: DataTypes.ENUM,
         values: ["inactive", "active", "expired"],
-        defaultValue: "inactive"
+        defaultValue: "inactive",
       },
       paymentDate: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
-      artistId: DataTypes.INTEGER
+      artistId: DataTypes.INTEGER,
     },
     {
-      timestamps: true
+      timestamps: true,
     }
   );
 
-  UserPackage.associate = function({
+  UserPackage.associate = function ({
     Package,
     User,
     Submission,
     Payment,
     Release,
-    Labelartist
+    Labelartist,
   }) {
     //UserPackage belongsTo Package
     this.belongsTo(Package, { foreignKey: "packageId", as: "package" });
@@ -40,16 +40,10 @@ module.exports = (sequelize, DataTypes) => {
     //UserPackage belongsTo User
     this.belongsTo(User, { foreignKey: "userId" });
 
-    //UserPackage hasMany Submissions
-    this.hasMany(Submission, {
-      foreignKey: "userPackageId",
-      as: "submissions"
-    });
-
     //UserPackage hasMany Payments
     this.hasMany(Payment, {
       foreignKey: "userPackageId",
-      as: "payments"
+      as: "payments",
     });
 
     //UserPackage hasMany Releases

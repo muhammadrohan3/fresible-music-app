@@ -1,39 +1,28 @@
 "use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("labelartists", {
+    return queryInterface.createTable("stores", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      firstName: {
+      store: {
         type: Sequelize.STRING,
       },
-      lastName: {
+      description: {
+        type: Sequelize.TEXT,
+      },
+      type: {
+        type: Sequelize.ENUM,
+        values: ["streaming", "downloading", "both"],
+        defaultValue: "both",
+      },
+      goLiveTime: {
         type: Sequelize.STRING,
       },
-      stageName: {
-        type: Sequelize.STRING,
-      },
-      twitter: {
-        type: Sequelize.STRING,
-      },
-      instagram: {
-        type: Sequelize.STRING,
-      },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "users",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
-      avatarId: {
+      logoId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
@@ -54,6 +43,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("labelArtists");
+    return queryInterface.dropTable("stores");
   },
 };

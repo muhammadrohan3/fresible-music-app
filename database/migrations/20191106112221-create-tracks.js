@@ -1,48 +1,51 @@
-("use strict");
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("userprofiles", {
+    return queryInterface.createTable("tracks", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      twitter: {
-        type: Sequelize.STRING,
-      },
-      instagram: {
-        type: Sequelize.STRING,
-      },
-      label: {
-        type: Sequelize.STRING,
-      },
-      stageName: {
-        type: Sequelize.STRING,
-      },
-      phone: {
-        type: Sequelize.STRING,
-      },
-      bank: {
-        type: Sequelize.STRING,
-      },
-      bankAccount: {
-        type: Sequelize.STRING,
-      },
-      bankAccountNo: {
-        type: Sequelize.STRING,
-      },
-      userId: {
+      releaseId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "users",
+          model: "releases",
           key: "id",
         },
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      avatarId: {
+      title: {
+        type: Sequelize.STRING,
+      },
+      artiste: {
+        type: Sequelize.STRING,
+      },
+      featured: {
+        type: Sequelize.STRING,
+      },
+      genre: {
+        type: Sequelize.STRING,
+      },
+      track: {
+        type: Sequelize.STRING,
+      },
+      explicit: {
+        type: Sequelize.STRING,
+      },
+      copyrightYear: {
+        type: Sequelize.STRING,
+      },
+      copyrightHolder: {
+        type: Sequelize.STRING,
+      },
+      isrcCode: {
+        type: Sequelize.STRING,
+      },
+      trackId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
@@ -63,6 +66,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("userProfiles");
+    return queryInterface.dropTable("tracks");
   },
 };

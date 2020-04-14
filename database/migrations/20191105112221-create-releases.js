@@ -33,35 +33,11 @@ module.exports = {
         allowNull: true,
         values: ["track", "album", "video"],
       },
-      albumId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "albums",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      title: {
+        type: Sequelize.STRING,
       },
-      trackId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "tracks",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
-      videoId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "videos",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      price: {
+        type: Sequelize.STRING,
       },
       status: {
         type: Sequelize.ENUM,
@@ -78,9 +54,8 @@ module.exports = {
           "expired",
         ],
       },
-      submitStatus: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
+      originalReleaseDate: {
+        type: Sequelize.DATE,
       },
       releaseDate: {
         type: Sequelize.DATE,
@@ -88,8 +63,21 @@ module.exports = {
       approvedDate: {
         type: Sequelize.DATE,
       },
+      manualBarcode: {
+        type: Sequelize.STRING,
+      },
       comment: {
         type: Sequelize.TEXT,
+      },
+      artworkId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "uploads",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
       artistId: {
         type: Sequelize.INTEGER,

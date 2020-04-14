@@ -9,9 +9,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM,
         values: ["track", "album", "video"],
       },
-      albumId: DataTypes.INTEGER,
-      trackId: DataTypes.INTEGER,
-      videoId: DataTypes.INTEGER,
+      title: DataTypes.STRING,
+      price: DataTypes.STRING,
+      artwork: DataTypes.STRING,
       status: {
         type: DataTypes.ENUM,
         values: [
@@ -25,27 +25,19 @@ module.exports = (sequelize, DataTypes) => {
           "expired",
         ],
       },
+      originalReleaseDate: DataTypes.DATE,
       releaseDate: DataTypes.DATE,
       approvedDate: DataTypes.DATE,
+      manualBarcode: DataTypes.STRING,
       comment: DataTypes.TEXT,
-      linkId: DataTypes.INTEGER,
+      uploadId: DataTypes.INTEGER,
+      artworkId: DataTypes.INTEGER,
       artistId: DataTypes.INTEGER,
     },
     {}
   );
 
-  Release.associate = function ({
-    Video,
-    Album,
-    Track,
-    Userpackage,
-    User,
-    Link,
-    Labelartist,
-  }) {
-    this.belongsTo(Video, { foreignKey: "videoId", as: "video" });
-    this.belongsTo(Album, { foreignKey: "albumId", as: "album" });
-    this.belongsTo(Track, { foreignKey: "trackId", as: "track" });
+  Release.associate = function ({ Userpackage, User, Link, Labelartist }) {
     this.belongsTo(Userpackage, {
       foreignKey: "userPackageId",
       as: "subscription",

@@ -8,6 +8,7 @@ const profile = require("./profile");
 const account = require("./account");
 const artists = require("./artists");
 const royalties = require("./royalties");
+const analytics = require("./analytics");
 const invoice = require("./invoices");
 const wallet = require("./wallet");
 const adminIndex = require("./admin/index");
@@ -91,6 +92,7 @@ router.use("/contact-us", contactUs(Controller));
 router.use("/complete-profile", completeProfile(Controller));
 router.use("/artists", artists(Controller));
 router.use("/royalties", royalties(Controller));
+router.use("/analytics", analytics(Controller));
 router.use("/invoices", invoice(Controller));
 router.use("/wallet", wallet(Controller));
 

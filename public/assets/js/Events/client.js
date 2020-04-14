@@ -5,9 +5,11 @@ import AudioPlayer from "../utilities/audioPlayer";
 import processInputIgnore from "../utilities/processInputIgnore";
 import injectLoader from "../utilities/injectLoader";
 import loadRoyaltiesChart from "../utilities/loadRoyaltiesChart";
+import analytics from "../utilities/Analytics";
 
 export default (Controller) => {
   let E;
+  const Analytics = analytics();
   const Album = album(Controller, View);
   if (location.pathname.startsWith("/add-music")) {
     //This opens the bootstrap modal containing informations relevant to the add music page (Maybe I will work on a generic form of notification later)
@@ -24,6 +26,10 @@ export default (Controller) => {
   if (location.pathname === "/royalties") {
     injectLoader(["royalties-graph-container"]);
     loadRoyaltiesChart();
+  }
+
+  if (location.pathname === "/analytics") {
+    Analytics.handle();
   }
 
   //CHANGE EVENT LISTENER GROUP

@@ -8,12 +8,12 @@ module.exports = (sequelize, DataTypes) => {
       stageName: DataTypes.STRING,
       twitter: DataTypes.STRING,
       instagram: DataTypes.STRING,
-      avatar: DataTypes.STRING,
-      userId: DataTypes.INTEGER
+      userId: DataTypes.INTEGER,
+      avatarId: DataTypes.INTEGER,
     },
     {}
   );
-  Labelartist.associate = function({ User }) {
+  Labelartist.associate = function ({ User }) {
     this.belongsTo(User, { foreignKey: "userId", as: "labelArtist" });
   };
   return Labelartist;

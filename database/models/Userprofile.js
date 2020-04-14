@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
   const Userprofile = sequelize.define(
     "userprofiles",
     {
-      avatar: DataTypes.STRING,
       twitter: DataTypes.STRING,
       instagram: DataTypes.STRING,
       label: DataTypes.STRING,
@@ -12,12 +11,13 @@ module.exports = (sequelize, DataTypes) => {
       bank: DataTypes.STRING,
       bankAccount: DataTypes.STRING,
       bankAccountNo: DataTypes.STRING,
-      userId: DataTypes.INTEGER
+      userId: DataTypes.INTEGER,
+      avatarId: DataTypes.INTEGER,
     },
     {}
   );
-  Userprofile.associate = function(models) {
-    // associations can be defined here
+  Userprofile.associate = function ({ Upload }) {
+    this.belongsTo(Upload, { foreignKey: "avatarId", as: "userAvatar" });
   };
   return Userprofile;
 };

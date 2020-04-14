@@ -11,11 +11,13 @@ module.exports = (sequelize, DataTypes) => {
       artwork: DataTypes.STRING,
       explicit: DataTypes.STRING,
       copyrightYear: DataTypes.STRING,
-      copyrightHolder: DataTypes.STRING
+      copyrightHolder: DataTypes.STRING,
+      trackId: DataTypes.INTEGER,
+      releaseId: DataTypes.INTEGER,
     },
     {}
   );
-  Track.associate = function({ Release }) {
+  Track.associate = function ({ Release }) {
     //Track belongsTo Release
     this.hasOne(Release, { foreignKey: "trackId", as: "release" });
   };
