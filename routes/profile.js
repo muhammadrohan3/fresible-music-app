@@ -9,10 +9,10 @@ const {
   PAGEDATA,
   USER,
   USERPROFILE,
-  PASSWORDCHANGED
+  PASSWORDCHANGED,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     seeStore,
     schemaDataConstructor,
@@ -27,7 +27,7 @@ module.exports = Controller => {
     respondIf,
     comparePassword,
     encryptPassword,
-    sendMail
+    sendMail,
   } = Controller;
 
   // This GET route renders the profile page
@@ -80,7 +80,7 @@ module.exports = Controller => {
     schemaDataConstructor("body"),
     getOneFromSchema(USER),
     fromStore(SCHEMADATA, ["oldPassword"], "passwordToCompare", ["password"]),
-    comparePassword,
+    comparePassword(),
     respondIf(
       "loginChecked",
       false,

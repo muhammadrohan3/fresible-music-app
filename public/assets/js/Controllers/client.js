@@ -53,13 +53,13 @@ const Controller = () => {
       !["jpg", "jpeg", "png"].includes(uploadedFileType)
     )
       return _nullFileInput("Image format not supported");
-    if (
-      file.type &&
-      filetype === "audio" &&
-      !["mp3", "wav", "mpeg"].includes(uploadedFileType)
-    ) {
-      return _nullFileInput("Audio format not supported");
-    }
+    // if (
+    //   file.type &&
+    //   filetype === "audio" &&
+    //   !["mp3", "wav", "mpeg"].includes(uploadedFileType)
+    // ) {
+    //   return _nullFileInput("Audio format not supported");
+    // }
     //Comparing the actual file size to the limit set for the file
     if (file.size / 1000000 > filelimit)
       return _nullFileInput(`File is larger than ${filelimit}mb`);
