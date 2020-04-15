@@ -23,12 +23,12 @@ export default (Controller) => {
     })();
   }
 
-  getElement("body").addEventListener("change", (e) => {
+  document.body.addEventListener("change", (e) => {
     const { id } = e.target;
     if (id === "hamburger") return Controller.handleMobileMenu(e.target);
   });
 
-  getElement("body").addEventListener("click", (e) => {
+  document.body.addEventListener("click", (e) => {
     // e.preventDefault();
     const { id } = e.target;
     if (id === "decline") return Controller.handleDecline(e.target);
@@ -44,10 +44,21 @@ export default (Controller) => {
     return Controller.handleBasicAction(e.target);
   });
 
-  getElement("body").addEventListener("submit", (e) => {
+  document.body.addEventListener("submit", (e) => {
     if (e.target.dataset.ignore) return;
     e.preventDefault();
     const { id } = e.target;
     if (id === "links-form") return Controller.handleStoreLinks(e.target);
   });
+
+  //BOOTSTRAP EVENTS
+  const toggleIcon = (status) => (e) => {
+    $(e.target).prev().find(".iconify").replaceWith(`<span
+      class="iconify"
+      data-icon="bx:bx-chevron-${status ? "up" : "down"}-circle"
+      data-inline="false"
+    ></span>`);
+  };
+  $("#analyticsAdd").on("hidden.bs.collapse", toggleIcon(false));
+  $("#analyticsAdd").on("shown.bs.collapse", toggleIcon(true));
 };

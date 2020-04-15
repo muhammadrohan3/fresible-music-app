@@ -1,0 +1,132 @@
+<section class="-u-page analyticsAdd" id="analyticsAdd">
+  <div id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="analyticsAdd__panel">
+      <div class="analyticsAdd__panel__heading" role="tab" id="headingOne">
+        <a
+          role="button"
+          data-toggle="collapse"
+          data-parent="#accordion"
+          href="#collapseOne"
+          aria-expanded="true"
+          aria-controls="collapseOne"
+          class="analyticsAdd__panel__heading__link"
+        >
+          <span class="analyticsAdd__panel__heading__link--text"
+            >Release Title (Album)</span
+          >
+          <span
+            class="iconify"
+            data-icon="bx:bx-chevron-down-circle"
+            data-inline="false"
+          ></span>
+        </a>
+      </div>
+      <div
+        id="collapseOne"
+        class="analyticsAdd__panel__body collapse"
+        role="tabpanel"
+        aria-labelledby="headingOne"
+      >
+        <div
+          class="analyticsAdd"
+          id="accordionSub"
+          role="tablist"
+          aria-multiselectable="true"
+        >
+          <div class="analyticsAdd__panel bg-white ml-5 mr-2">
+            <div
+              class="analyticsAdd__panel__heading"
+              role="tab"
+              id="headingOne"
+            >
+              <a
+                role="button"
+                data-toggle="collapse"
+                data-parent="#accordionSub"
+                href="#collapseSubOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+                class="analyticsAdd__panel__heading__link"
+              >
+                <span class="analyticsAdd__panel__heading__link--text"
+                  >TRACK TITLE</span
+                >
+                <span
+                  class="iconify"
+                  data-icon="bx:bx-chevron-down-circle"
+                  data-inline="false"
+                ></span>
+              </a>
+            </div>
+            <div
+              id="collapseSubOne"
+              class="collapse"
+              role="tabpanel"
+              aria-labelledby="headingOne"
+            >
+              <div class="ml-5 d-flex flex-column flex-md-row px-2">
+                <section class="analyticsAdd__option">
+                  <div class="analyticsAdd__option--title">Streams</div>
+                  <div class="d-flex ml-2">
+                    <button class="analyticsAdd__option--icon">+</button>
+                    <div class="analyticsAdd__option__container">
+                      <div class="analyticsAdd__option__container__item">
+                        <div>
+                          <%- include('../partials/form/select', {formData: {}})
+                          %>
+                        </div>
+                        <div>
+                          <%- include('../partials/form/input', {formData: {}})
+                          %>
+                        </div>
+                      </div>
+                      <div class="analyticsAdd__option__container__item">
+                        <div>
+                          <%- include('../partials/form/select', {formData: {}})
+                          %>
+                        </div>
+                        <div>
+                          <%- include('../partials/form/input', {formData: {}})
+                          %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <!-- DOWNLOADS -->
+                <section class="analyticsAdd__option">
+                  <div class="analyticsAdd__option--title">Downloads</div>
+                  <div class="d-flex">
+                    <button class="analyticsAdd__option--icon">+</button>
+                    <div class="analyticsAdd__option__container">
+                      <div class="analyticsAdd__option__container__item">
+                        <div>
+                          <%- include('../partials/form/select', {formData: {}})
+                          %>
+                        </div>
+                        <div>
+                          <%- include('../partials/form/input', {formData: {}})
+                          %>
+                        </div>
+                      </div>
+                      <div class="analyticsAdd__option__container__item">
+                        <div>
+                          <%- include('../partials/form/select', {formData: {}})
+                          %>
+                        </div>
+                        <div>
+                          <%- include('../partials/form/input', {formData: {}})
+                          %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

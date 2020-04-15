@@ -72,6 +72,8 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
         },
       };
 
+      let L;
+
       //Create or updates the data for the CurrentDataHash variable declared at the top
       CurrentDataHash = {
         ...CurrentDataHash,
@@ -79,27 +81,18 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
           title: release.title,
           type: release.type,
           stream:
-            ((CurrentDataHash[releaseId] || {})["stream"] || 0) + (count || 0),
+            ((L = CurrentDataHash[releaseId] || {})["stream"] || 0) +
+            (count || 0),
           tracks: {
-            ...((CurrentDataHash[releaseId] || {})["tracks"] || {}),
+            ...(L = L["tracks"] || {}),
             [trackId]: {
               title: track.title,
-              stream:
-                ((((CurrentDataHash[releaseId] || {})["tracks"] || {})[
-                  trackId
-                ] || {})["stream"] || 0) + (count || 0),
+              stream: ((L = L[trackId] || {})["stream"] || 0) + (count || 0),
               stores: {
-                ...(((CurrentDataHash[releaseId] || {})[trackId] || {})[
-                  "stores"
-                ] || {}),
+                ...(L = L["stores"] || {}),
                 [storeId]: {
                   title: store.store,
-                  stream:
-                    (((((((CurrentDataHash[releaseId] || {})["tracks"] || {})[
-                      trackId
-                    ] || {})["stream"] || {})["stores"] || {})[storeId] || {})[
-                      "stream"
-                    ] || 0) + (count || 0),
+                  stream: ((L[storeId] || {})["stream"] || 0) + (count || 0),
                 },
               },
             },
@@ -107,35 +100,25 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
         },
       };
 
-      //Create or updates the data for the PreviousDataHash variable declared at the top
+      ///
       PreviousDataHash = {
         ...PreviousDataHash,
         [preleaseId]: {
           title: prelease.title,
           type: prelease.type,
           stream:
-            ((PreviousDataHash[preleaseId] || {})["stream"] || 0) +
+            ((L = PreviousDataHash[preleaseId] || {})["stream"] || 0) +
             (pcount || 0),
           tracks: {
-            ...((PreviousDataHash[preleaseId] || {})["tracks"] || {}),
+            ...(L = L["tracks"] || {}),
             [ptrackId]: {
               title: ptrack.title,
-              stream:
-                ((((PreviousDataHash[preleaseId] || {})["tracks"] || {})[
-                  ptrackId
-                ] || {})["stream"] || 0) + (pcount || 0),
+              stream: ((L = L[ptrackId] || {})["stream"] || 0) + (pcount || 0),
               stores: {
-                ...(((PreviousDataHash[preleaseId] || {})[ptrackId] || {})[
-                  "stores"
-                ] || {}),
+                ...(L = L["stores"] || {}),
                 [pstoreId]: {
-                  pstore,
-                  stream:
-                    (((((((PreviousDataHash[preleaseId] || {})["tracks"] || {})[
-                      ptrackId
-                    ] || {})["stream"] || {})["stores"] || {})[pstoreId] || {})[
-                      "stream"
-                    ] || 0) + (pcount || 0),
+                  title: pstore.store,
+                  stream: ((L[pstoreId] || {})["stream"] || 0) + (pcount || 0),
                 },
               },
             },
@@ -149,10 +132,7 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
         ...ChartDataHash,
         [releaseId]: {
           label: title,
-          stream: [
-            ...((ChartDataHash[releaseId] || {})["stream"] || []),
-            stream,
-          ],
+          data: [...((ChartDataHash[releaseId] || {})["data"] || []), stream],
         },
       };
     });
@@ -162,20 +142,28 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
   const ChartDataset = Object.values(ChartDataHash).map((value) => value);
   const ChartData = {
     dates: Dates,
-    dataset: ChartDataset,
+    datasets: ChartDataset,
   };
 
   const rangeReport = [0, 0];
   //Prepare Table Data;
+  //Loops throught the CurrentDataHash by creating an array of entries
   const TableData = Object.entries(CurrentDataHash).map(([id, data]) => {
+    //Gets the previous Data for the current Data ID
     const previousData = PreviousDataHash[id];
+    //Get the key value pairs
     const { stream, tracks, type, title } = data;
-    rangeReport[0] = rangeReport[0] + stream;
-    rangeReport[1] = rangeReport[1] + previousData.stream;
+    rangeReport = [
+      rangeReport[0] + stream,
+      rangeReport[1] + previousData.stream,
+    ];
     const [rate, growing] = _growthCalc(stream, previousData.stream);
-    const children = Object.entries(tracks).map(([trackId, trackData]) => {
+    const tracksToLoop =
+      type === "track" ? [Object.entries(tracks)[0]] : Object.entries(tracks);
+    const children = tracksToLoop.map(([trackId, trackData]) => {
       const previousTrackData = previousData["tracks"][trackId];
       const { stream, title, stores } = trackData;
+      const releaseTitle = title;
       const [rate, growing] = _growthCalc(stream, previousTrackData.stream);
       const children = Object.entries(stores).map(([storeId, storeData]) => {
         const previousTrackStoreData =
@@ -192,7 +180,7 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
           growing,
         };
       });
-      if (type === "track") return children[0];
+      if (type === "track") return children;
       return {
         title,
         stream,
@@ -203,10 +191,11 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
     });
     return {
       title,
+      type,
       stream,
       rate,
       growing,
-      children,
+      children: type === "track" ? children[0] : children,
     };
   });
 

@@ -1,10 +1,19 @@
 function test(schemaResult, range) {
+  const Colors = [
+    { color: "#3f91f3", light: "#d9e9fc" },
+    { color: "#FF006E", light: "#ffcce2" },
+    { color: "#12c1ae", light: "#c9f9f4" },
+    { color: "#C482DB", light: "#f3e6f7" },
+    { color: "#d4008b", light: "#fec4ea" },
+    { color: "#3F0099", light: "#d5b8ff" },
+    { color: "#940062", light: "#ffb7e7" },
+  ];
   let ChartDataHash = {};
   let CurrentDataHash = {};
   let PreviousDataHash = {};
   const _growthCalc = (current, previous) => {
     if (current === 0 || previous === 0) return [null, null];
-    let rate = ((current - previous) / current) * 100;
+    let rate = ((current - previous) / previous) * 100;
     rate = Math.round(rate * 100) / 100;
     if (rate === 0) return [null, null];
     return [rate, rate > 0];
@@ -51,6 +60,7 @@ function test(schemaResult, range) {
             ((holdRelease[releaseId] || {})["stream"] || 0) + (count || 0),
         },
       };
+      let L;
       //
       CurrentDataHash = {
         ...CurrentDataHash,
@@ -58,27 +68,18 @@ function test(schemaResult, range) {
           title: release.title,
           type: release.type,
           stream:
-            ((CurrentDataHash[releaseId] || {})["stream"] || 0) + (count || 0),
+            ((L = CurrentDataHash[releaseId] || {})["stream"] || 0) +
+            (pcount || 0),
           tracks: {
-            ...((CurrentDataHash[releaseId] || {})["tracks"] || {}),
+            ...(L = L["tracks"] || {}),
             [trackId]: {
               title: track.title,
-              stream:
-                ((((CurrentDataHash[releaseId] || {})["tracks"] || {})[
-                  trackId
-                ] || {})["stream"] || 0) + (count || 0),
+              stream: ((L = L[trackId] || {})["stream"] || 0) + (pcount || 0),
               stores: {
-                ...(((CurrentDataHash[releaseId] || {})[trackId] || {})[
-                  "stores"
-                ] || {}),
+                ...(L = L["stores"] || {}),
                 [storeId]: {
                   title: store.store,
-                  stream:
-                    (((((((CurrentDataHash[releaseId] || {})["tracks"] || {})[
-                      trackId
-                    ] || {})["stream"] || {})["stores"] || {})[storeId] || {})[
-                      "stream"
-                    ] || 0) + (count || 0),
+                  stream: ((L[storeId] || {})["stream"] || 0) + (pcount || 0),
                 },
               },
             },
@@ -93,28 +94,18 @@ function test(schemaResult, range) {
           title: prelease.title,
           type: prelease.type,
           stream:
-            ((PreviousDataHash[preleaseId] || {})["stream"] || 0) +
-            (pcount || 0),
+            ((L = PreviousDataHash[preleaseId] || {})["stream"] || 0) +
+            (count || 0),
           tracks: {
-            ...((PreviousDataHash[preleaseId] || {})["tracks"] || {}),
+            ...(L = L["tracks"] || {}),
             [ptrackId]: {
               title: ptrack.title,
-              stream:
-                ((((PreviousDataHash[preleaseId] || {})["tracks"] || {})[
-                  ptrackId
-                ] || {})["stream"] || 0) + (pcount || 0),
+              stream: ((L = L[ptrackId] || {})["stream"] || 0) + (count || 0),
               stores: {
-                ...(((PreviousDataHash[preleaseId] || {})[ptrackId] || {})[
-                  "stores"
-                ] || {}),
+                ...(L = L["stores"] || {}),
                 [pstoreId]: {
-                  pstore,
-                  stream:
-                    (((((((PreviousDataHash[preleaseId] || {})["tracks"] || {})[
-                      ptrackId
-                    ] || {})["stream"] || {})["stores"] || {})[pstoreId] || {})[
-                      "stream"
-                    ] || 0) + (pcount || 0),
+                  title: pstore.store,
+                  stream: ((L[pstoreId] || {})["stream"] || 0) + (count || 0),
                 },
               },
             },
@@ -141,20 +132,28 @@ function test(schemaResult, range) {
   const ChartDataset = Object.values(ChartDataHash).map((value) => value);
   const ChartData = {
     dates: Dates,
-    dataset: ChartDataset,
+    datasets: ChartDataset,
   };
 
-  const rangeReport = [0, 0];
+  let rangeReport = [0, 0];
   //Prepare Table Data;
+  //Loops throught the CurrentDataHash by creating an array of entries
   const TableData = Object.entries(CurrentDataHash).map(([id, data]) => {
+    //Gets the previous Data for the current Data ID
     const previousData = PreviousDataHash[id];
+    //Get the key value pairs
     const { stream, tracks, type, title } = data;
-    rangeReport[0] = rangeReport[0] + stream;
-    rangeReport[1] = rangeReport[1] + previousData.stream;
+    rangeReport = [
+      rangeReport[0] + stream,
+      rangeReport[1] + previousData.stream,
+    ];
     const [rate, growing] = _growthCalc(stream, previousData.stream);
-    const children = Object.entries(tracks).map(([trackId, trackData]) => {
+    const tracksToLoop =
+      type === "track" ? [Object.entries(tracks)[0]] : Object.entries(tracks);
+    const children = tracksToLoop.map(([trackId, trackData]) => {
       const previousTrackData = previousData["tracks"][trackId];
       const { stream, title, stores } = trackData;
+      const releaseTitle = title;
       const [rate, growing] = _growthCalc(stream, previousTrackData.stream);
       const children = Object.entries(stores).map(([storeId, storeData]) => {
         const previousTrackStoreData =
@@ -171,7 +170,7 @@ function test(schemaResult, range) {
           growing,
         };
       });
-      if (type === "track") return children[0];
+      if (type === "track") return children;
       return {
         title,
         stream,
@@ -186,7 +185,7 @@ function test(schemaResult, range) {
       stream,
       rate,
       growing,
-      children,
+      children: type === "track" ? children[0] : children,
     };
   });
 

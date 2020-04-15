@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Dashboard = require("./dashboard");
+const Analytics = require("./analytics");
 const {
   SITEDATA,
   SAMEAS,
@@ -62,6 +63,7 @@ module.exports = (Controller) => {
   router.get("/", addToSchema(SITEDATA, { page: "dashboard" }), pageRender());
 
   router.use("/dashboard", Dashboard(Controller));
+  router.use("/analytics", Analytics(Controller));
 
   ////LOGS
   router.get(
