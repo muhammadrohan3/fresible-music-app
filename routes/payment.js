@@ -190,7 +190,14 @@ module.exports = (Controller) => {
   router.get(
     "/history",
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMAINCLUDE, [{ m: PACKAGE }]),
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: USERPACKAGE,
+        at: ["id"],
+        al: "subscription",
+        i: [{ m: PACKAGE, at: ["package"] }],
+      },
+    ]),
     getAllFromSchema(PAYMENT),
     fromStore(SCHEMARESULT, null, PAGEDATA),
     copyKeyTo(PAGEDATA, SITEDATA),
@@ -207,8 +214,12 @@ module.exports = (Controller) => {
     redirectIf(SCHEMAQUERY, false, "/payment/history"),
     schemaQueryConstructor("user", ["id"], ["userid"]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: "package" },
-      { m: "userpackage", al: "subscription", at: ["id"] },
+      {
+        m: USERPACKAGE,
+        al: "subscription",
+        at: ["id"],
+        i: [{ m: PACKAGE }],
+      },
     ]),
     getOneFromSchema(PAYMENT),
     redirectIf(SCHEMARESULT, false, "/payment/history"),

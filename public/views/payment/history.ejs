@@ -11,8 +11,8 @@
         </tr>
       </thead>
       <tbody>
-        <% pageData && pageData.forEach(d => { const {id, status, date, package}
-        = d; %>
+        <% pageData && pageData.forEach(d => { const {id, status, date,
+        subscription: {package}} = d; %>
         <tr>
           <td>
             <a href="/payment/history/single?id=<%=Fns.idLookUp(id) %>"

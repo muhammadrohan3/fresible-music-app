@@ -499,7 +499,12 @@ module.exports = (Controller) => {
     fromReq("query", ["p"], "schemaOptions"),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
-      { m: PACKAGE, at: ["package"] },
+      {
+        m: USERPACKAGE,
+        at: ["id"],
+        al: "subscription",
+        i: [{ m: PACKAGE }],
+      },
     ]),
     getAndCountAllFromSchema(PAYMENT),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
@@ -517,8 +522,12 @@ module.exports = (Controller) => {
         at: ["id", "firstName", "lastName"],
         i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
-      { m: PACKAGE },
-      { m: USERPACKAGE, al: "subscription", at: ["id"] },
+      {
+        m: USERPACKAGE,
+        at: ["id"],
+        al: "subscription",
+        i: [{ m: PACKAGE }],
+      },
     ]),
     getOneFromSchema(PAYMENT),
     redirectIf(SCHEMARESULT, false, "/fmadmincp/payments"),
@@ -538,7 +547,12 @@ module.exports = (Controller) => {
     schemaQueryConstructor("params", ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
-      { m: PACKAGE, at: ["package"] },
+      {
+        m: USERPACKAGE,
+        at: [],
+        al: "subscription",
+        i: [{ m: PACKAGE, at: ["package"] }],
+      },
     ]),
     getAndCountAllFromSchema(PAYMENT),
     respondIf(SCHEMARESULT, false, "HELLO"),

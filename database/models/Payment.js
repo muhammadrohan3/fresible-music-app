@@ -7,25 +7,20 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.INTEGER,
       status: DataTypes.STRING,
       reference: DataTypes.STRING,
-      date: DataTypes.DATE
+      date: DataTypes.DATE,
     },
     {}
   );
 
-  Payment.associate = function({ Userpackage, Package, User }) {
+  Payment.associate = function ({ Userpackage, Package, User }) {
     //User belongsToMany Packages
     this.belongsTo(Userpackage, {
       foreignKey: "userPackageId",
-      as: "subscription"
-    });
-
-    this.belongsTo(Package, {
-      foreignKey: "packageId",
-      as: "package"
+      as: "subscription",
     });
 
     this.belongsTo(User, {
-      foreignKey: "userId"
+      foreignKey: "userId",
     });
   };
 

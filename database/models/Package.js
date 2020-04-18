@@ -11,25 +11,19 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM,
         values: ["inactive", "active"],
-        defaultValue: "active"
-      }
+        defaultValue: "active",
+      },
     },
     {
-      timestamps: false
+      timestamps: false,
     }
   );
-  Package.associate = function({ User, Userpackage, Payment }) {
+  Package.associate = function ({ User, Userpackage }) {
     // Package belongsToMany User
     this.belongsToMany(User, {
       through: Userpackage,
       foreignKey: "packageId",
-      as: "packages"
-    });
-
-    // Package hasMany Payments
-    this.hasMany(Payment, {
-      foreignKey: "packageId",
-      as: "payments"
+      as: "packages",
     });
   };
   return Package;
