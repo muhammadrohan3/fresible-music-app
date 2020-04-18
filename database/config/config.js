@@ -9,16 +9,16 @@ module.exports = {
     host: "localhost",
     dialect: "mysql",
     dialectModule: mysql2,
-    logging: false
+    logging: false,
   },
   test: {
     username: "root",
     password: null,
-    database: "fresible_music_test",
+    database: "fresible_music-test",
     host: "localhost",
     dialect: "mysql",
     logging: false,
-    dialectModule: mysql2
+    dialectModule: mysql2,
   },
   production: {
     username: process.env.DB_USERNAME,
@@ -27,6 +27,6 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: process.env.DB_TYPE,
     dialectModule: mysql2,
-    logging: false
-  }
+    logging: false,
+  },
 };
