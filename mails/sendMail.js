@@ -10,7 +10,7 @@ module.exports = ({ subject, email, template, variables }) => {
     ejs.renderFile(getMailTemplate(template), variables, (err, data) => {
       if (err) throw new Error(err);
       const mailOptions = {
-        from: '"Fresible Music" <music@fresible.com>', // sender address
+        from: "Fresible Music <music@fresible.com>", // sender address
         to: email, // list of receivers
         subject, // Subject line
         html: data, // html body

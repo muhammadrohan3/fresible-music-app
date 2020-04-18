@@ -378,48 +378,57 @@ const Controller = () => {
 
   //HANDLE ADD-MUSIC SAVE
   const handleSaveRelease = async (callback = false) => {
+    //Checks if the callback is true (means, it was called by the publishRelease)
     !callback && View.showLoader(true);
     const RELEASE_DATE_FORM_ID = "#addMusic-release-date";
     const ALBUM_FORM_ID = "#addMusic-album-form";
     const TRACK_FORM_ID = "#addMusic-track-form";
+    //Gets the release type of the submission
     const { release_type } = View.getElement("#addMusic").dataset;
 
+    //An array that holds the statuses of the form to be submitted
     let Status = [];
 
+    //A helper function that runs a function with the params and checks the status of the response and makes decision
     const _analyze = async (func, params) => {
       const { status, data } = await func.apply(null, params);
-      if (status === "error") return false;
+      if (status === "error") {
+        Status.push(false);
+        return false;
+      }
       return data;
     };
 
-    //
-
+    //An helper that submit forms for this function
     const _submitForm = async (formId) => {
       const form = View.getElement(formId);
       if (!form) return true;
+      //Submits the form and returns response for the _analyze function
       return await submitForm(form, { strict: callback ? true : false });
     };
 
-    const releaseDateFormResponse = await _analyze(_submitForm, [
-      RELEASE_DATE_FORM_ID,
-    ]);
-    if (!releaseDateFormResponse) Status.push(false);
+    //Release Date form handler
+    await _analyze(_submitForm, [RELEASE_DATE_FORM_ID]);
+
     if (release_type === "track") {
       const response = await _analyze(_submitForm, [TRACK_FORM_ID]);
-      if (!response) Status.push(false);
     } else {
-      const response = await _analyze(_submitForm, [ALBUM_FORM_ID]);
-      if (!response) Status.push(false);
-      const albumSubmissionResponse = await Album.handleSubmit(callback);
-      if (!albumSubmissionResponse) Status.push(false);
+      //submission and analyzing of album related forms
+      await _analyze(_submitForm, [ALBUM_FORM_ID]);
+      await _analyze(Album.handleSubmit, callback);
     }
+
+    //If any of the submission above fails, throw an error alert
     if (Status.length)
       return View.showAlert(
         "Error: It seems your submission was not successful, check your internet connection and try again or contact admin",
         5
       );
-    if (!callback) return View.refresh();
-    return await callback();
+
+    //If there is callback, run the callback function
+    if (callback) return await callback();
+    //Refresh the view
+    return View.refresh();
   };
 
   return {

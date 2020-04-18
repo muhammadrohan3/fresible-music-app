@@ -77,7 +77,6 @@ const submitForm = (View) => async (form, formOptions = {}) => {
       if (fileInStore) {
         const response = await uploadFile(name);
         if (!(R = responseHandler(response))) return false;
-
         const { secure_url } = R;
         rawFormData = { ...rawFormData, [name]: secure_url };
       }
@@ -129,7 +128,7 @@ const submitForm = (View) => async (form, formOptions = {}) => {
     }
   }
 
-  //DEFAULT (THESE RUNS AFTER THE GROUP IF THERE IS ANY)... Its the default form submitter.
+  // DEFAULT (THESE RUNS AFTER THE GROUP IF THERE IS ANY)... Its the default form submitter.
   const response = await makeRequest(submiturl, rawFormData, QueryParams);
   //refresh means the submitForm function should continue and refresh the page afterwards
   if (!refresh) return response;

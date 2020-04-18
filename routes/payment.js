@@ -19,10 +19,10 @@ const {
   PACKAGE,
   SUBSCRIPTIONACTIVATED,
   PAGEDATA,
-  SITEDATA
+  SITEDATA,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     seeStore,
     urlFormer,
@@ -47,7 +47,7 @@ module.exports = Controller => {
     respondIf,
     redirectIf,
     redirect,
-    sendMail
+    sendMail,
   } = Controller;
 
   /// This GET route renders the payment page
@@ -74,9 +74,7 @@ module.exports = Controller => {
     getOneFromSchema(USERPACKAGE),
     respondIf(SCHEMARESULT, false, "data not found"),
     fromStore(SCHEMARESULT, ["package"], "paystackKey"),
-    fromStore(SCHEMARESULT, ["id", "userId", "packageId"], SCHEMADATA, [
-      "userPackageId"
-    ]),
+    fromStore(SCHEMARESULT, ["id", "userId"], SCHEMADATA, ["userPackageId"]),
     resetKey(SCHEMARESULT),
     createSchemaData(PAYMENT),
     fromStore(SCHEMARESULT, ["id"], "paystackKey"),
@@ -197,7 +195,7 @@ module.exports = Controller => {
     fromStore(SCHEMARESULT, null, PAGEDATA),
     copyKeyTo(PAGEDATA, SITEDATA),
     addToSchema(SITEDATA, {
-      title: "Payment History"
+      title: "Payment History",
     }),
     pageRender()
   );
@@ -210,7 +208,7 @@ module.exports = Controller => {
     schemaQueryConstructor("user", ["id"], ["userid"]),
     addToSchema(SCHEMAINCLUDE, [
       { m: "package" },
-      { m: "userpackage", al: "subscription", at: ["id"] }
+      { m: "userpackage", al: "subscription", at: ["id"] },
     ]),
     getOneFromSchema(PAYMENT),
     redirectIf(SCHEMARESULT, false, "/payment/history"),
@@ -219,7 +217,7 @@ module.exports = Controller => {
     copyKeyTo(PAGEDATA, SITEDATA),
     addToSchema(SITEDATA, {
       page: "payment/single-payment-history",
-      title: "Payment Summary"
+      title: "Payment Summary",
     }),
     pageRender()
   );

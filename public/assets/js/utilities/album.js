@@ -23,7 +23,7 @@ export default () => {
     if (TRACKLIST.dataset.existing) checkForTracksAndRender();
     else handleNew();
     //Click events handler
-    TRACKLIST.addEventListener("click", e => {
+    TRACKLIST.addEventListener("click", (e) => {
       const clickedElem = e.target;
       const { num, type } = clickedElem.dataset;
       if (type === "edit") return handleEdit(num);
@@ -34,7 +34,7 @@ export default () => {
     getElement("#new").addEventListener("click", () => handleNew());
 
     //Change event handler for music title changes
-    TRACKLIST.addEventListener("change", e => {
+    TRACKLIST.addEventListener("change", (e) => {
       let elem = e.target;
       const { target } = elem.dataset;
       if (elem.tagName === "INPUT" && elem.name === "title")
@@ -42,7 +42,7 @@ export default () => {
     });
 
     //Submit event handlers
-    TRACKLIST.addEventListener("submit", async e => {
+    TRACKLIST.addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
       const { num, type } = form.dataset;
@@ -54,7 +54,7 @@ export default () => {
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, I'm done with this track"
+          confirmButtonText: "Yes, I'm done with this track",
         });
         if (result.dismiss) return;
         toggleTrack(num, true);
@@ -69,7 +69,7 @@ export default () => {
     //If there are no existing dataset return false
     if (!existing) return false;
     //Parses the data set and insert component for each
-    JSON.parse(existing).forEach(data => {
+    JSON.parse(existing).forEach((data) => {
       insertComponent(data, true);
     });
     //Resets each individual track count
@@ -98,7 +98,7 @@ export default () => {
         url,
         upload_preset,
         stagename,
-        data
+        data,
       })
     );
     tab && toggleTrack(i, true);
@@ -118,13 +118,13 @@ export default () => {
     return (window.location.hash = `track${i}`);
   };
 
-  const handleEdit = num => {
+  const handleEdit = (num) => {
     if (isAnyOpen())
       return View.showAlert("You are not yet done with an active track");
     return toggleTrack(num, false);
   };
 
-  const handleDelete = async num => {
+  const handleDelete = async (num) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -132,7 +132,7 @@ export default () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, delete it!",
     });
     if (result.dismiss) return;
     const toRemove = getElement(`#track${num}`);
@@ -182,7 +182,7 @@ export default () => {
     //Uploads the file to the server
     const response = await uploadFile(fileName);
     if (!(R = responseHandler(response))) {
-      uploadingFiles = uploadingFiles.filter(item => item !== fileName);
+      uploadingFiles = uploadingFiles.filter((item) => item !== fileName);
       return check ? false : true;
     }
     setStore("uploadedFiles", [fileName]);
@@ -190,7 +190,7 @@ export default () => {
     const hiddenInput = trackForm.querySelector("input[type='hidden']");
     hiddenInput.value = R.secure_url;
     //removes the just uploaded file from the array
-    uploadingFiles = uploadingFiles.filter(item => item !== fileName);
+    uploadingFiles = uploadingFiles.filter((item) => item !== fileName);
     return true;
   };
 
@@ -203,7 +203,7 @@ export default () => {
       const { num } = track.dataset;
       const form = View.getElement("form", track);
       const doneStatus = await handleDone(num, distribute);
-      if (!doneStatus) return false;
+      if (!doneStatus) return { status: false };
       const { rawFormData } = doneStatus && View.getFormData(form, true);
       formData.push({ ...rawFormData, albumId });
     }
@@ -213,12 +213,12 @@ export default () => {
       method: "post",
       data: formData,
       params: {
-        albumId
-      }
+        albumId,
+      },
     });
 
     if (!(R = responseHandler(submitResponse))) return false;
-    return true;
+    return { status: true, data: R };
   };
 
   const toggleTrack = (trackNo, status) => {
@@ -237,7 +237,7 @@ export default () => {
     });
   };
 
-  const generateToken = n => {
+  const generateToken = (n) => {
     let token = "";
     for (let i = 1; i <= n; i++) {
       token += Math.floor(Math.random() * 9);
@@ -248,6 +248,6 @@ export default () => {
   return {
     initiate,
     tracksNotValidated,
-    handleSubmit
+    handleSubmit,
   };
 };
