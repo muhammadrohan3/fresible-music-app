@@ -1,41 +1,22 @@
 import "regenerator-runtime/runtime";
 import Swal from "sweetalert2";
 import { async, promised } from "q";
-import moment from "moment";
 import * as ejs from "../ejs.min.js";
 import "../../../../node_modules/chart.js/dist/Chart";
 import View from "../View";
 import serverRequest from "../utilities/serverRequest";
 import mobileMenu from "../utilities/handleMobileMenu";
-import Log from "../templates/log";
-import { mainChart, subChart } from "../templates/dashboardCanvas";
 import submitForm from "../utilities/submitForm";
 import AdminModals from "../popups/admin";
 import modalPrepare from "../utilities/prepareModal";
+import DashboardLoader from "../components/AdminDashboard";
+import AnalyticsLoader from "../components/AdminAnalytics";
 
 export default () => {
   let R;
   const SubmitForm = submitForm(View);
 
   const prepareModal = modalPrepare(AdminModals);
-
-  const timeFunc = (date) => {
-    const todayTimeHandler = (date) => {
-      let t;
-      if ((t = moment().diff(moment(date), "s")) < 60) return `${t}s`;
-      if ((t = moment().diff(moment(date), "m")) < 60) return `${t}m`;
-      if ((t = moment().diff(moment(date), "h")) < 24) return `${t}h`;
-    };
-
-    const daysHandler = (date) => {
-      if (moment().diff(moment(date), "w") > 0)
-        return moment(date).format("YYYY-MM-DD");
-      return `${moment().diff(moment(date), "d")}d`;
-    };
-
-    if (moment().diff(moment(date), "h") >= 24) return daysHandler(date);
-    return todayTimeHandler(date);
-  };
 
   const handleMobileMenu = mobileMenu(View);
   const responseHandler = ({ status, data = true }, customMessage) => {
@@ -187,184 +168,6 @@ export default () => {
     return View.refresh();
   };
 
-  const getTopBoxesData = async () => {
-    const boxes = [
-      "totalSubscribers",
-      "totalReleases",
-      "paidSubscribers",
-      "approvedReleases",
-    ];
-    return await Promise.all(
-      boxes.map(async (box) => {
-        const { data } = await serverRequest({
-          href: `/fmadmincp/dashboard/${box}`,
-          method: "get",
-        });
-        let { count } = data;
-        if (Array.isArray(count)) count = count.length;
-        return View.addContent(`#${box}`, count);
-      })
-    );
-  };
-
-  /////////////
-  const buildMainChart = async () => {
-    const { data: response } = await serverRequest({
-      href: "/fmadmincp/dashboard/get-graph-data",
-      method: "get",
-    });
-    if (!response) return;
-    const dates = [];
-    const days = [];
-    const dateObj = {
-      releases: Array(7).fill(0),
-      subscribers: Array(7).fill(0),
-      subscriptions: Array(7).fill(0),
-    };
-
-    for (let i = 6; i >= 0; --i) {
-      const m = moment().subtract(i, "days");
-      dates.push(m.format("YYYY-MM-DD"));
-      days.push(m.format("ddd"));
-    }
-    for (let item in response) {
-      if (response.hasOwnProperty(item)) {
-        //
-        response[item].forEach(({ count, date }) => {
-          //
-          dateObj[item][dates.indexOf(date)] = count;
-        });
-      }
-    }
-
-    const addedObj = {
-      borderCapStyle: "butt",
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: "miter",
-      pointBorderColor: "rgba(75,192,192,1)",
-      pointBackgroundColor: "#fff",
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: "rgba(75,192,192,1)",
-      pointHoverBorderColor: "rgba(220,220,220,1)",
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      fill: false,
-      lineTension: 0.1,
-    };
-
-    const options = {};
-
-    var data = {
-      labels: days,
-      datasets: [
-        {
-          label: "Subscribers",
-          backgroundColor: "rgb(86, 12, 104)",
-          borderColor: "rgb(86, 12, 104)",
-          data: dateObj.subscribers,
-          ...addedObj,
-        },
-        {
-          label: "Subscriptions",
-          backgroundColor: "#91b252",
-          borderColor: "#91b252",
-          data: dateObj.subscriptions,
-          ...addedObj,
-        },
-        {
-          label: "Releases",
-          backgroundColor: "#6262af",
-          borderColor: "#6262af",
-          data: dateObj.releases,
-          ...addedObj,
-        },
-      ],
-    };
-
-    View.addContent("#dash-graph", ejs.render(mainChart), true);
-    new Chart(View.getElement("#main-chart"), {
-      type: "line",
-      data,
-      options,
-    });
-  };
-
-  //////////////////////////>>>>>>>>SUB CHART
-  const buildSubChart = async () => {
-    const { data: response } = await serverRequest({
-      href: "/fmadmincp/dashboard/get-packages-sub-count",
-      method: "get",
-    });
-    //COUNTING THE PACKAGE IDS ARE SERIALIZED [1,2,3,4]
-    const hashMap = {
-      single: 0,
-      album: 1,
-      basic: 2,
-      professional: 3,
-      "world class": 4,
-      legendary: 5,
-    };
-
-    const dataValues = [0, 0, 0, 0, 0, 0];
-
-    response.forEach(
-      ({ count, package: { package: packageName } }) =>
-        (dataValues[hashMap[packageName.toLowerCase()]] = count)
-    );
-
-    let data = {
-      datasets: [
-        {
-          data: dataValues,
-          backgroundColor: [
-            "#84BC9C",
-            "#246EB9",
-            "#1e1e2c",
-            "rgb(86, 12, 104)",
-            "#91b252",
-            "#6262af",
-          ],
-        },
-      ],
-      labels: [
-        "Single",
-        "Album",
-        "Basic",
-        "Professional",
-        "World Class",
-        "Legendary",
-      ],
-    };
-    View.addContent("#dash-doughnut", ejs.render(subChart), true);
-    new Chart(View.getElement("#sub-chart"), {
-      type: "doughnut",
-      data: data,
-      options: {},
-    });
-  };
-
-  const renderLogs = async () => {
-    const logs = ["dash-subscriberslog", "dash-adminlog"];
-    await Promise.all(
-      logs.map(async (log, i) => {
-        const { data } = await serverRequest({
-          href: `/fmadmincp/dashboard/${log}`,
-          method: "get",
-        });
-
-        data &&
-          View.addContent(
-            `#${log}`,
-            ejs.render(Log, { data, timeFunc, isAdmin: i }),
-            true
-          );
-      })
-    );
-  };
-
   //DECLINE COMMENT EDIT
   const handleDeclineCommentEdit = async (elem) => {
     const { id } = elem.dataset;
@@ -410,10 +213,8 @@ export default () => {
     handleBasicAction,
     handleDecline,
     handleChangeRole,
-    getTopBoxesData,
-    buildMainChart,
-    buildSubChart,
-    renderLogs,
+    DashboardLoader,
+    AnalyticsLoader,
     handleDeclineCommentEdit,
     handleStoreLinks,
     handleStoreLinksModal,

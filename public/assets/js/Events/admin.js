@@ -1,5 +1,5 @@
 import View from "../View";
-import injectLoader from "../utilities/injectLoader";
+import Loader from "../components/Loader";
 
 export default (Controller) => {
   const { getElement } = View;
@@ -7,7 +7,7 @@ export default (Controller) => {
 
   if (location.pathname === "/fmadmincp") {
     (async () => {
-      injectLoader([
+      Loader([
         "dash-graph",
         "dash-doughnut",
         "dash-adminlog",
@@ -15,10 +15,20 @@ export default (Controller) => {
       ]);
       //I SHOULD HAVE USED PROMISE.ALL HERE BUT THERE IS A REASON ITS LIKE THIS
       await Promise.all([
-        Controller.getTopBoxesData(),
-        Controller.buildMainChart(),
-        Controller.buildSubChart(),
-        Controller.renderLogs(),
+        Controller.DashboardLoader.getTopBoxesData(),
+        Controller.DashboardLoader.buildMainChart(),
+        Controller.DashboardLoader.buildSubChart(),
+        Controller.DashboardLoader.renderLogs(),
+      ]);
+    })();
+  }
+
+  if (location.pathname === "/fmadmincp/analytics") {
+    (async () => {
+      await Promise.all([
+        // Controller.DashboardLoader.getTopBoxesData(),
+        // Controller.DashboardLoader.buildMainChart(),
+        Controller.AnalyticsLoader.buildStoresChart(),
       ]);
     })();
   }

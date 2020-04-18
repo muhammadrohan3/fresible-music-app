@@ -1,11 +1,11 @@
 import View from "../View";
 import flatpickr from "flatpickr";
-import album from "../utilities/album";
-import AudioPlayer from "../utilities/audioPlayer";
-import processInputIgnore from "../utilities/processInputIgnore";
-import injectLoader from "../utilities/injectLoader";
-import loadRoyaltiesChart from "../utilities/loadRoyaltiesChart";
-import analytics from "../utilities/Analytics";
+import album from "../components/Album";
+import AudioPlayer from "../components/AudioPlayer";
+import processInputIgnore from "../utilities/processFormElementChange";
+import injectLoader from "../components/Loader";
+import RoyaltiesGraph from "../components/RoyaltiesGraph";
+import analytics from "../components/Analytics";
 
 export default (Controller) => {
   let E;
@@ -25,7 +25,7 @@ export default (Controller) => {
 
   if (location.pathname === "/royalties") {
     injectLoader(["royalties-graph-container"]);
-    loadRoyaltiesChart();
+    RoyaltiesGraph();
   }
 
   if (location.pathname === "/analytics") {
@@ -41,6 +41,8 @@ export default (Controller) => {
       dataset: { filter_target },
     } = e.target;
     if (id === "hamburger") return Controller.handleMobileMenu(e.target);
+    if (View.getElement("#analyticsOptions").contains(e.target))
+      return Analytics.handle(e.target);
     if (filter_target) Controller.handleSelectFilter(e.target);
     if (e.target.classList.contains("form__input--element"))
       processInputIgnore(e.target);

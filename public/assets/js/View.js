@@ -1,13 +1,13 @@
 import "regenerator-runtime/runtime";
 import Swal from "sweetalert2";
-import injectIconToAlert from "./utilities/injectIconToAlert";
+import injectIconToAlert from "./components/AlertIcon";
 
-const View = (document => {
-  const _ = e => document.querySelector(e);
-  const getCookieValue = cookieName => {
+const View = ((document) => {
+  const _ = (e) => document.querySelector(e);
+  const getCookieValue = (cookieName) => {
     const cookies = decodeURIComponent(document.cookie);
     let cookieValue = "";
-    cookies.split("; ").forEach(cookie => {
+    cookies.split("; ").forEach((cookie) => {
       let [key, value] = cookie.split("=");
       cookieName = cookieName.toLowerCase();
       key = key.toLowerCase();
@@ -47,9 +47,9 @@ const View = (document => {
     }
   };
 
-  const show = id => removeClass(id, "hide");
+  const show = (id) => removeClass(id, "hide");
 
-  const hide = id => addClass(id, "hide");
+  const hide = (id) => addClass(id, "hide");
 
   const removeClass = (elem, className) =>
     getElement(elem) && getElement(elem).classList.remove(className);
@@ -79,7 +79,7 @@ const View = (document => {
     );
   };
 
-  const showLoader = status => {
+  const showLoader = (status) => {
     status && showAlert(false);
     return status ? show("#loader") : hide("#loader");
   };
@@ -94,13 +94,14 @@ const View = (document => {
   const confirmAction = async (title, text, buttonText) => {
     const result = await Swal.fire({
       title: `${title || "Are you sure?"}`,
-      text: `${text ||
-        "Proceeding with this action will make changes to the system"}`,
+      text: `${
+        text || "Proceeding with this action will make changes to the system"
+      }`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, ${buttonText || "proceed"}`
+      confirmButtonText: `Yes, ${buttonText || "proceed"}`,
     });
     if (result.value) return true;
     return false;
@@ -117,12 +118,12 @@ const View = (document => {
     getCookieValue,
     showAlert,
     refresh,
-    loaderText: text => addContent("#loader-text", text),
+    loaderText: (text) => addContent("#loader-text", text),
     showLoader,
     getFormData,
     elemAttribute,
     addContent,
-    confirmAction
+    confirmAction,
   };
 })(document);
 

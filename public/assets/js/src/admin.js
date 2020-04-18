@@ -1,7 +1,7 @@
 import flatpickr from "flatpickr";
 import Event from "../Events/admin";
 import Controller from "../Controllers/admin";
-import injectIconToAlert from "../utilities/injectIconToAlert";
+import injectIconToAlert from "../components/AlertIcon";
 import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/modal";
 import "bootstrap/js/dist/tab";

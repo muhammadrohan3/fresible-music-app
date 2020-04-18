@@ -60,26 +60,29 @@ function test(schemaResult, range) {
             ((holdRelease[releaseId] || {})["stream"] || 0) + (count || 0),
         },
       };
-      let L;
+      let Location;
       //
       CurrentDataHash = {
         ...CurrentDataHash,
         [releaseId]: {
           title: release.title,
           type: release.type,
-          stream:
-            ((L = CurrentDataHash[releaseId] || {})["stream"] || 0) +
-            (pcount || 0),
+          count:
+            ((Location = CurrentDataHash[releaseId] || {})["count"] || 0) +
+            (count || 0),
           tracks: {
-            ...(L = L["tracks"] || {}),
+            ...(Location = Location["tracks"] || {}),
             [trackId]: {
               title: track.title,
-              stream: ((L = L[trackId] || {})["stream"] || 0) + (pcount || 0),
+              count:
+                ((Location = Location[trackId] || {})["count"] || 0) +
+                (count || 0),
               stores: {
-                ...(L = L["stores"] || {}),
+                ...(Location = Location["stores"] || {}),
                 [storeId]: {
                   title: store.store,
-                  stream: ((L[storeId] || {})["stream"] || 0) + (pcount || 0),
+                  count:
+                    ((Location[storeId] || {})["count"] || 0) + (count || 0),
                 },
               },
             },
@@ -93,19 +96,22 @@ function test(schemaResult, range) {
         [preleaseId]: {
           title: prelease.title,
           type: prelease.type,
-          stream:
-            ((L = PreviousDataHash[preleaseId] || {})["stream"] || 0) +
-            (count || 0),
+          count:
+            ((Location = PreviousDataHash[preleaseId] || {})["count"] || 0) +
+            (pcount || 0),
           tracks: {
-            ...(L = L["tracks"] || {}),
+            ...(Location = Location["tracks"] || {}),
             [ptrackId]: {
               title: ptrack.title,
-              stream: ((L = L[ptrackId] || {})["stream"] || 0) + (count || 0),
+              count:
+                ((Location = Location[ptrackId] || {})["count"] || 0) +
+                (pcount || 0),
               stores: {
-                ...(L = L["stores"] || {}),
+                ...(Location = Location["stores"] || {}),
                 [pstoreId]: {
                   title: pstore.store,
-                  stream: ((L[pstoreId] || {})["stream"] || 0) + (count || 0),
+                  count:
+                    ((Location[pstoreId] || {})["count"] || 0) + (pcount || 0),
                 },
               },
             },
@@ -135,6 +141,7 @@ function test(schemaResult, range) {
     datasets: ChartDataset,
   };
 
+  //Set range initials
   let rangeReport = [0, 0];
   //Prepare Table Data;
   //Loops throught the CurrentDataHash by creating an array of entries
@@ -142,47 +149,48 @@ function test(schemaResult, range) {
     //Gets the previous Data for the current Data ID
     const previousData = PreviousDataHash[id];
     //Get the key value pairs
-    const { stream, tracks, type, title } = data;
-    rangeReport = [
-      rangeReport[0] + stream,
-      rangeReport[1] + previousData.stream,
-    ];
-    const [rate, growing] = _growthCalc(stream, previousData.stream);
+    const { count, tracks, type, title } = data;
+    rangeReport = [rangeReport[0] + count, rangeReport[1] + previousData.count];
+    const [rate, growing] = _growthCalc(count, previousData.count);
     const tracksToLoop =
       type === "track" ? [Object.entries(tracks)[0]] : Object.entries(tracks);
+    //TRACKS
     const children = tracksToLoop.map(([trackId, trackData]) => {
       const previousTrackData = previousData["tracks"][trackId];
-      const { stream, title, stores } = trackData;
-      const releaseTitle = title;
-      const [rate, growing] = _growthCalc(stream, previousTrackData.stream);
+      const { count, title, stores } = trackData;
+      const [rate, growing] = _growthCalc(count, previousTrackData.count);
+      //STORES
       const children = Object.entries(stores).map(([storeId, storeData]) => {
         const previousTrackStoreData =
           previousData["tracks"][trackId]["stores"][storeId];
-        const { stream, title } = storeData;
+        const { count, title } = storeData;
         const [rate, growing] = _growthCalc(
-          stream,
-          previousTrackStoreData.stream
+          count,
+          previousTrackStoreData.count
         );
         return {
+          level: 3,
           title,
-          stream,
+          count,
           rate,
           growing,
         };
       });
       if (type === "track") return children;
       return {
+        level: 2,
         title,
-        stream,
+        count,
         rate,
         growing,
         children,
       };
     });
     return {
+      level: 1,
       title,
       type,
-      stream,
+      count,
       rate,
       growing,
       children: type === "track" ? children[0] : children,

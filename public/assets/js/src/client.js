@@ -1,7 +1,7 @@
 import Event from "../Events/client";
 import Controller from "../Controllers/client";
 // import { async } from "regenerator-runtime/runtime";
-import injectIconToAlert from "../utilities/injectIconToAlert";
+import injectIconToAlert from "../components/AlertIcon";
 import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/modal";
 import "bootstrap/js/dist/tab";

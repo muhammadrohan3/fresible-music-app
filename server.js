@@ -4,6 +4,7 @@ const server = express();
 const cookieSession = require("cookie-session");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
+const cors = require("cors");
 require("dotenv").config();
 const PORT = process.env.PORT || 7777;
 const siteFns = require("./controller/siteFns");
@@ -21,7 +22,7 @@ const routeIndex = require("./routes/index");
         [curr.split(".")[0].trim()]: fs.readFileSync(
           `${baseLocation}/${curr}`,
           { encoding: "utf-8" }
-        )
+        ),
       }),
       {}
     );
@@ -29,13 +30,16 @@ const routeIndex = require("./routes/index");
   });
 })();
 
+server.use(cors());
+
+//
 server.use("/favicon.ico", (req, res, next) => res.status(204).send());
 server.use(express.urlencoded({ extended: false, limit: "50mb" }));
 server.use(express.json({ strict: false }));
 server.use(
   cookieSession({
     maxAge: 24 * 60 * 60 * 1000,
-    keys: ["iamtryingtoseehowthisisgoingtoworkout"]
+    keys: ["iamtryingtoseehowthisisgoingtoworkout"],
   })
 );
 

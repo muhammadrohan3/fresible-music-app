@@ -50,35 +50,16 @@ module.exports = () => ({
   dateTimeFormat: (date) => date && moment(date).format("YYYY-MM-DD h:mma"),
   dirs: { viewsDir },
   filter: (list, key) => list.filter((item) => item !== key),
-  packageSelectHandler: ({
-    package: { package, maxTracks, maxAlbums },
-    releases,
-  }) => {
-    let notApplicable = "";
-    let trackCount = 0;
-    let albumCount = 0;
-    let albumStatus;
-    let trackStatus;
-    releases.forEach(({ type }) =>
-      type === "album" ? albumCount++ : trackCount++
-    );
-    if (trackCount >= maxTracks && albumCount >= maxAlbums) return false;
-
-    if (maxAlbums > 0) {
-      albumCount === maxAlbums && (notApplicable = "album/full");
-      albumStatus = `${albumCount} of ${maxAlbums}`;
-    } else {
-      notApplicable = "album";
-      albumStatus = "Not applicable";
+  formatNumber: (num) => {
+    if (num >= 1000000000) {
+      return (num / 1000000000).toFixed(1).replace(/\.0$/, "") + "G+";
     }
-
-    if (maxTracks > 0) {
-      trackCount === maxTracks && (notApplicable = "track/full");
-      trackStatus = `${trackCount} of ${maxTracks}`;
-    } else {
-      notApplicable = "track";
-      trackStatus = "Not Applicable";
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M+";
     }
-    return { notApplicable, trackCount, trackStatus, albumStatus, albumCount };
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K+";
+    }
+    return num;
   },
 });

@@ -175,6 +175,29 @@
       color: $red;
     }
   }
+  &__card {
+    flex: 1;
+    min-height: 23rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    &:not(:last-child) {
+      margin-right: 3rem;
+    }
+    &--number {
+      font-weight: 600;
+      font-size: 4rem;
+    }
+    @media screen and (max-width: $sm) {
+      &:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 3rem;
+      }
+    }
+  }
 }
 
 ///////////////////////////////////////////

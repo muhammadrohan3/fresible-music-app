@@ -1,8 +1,25 @@
 <section class="analytics mx-2 mx-md-5">
   <div class="analytics--welcome mb-4 text-center">
-    Some stores don’t provide live sales & streaming data, so these reports may
-    not reflect your exact final sales figures.
+    <div class="-u-font-bold" style="font-size: 1.7rem;">
+      Analytics for Joko Sile
+    </div>
   </div>
+  <section class="d-flex flex-column flex-md-row mb-4">
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Streams</div>
+      <div class="analytics__card--number"><%=Fns.formatNumber(40500) %></div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Downloads</div>
+      <div class="analytics__card--number"><%=Fns.formatNumber(40000) %></div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Top 3 stores</div>
+      <div class="analytics__card--chart">
+        <canvas id="admin-analytics-stores-graph"></canvas>
+      </div>
+    </div>
+  </section>
   <section class="analytics__info d-flex flex-column flex-md-row">
     <div class="analytics__info__graph pl-md-4 pr-md-5">
       <div

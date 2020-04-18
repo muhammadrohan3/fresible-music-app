@@ -1,0 +1,21 @@
+<section class="mx-5" style="margin-top: 3rem; margin-bottom: 5rem;">
+  <section class="d-flex flex-column flex-md-row">
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Streams</div>
+      <div class="analytics__card--number"><%=Fns.formatNumber(40500) %></div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Downloads</div>
+      <div class="analytics__card--number"><%=Fns.formatNumber(40000) %></div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Top 3 stores</div>
+      <div class="analytics__card--chart">
+        <canvas id="admin-analytics-stores-graph"></canvas>
+      </div>
+    </div>
+  </section>
+  <section class="mt-5">
+    <table id="analytics-table"></table>
+  </section>
+</section>

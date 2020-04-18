@@ -1,3 +1,24 @@
+<div class="customSelect" id="noble-gases">
+  <div class="customSelect__header">
+    <span></span>
+    <span class="customSelect__header--space">&nbsp;</span>
+  </div>
+  <ul class="customSelect__drop">
+    <li class="selected"><a>All Noble Gases</a></li>
+    <li><a>Helium</a></li>
+    <li><a>Neon</a></li>
+    <li><a>Argon</a></li>
+    <li><a>Krypton</a></li>
+    <li><a>Xenon</a></li>
+    <li><a>Radon</a></li>
+  </ul>
+  <input type="hidden" name="<%= name %>">
+</div>
+
+
+
+<!--  -->
+
 <% const hashMap = {label: '', disabled: false, required: '', placeholder: '', type: 'text', name: '', id: '', value: '', classList: [], options: [], dataAttributes: []} %>
 
 <!--  -->
@@ -6,19 +27,14 @@
 formData[key] || value}) , {}) %>
 
 <div class="form__input <%= classList.join(' ') %>">
-    <label class="form__input--label">
-      <span><%= label %></span>
-      <span><%= required %></span>
-    </label>
     <select style="font-size: inherit;" class="form-control form__input--element" <%= value && 'data-ignore=true' %> name="<%= name %>" <%= id && `id=${id}` %> <%= required && 'required' %> <%= disabled && 'disabled'  %>
       <% const attributes = Object.entries(dataAttributes).map(([name, value]) => name && value && `data-${name}=${value}` ) %>
       <%= attributes.join(' ') %>
       >
-      <% const optionVal = value && Array.isArray(value) ? value : [value, value] %>
-     <option value="<%= optionVal ? optionVal[0] : ""%>"> <%= optionVal ? optionVal[1] : `${placeholder || '-- select --'}` %></option>
+     <option value="<%= value ? value : ""%>"> <%= value ? value : `${placeholder || '-- select --'}` %></option>
      <% options.forEach((item) => { %>
         <% let [key, desc] = typeof item === 'string' ? [item, item] : item; %>
-        <% if(key !== optionVal[0]) { %>
+        <% if(key !== value) { %>
             <option value="<%= key %>"><%= desc %></option>
        <% } %>
      <% }) %>

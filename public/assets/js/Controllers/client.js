@@ -2,15 +2,12 @@ import View from "../View";
 import Swal from "sweetalert2";
 import { setStore, getStore } from "../Store";
 import SubmitForm from "../utilities/submitForm";
-import Validations from "../../../Validations";
 import serverRequest from "../utilities/serverRequest";
-import { packageInfoView } from "../templates/packageInfoView";
 import OptionsTemplate from "../templates/options";
 import uploadFile from "../utilities/uploadFile";
 import mobileMenuHandler from "../utilities/handleMobileMenu";
 import validator from "../utilities/validator";
-import albumFunction from "../utilities/album";
-import extractDataFromList from "../utilities/extractDataFromList";
+import albumFunction from "../components/Album";
 import { async } from "regenerator-runtime";
 
 const Controller = () => {

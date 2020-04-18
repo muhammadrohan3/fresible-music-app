@@ -71,5 +71,14 @@ module.exports = (Controller) => {
     pageRender()
   );
 
+  router.get(
+    "/release",
+    addToSchema(SITEDATA, {
+      page: "releaseAnalytics",
+      title: "Release Analytics",
+    }),
+    pageRender()
+  );
+
   return router;
 };
