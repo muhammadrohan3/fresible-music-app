@@ -38,11 +38,11 @@ module.exports = ({ req, res }) => () => {
   };
   switch (req.user.profileActive) {
     case 0:
-      return handle("/confirm-account", 1);
+      return handle("/select-account", 1);
     case 1:
-      return handle("/select-account", 2);
+      return handle("/complete-profile", 2);
     case 2:
-      return handle("/complete-profile", 3);
+      return handle("/confirm-account", 3);
     case 3:
       return handle("/artists/add-artist", 4);
     case 4:

@@ -151,7 +151,7 @@ module.exports = (Controller) => {
     updateSchemaData(USERPACKAGE),
     respondIf(SCHEMAMUTATED, false, "Error occured activating subscription"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email", "id"] }]),
-    getOneFromSchema(USERPACKAGE, ["id", "user"]),
+    getOneFromSchema(USERPACKAGE, ["id"]),
     urlFormer("/subscription", SCHEMAQUERY),
     sendMail("subscriptionActivated"),
     resetKey(SCHEMAQUERY),
@@ -253,7 +253,7 @@ module.exports = (Controller) => {
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured updating submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
-    getOneFromSchema(RELEASE, ["id", "user"]),
+    getOneFromSchema(RELEASE, ["id"]),
     urlFormer("/submission", SCHEMAQUERY),
     sendMail("submissionApproved"),
     respond(1)
@@ -273,7 +273,7 @@ module.exports = (Controller) => {
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured updating submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
-    getOneFromSchema(RELEASE, ["user", "id"]),
+    getOneFromSchema(RELEASE, ["id"]),
     urlFormer("/submission", SCHEMAQUERY),
     sendMail("submissionDeclined"),
     respond(1)
@@ -287,7 +287,7 @@ module.exports = (Controller) => {
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured deleting submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
-    getOneFromSchema(RELEASE, ["id", "user"]),
+    getOneFromSchema(RELEASE, ["id"]),
     sendMail("submissionDeleted"),
     respond(1)
   );
@@ -322,7 +322,7 @@ module.exports = (Controller) => {
       "Error: Could not update release with link ID"
     ),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email"] }]),
-    getOneFromSchema(RELEASE, ["user"]),
+    getOneFromSchema(RELEASE, []),
     generateSmartLink(TEMPKEY),
     sendMail(LINKSADDED),
     respond(1)

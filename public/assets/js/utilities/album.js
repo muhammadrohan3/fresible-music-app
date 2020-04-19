@@ -203,7 +203,7 @@ export default () => {
       const { num } = track.dataset;
       const form = View.getElement("form", track);
       const doneStatus = await handleDone(num, distribute);
-      if (!doneStatus) return { status: false };
+      if (!doneStatus) return { status: "error" };
       const { rawFormData } = doneStatus && View.getFormData(form, true);
       formData.push({ ...rawFormData, albumId });
     }
@@ -217,8 +217,8 @@ export default () => {
       },
     });
 
-    if (!(R = responseHandler(submitResponse))) return false;
-    return { status: true, data: R };
+    if (!(R = responseHandler(submitResponse))) return { status: "error" };
+    return { status: "success", data: R };
   };
 
   const toggleTrack = (trackNo, status) => {

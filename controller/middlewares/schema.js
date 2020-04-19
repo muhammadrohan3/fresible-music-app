@@ -236,9 +236,8 @@ const _modelWrapper = (method, extras = {}) => ({
       ...schemaOptionsGen(schemaOptions, options),
       ...schemaAttributes(attributes),
     };
-
     const data =
-      actionType === "get"
+      actionType === "get" || actionType === "delete"
         ? await Model[method](Options)
         : await Model[method](schemaData, Options);
     return schemaResultHandler(
@@ -260,7 +259,7 @@ const updateSchemaData = _modelWrapper("update", {
   mutation: true,
   actionType: "update",
 });
-const deleteSchemaData = _modelWrapper("delete", {
+const deleteSchemaData = _modelWrapper("destroy", {
   mutation: true,
   actionType: "delete",
 });

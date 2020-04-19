@@ -325,8 +325,7 @@ const Controller = () => {
       const statusList = formIds.map((formId) => {
         const form = View.getElement(formId);
         if (!form) return true;
-        const { requiredData } = View.getFormData(form);
-        const validateStatus = validator(form, requiredData);
+        const validateStatus = validator(form);
         return validateStatus;
       });
       return statusList;
@@ -359,7 +358,6 @@ const Controller = () => {
         View.showAlert("Error: some input fields require your action");
       return;
     }
-
     const _executeAfterSave = async () => {
       const response = await serverRequest({
         href: "/add-music/publishRelease",
@@ -390,8 +388,9 @@ const Controller = () => {
     let Status = [];
 
     //A helper function that runs a function with the params and checks the status of the response and makes decision
-    const _analyze = async (func, params) => {
-      const { status, data } = await func.apply(null, params);
+    const _analyze = async (func, params, a = "s") => {
+      const res = await func.apply(null, params);
+      const { status, data } = res;
       if (status === "error") {
         Status.push(false);
         return false;
@@ -408,14 +407,14 @@ const Controller = () => {
     };
 
     //Release Date form handler
-    await _analyze(_submitForm, [RELEASE_DATE_FORM_ID]);
+    await _analyze(_submitForm, [RELEASE_DATE_FORM_ID], "release");
 
     if (release_type === "track") {
-      const response = await _analyze(_submitForm, [TRACK_FORM_ID]);
+      const response = await _analyze(_submitForm, [TRACK_FORM_ID], "track");
     } else {
       //submission and analyzing of album related forms
       await _analyze(_submitForm, [ALBUM_FORM_ID]);
-      await _analyze(Album.handleSubmit, callback);
+      await _analyze(Album.handleSubmit, [callback]);
     }
 
     //If any of the submission above fails, throw an error alert

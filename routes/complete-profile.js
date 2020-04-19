@@ -31,7 +31,7 @@ module.exports = (Controller) => {
   /// This GET route renders the complete-profile page
   router.get(
     "/",
-    sameAs("profileActive", 2, USER),
+    sameAs("profileActive", 1, USER),
     redirectIf(SAMEAS, false, "/"),
     pageRender()
   );
@@ -46,7 +46,7 @@ module.exports = (Controller) => {
     resetKey(SCHEMADATA),
     resetKey(SCHEMAQUERY),
     schemaQueryConstructor("user", ["id"]),
-    addToSchema(SCHEMADATA, { profileActive: 3 }),
+    addToSchema(SCHEMADATA, { profileActive: 2 }),
     updateSchemaData(USER),
     respondIf(
       SCHEMAMUTATED,

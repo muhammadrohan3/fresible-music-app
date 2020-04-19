@@ -1,4 +1,4 @@
-export default View => (form, errors, reset) => {
+export default (View) => (form, errors, reset) => {
   let status = false;
   const inputs = form.querySelectorAll(".form__input--element");
   for (let input of inputs) {
