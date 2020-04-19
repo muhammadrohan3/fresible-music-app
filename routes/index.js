@@ -115,15 +115,20 @@ router.get(
   redirect("/")
 );
 
-router.get("/select-account", pageRender());
+router.get(
+  "/select-account",
+  sameAs("profileActive", 0, USER),
+  redirectIf(SAMEAS, false, "/"),
+  pageRender()
+);
 
 router.post(
   "/select-account",
-  sameAs("profileActive", 1, USER),
+  sameAs("profileActive", 0, USER),
   respondIf(SAMEAS, false, "Error: access denied"),
   schemaDataConstructor("body", ["accountType"], ["type"]),
   respondIf(SCHEMADATA, false, "Error: request incomplete"),
-  addToSchema(SCHEMADATA, { profileActive: 2 }),
+  addToSchema(SCHEMADATA, { profileActive: 1 }),
   schemaQueryConstructor(USER, ["id"]),
   updateSchemaData(USER),
   respondIf(SCHEMAMUTATED, false, "Error: could not update data"),

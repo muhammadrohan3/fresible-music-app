@@ -7,10 +7,10 @@ const {
   SCHEMAMUTATED,
   SAMEAS,
   TEMPKEY,
-  ACCOUNTVERIFY
+  ACCOUNTVERIFY,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     generateToken,
     schemaQueryConstructor,
@@ -26,7 +26,7 @@ module.exports = Controller => {
     redirectIf,
     redirect,
     urlFormer,
-    sendMail
+    sendMail,
   } = Controller;
 
   // This GET route renders the confirm-account page
@@ -67,9 +67,9 @@ module.exports = Controller => {
   // This GET route is internally called to do some checks and update the DB if necessary
   router.get(
     "/proceed",
-    sameAs("profileActive", 0, USER),
+    sameAs("profileActive", 2, USER),
     redirectIf(SAMEAS, false, "/"),
-    addToSchema(SCHEMADATA, { profileActive: 1 }),
+    addToSchema(SCHEMADATA, { profileActive: 3 }),
     schemaQueryConstructor(USER, ["id"]),
     updateSchemaData(USER),
     redirect("/")

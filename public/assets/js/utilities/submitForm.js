@@ -2,7 +2,7 @@ import serverRequest, { responseHandler } from "./serverRequest";
 import Validations from "../../../Validations";
 import uploadFile from "./uploadFile";
 import { getStore } from "../Store";
-import FormErrorHandler from "./formErrorHandler";
+import validator from "./validator";
 
 const submitForm = (View) => async (form, formOptions = {}) => {
   const {
@@ -33,24 +33,6 @@ const submitForm = (View) => async (form, formOptions = {}) => {
   if (refresh) View.showLoader(true);
   let { rawFormData, isThereFile } = View.getFormData(form);
 
-  //INITIATES THE FORM ERROR HANDLER WITH THE VIEW OBJECT
-  const formErrorHandler = FormErrorHandler(View);
-  const validationErrors = validation
-    ? Validations[validation](rawFormData)
-    : "";
-
-  //CHECKS IF THERE IS ANY VALIDATION ERROR AND RETURNS FORM ERROR HANDLER
-  if (validationErrors) {
-    View.showLoader(false);
-    View.showAlert(
-      "Ooops!, one or more of your inputs did not pass validation, please correct..."
-    );
-    return formErrorHandler(form, validationErrors);
-  }
-
-  //THIS CLEARS THE FORM... (OPTIONAL)
-  formErrorHandler(form, validation);
-
   const _isEmpty = (obj) => !Boolean(Object.entries(obj).length);
 
   if (_isEmpty(rawFormData) && !isThereFile.length) {
@@ -59,6 +41,18 @@ const submitForm = (View) => async (form, formOptions = {}) => {
     return {
       status: "empty",
       data: "No new values submitted, nothing changed.",
+    };
+  }
+
+  //INITIATES THE FORM ERROR HANDLER WITH THE VIEW OBJECT
+  if (!validator(form, null, validation) && strict) {
+    if (refresh)
+      return View.showAlert(
+        "Ooops!, one or more of your inputs did not pass validation."
+      );
+    return {
+      status: "error",
+      data: "Ooops!, one or more of your inputs did not pass validation.",
     };
   }
 
@@ -76,8 +70,7 @@ const submitForm = (View) => async (form, formOptions = {}) => {
       const fileInStore = getStore("files")[name];
       if (fileInStore) {
         const response = await uploadFile(name);
-        if (!(R = responseHandler(response))) return false;
-
+        if (!(R = responseHandler(response))) return { status: "error" };
         const { secure_url } = R;
         rawFormData = { ...rawFormData, [name]: secure_url };
       }
@@ -129,7 +122,7 @@ const submitForm = (View) => async (form, formOptions = {}) => {
     }
   }
 
-  //DEFAULT (THESE RUNS AFTER THE GROUP IF THERE IS ANY)... Its the default form submitter.
+  // DEFAULT (THESE RUNS AFTER THE GROUP IF THERE IS ANY)... Its the default form submitter.
   const response = await makeRequest(submiturl, rawFormData, QueryParams);
   //refresh means the submitForm function should continue and refresh the page afterwards
   if (!refresh) return response;

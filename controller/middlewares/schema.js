@@ -175,6 +175,8 @@ const whereGen = (store, data = {}) => {
   if (mutation && !items.length)
     throw new Error("ERROR: WHEREGEN, where items empty ");
 
+  console.log(items);
+
   return {
     where: {
       [Op[queryMainOp || "and"]]: items,
@@ -185,14 +187,13 @@ const whereGen = (store, data = {}) => {
 const schemaResultHandler = async (
   { setStore, getStore, schema, req },
   schemaResult,
-  keys,
   actionType
 ) => {
   //Condition that checks if transaction with the DB was successful
   if (!schemaResult) return;
   actionType = actionType && actionType.toLowerCase();
   const didMutate = Array.isArray(schemaResult) && schemaResult[0] > 0;
-  const data = organizeData(schemaResult, keys);
+  const data = organizeData(schemaResult);
   //This condition checks if the type of action was an update or a delete
   if (actionType === "update") setStore("schemaMutated", didMutate);
   else if (actionType === "delete") setStore("schemaDeleted", didMutate);
@@ -220,130 +221,59 @@ const runSql = ({ getStore, setStore }) => async (model, type, args) => {
   return setStore(SCHEMARESULT, data);
 };
 
-const getAllFromSchema = ({ getStore, setStore, req }) => async (
-  schema,
-  attributes,
-  options
-) => {
+const _modelWrapper = (method, extras = {}) => ({
+  getStore,
+  setStore,
+  req,
+}) => async (schema, attributes, options) => {
   try {
+    const { mutation = false, actionType = "get" } = extras;
     const Model = schemaType(schema, getStore);
-    const { schemaInclude, schemaOptions } = getStore();
-    const data = await Model.findAll({
-      ...whereGen({ ...getStore(), schema }),
+    const { schemaInclude, schemaOptions, schemaData } = getStore();
+    const Options = {
+      ...whereGen({ ...getStore(), schema }, { mutation }),
       ...includeGen(getStore, schemaInclude),
       ...schemaOptionsGen(schemaOptions, options),
       ...schemaAttributes(attributes),
-    });
-    return schemaResultHandler({ setStore, getStore }, data);
+    };
+    const data =
+      actionType === "get" || actionType === "delete"
+        ? await Model[method](Options)
+        : await Model[method](schemaData, Options);
+    return schemaResultHandler(
+      { setStore, getStore, schema, req },
+      data,
+      actionType
+    );
   } catch (err) {
     return handleResponse("error", err);
   }
 };
 
-const getAndCountAllFromSchema = ({ getStore, setStore, req }) => async (
-  schema,
-  attributes,
-  options
-) => {
-  try {
-    const Model = schemaType(schema, getStore);
-    const { schemaQuery, schemaInclude, schemaOptions } = getStore();
-    const data = await Model.findAndCountAll({
-      ...whereGen({ ...getStore(), schema }),
-      ...includeGen(getStore, schemaInclude),
-      ...schemaOptionsGen(schemaOptions, options),
-      ...schemaAttributes(attributes),
-    });
-    return schemaResultHandler({ setStore, getStore, schema }, data);
-  } catch (err) {
-    return handleResponse("error", err);
-  }
-};
+const getAllFromSchema = _modelWrapper("findAll");
+const getAndCountAllFromSchema = _modelWrapper("findAndCountAll");
+const getOneFromSchema = _modelWrapper("findOne");
+const bulkCreateSchema = _modelWrapper("bulkCreate", { actionType: "create" });
+const createSchemaData = _modelWrapper("create", { actionType: "create" });
+const updateSchemaData = _modelWrapper("update", {
+  mutation: true,
+  actionType: "update",
+});
+const deleteSchemaData = _modelWrapper("destroy", {
+  mutation: true,
+  actionType: "delete",
+});
 
-const getOneFromSchema = ({ getStore, setStore }) => async (
-  schema,
-  keys,
-  attributes
-) => {
-  try {
-    setStore("currentSchema", schema);
-    const Model = schemaType(schema, getStore);
-    const { schemaQuery, schemaInclude } = getStore();
-    const data = await Model.findOne({
-      ...whereGen(getStore()),
-      ...includeGen(getStore, schemaInclude),
-      ...schemaAttributes(attributes),
-    });
-    return schemaResultHandler({ setStore, getStore, schema }, data, keys);
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-const bulkCreateSchema = ({ getStore, setStore }) => async (schema) => {
-  try {
-    const Model = schemaType(schema, getStore);
-    const { schemaData } = getStore();
-    const data = await Model.bulkCreate(schemaData);
-    return schemaResultHandler({ setStore, getStore, schema }, data);
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-const createSchemaData = ({ getStore, setStore, req }) => async (schema) => {
-  try {
-    const Model = schemaType(schema, getStore);
-    const { schemaData } = getStore();
-    const data = await Model.create(schemaData);
-    return schemaResultHandler(
-      { setStore, getStore, req, schema },
-      data,
-      null,
-      "create"
-    );
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-const updateSchemaData = ({ getStore, setStore, req }) => async (schema) => {
-  try {
-    const Model = schemaType(schema, getStore);
-    const { schemaQuery, schemaData } = getStore();
-    let id = schemaQuery.id;
-    if (id && typeof id === "string") schemaQuery.id = parseInt(id);
-    const data = await Model.update(
-      { ...schemaData },
-      { ...whereGen(getStore(), { mutation: true }) }
-    );
-    console.log("UPDATE: ", data);
-    return schemaResultHandler(
-      { setStore, getStore, req, schema },
-      data,
-      null,
-      "update"
-    );
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-const deleteSchemaData = ({ getStore, setStore, req }) => async (schema) => {
-  try {
-    const Model = schemaType(schema, getStore);
-    const data = await Model.destroy({
-      ...whereGen(getStore(), { mutation: true }),
-    });
-    return schemaResultHandler(
-      { setStore, getStore, req, schema },
-      data,
-      null,
-      "delete"
-    );
-  } catch (err) {
-    throw new Error(err);
-  }
-};
+// const bulkCreateSchema = ({ getStore, setStore }) => async (schema) => {
+//   try {
+//     const Model = schemaType(schema, getStore);
+//     const { schemaData } = getStore();
+//     const data = await Model.bulkCreate(schemaData);
+//     return schemaResultHandler({ setStore, getStore, schema }, data);
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+// };
 
 module.exports = {
   getAllFromSchema,

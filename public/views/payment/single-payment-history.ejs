@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
-  <% const {id, status, subscription, package, reference, date, createdAt} =
-  pageData; %>
+  <% const {id, status, subscription: {id: subscriptionId, package}, reference,
+  date, createdAt} = pageData; %>
   <div class="single-head">
     <a class="single-head__back" href="/payment/history">
       <span
@@ -74,9 +74,7 @@
         </li>
       </ul>
       <div class="text-center">
-        <a
-          href="/subscription?id=<%=Fns.idLookUp(subscription.id) %>"
-          class="btn-outline"
+        <a href="/subscription?id=<%=subscriptionId %>" class="btn-outline"
           >View Subscription &rarr;</a
         >
       </div>
@@ -149,7 +147,7 @@
         <% } else {%>
         <div
           class="-u-flexerize -u-mt-10 -u-border-grey"
-          style="padding: 10px; border-radius: 10px"
+          style="padding: 10px; border-radius: 10px;"
         >
           <span>This payment is not yet verified</span>
           <div class="text-right">

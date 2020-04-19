@@ -59,6 +59,50 @@ module.exports = (Controller) => {
     addMusic_checkIncompleteCreation,
   } = Controller;
 
+  /// This GET ROUTE displays the add music components excluding the package comp
+  router.get(
+    "/",
+    schemaQueryConstructor("query", ["id"]),
+    redirectIf(SCHEMAQUERY, false, "/add-music/set-id"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    addToSchema(SCHEMAINCLUDE, [
+      { m: USERPACKAGE, al: "subscription", at: ["packageId", "status"] },
+      {
+        m: USER,
+        at: ["id"],
+        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
+      },
+      {
+        m: LABELARTIST,
+        at: ["stageName"],
+      },
+      {
+        m: TRACK,
+      },
+      {
+        m: ALBUM,
+        i: [{ m: ALBUMTRACK, al: "tracks" }],
+      },
+    ]),
+    getOneFromSchema(RELEASE, [
+      "id",
+      "type",
+      "status",
+      "releaseDate",
+      "comment",
+    ]),
+    redirectIf(SCHEMARESULT, false, "/add-music"),
+    isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
+    seeStore([SCHEMARESULT, "status"]),
+    redirectIf(SAMEAS, false, "/submission", [SCHEMAQUERY], ["id"]),
+    addMusic_checkIncompleteCreation(),
+    redirectIf(TEMPKEY, true, "/add-music/createReleaseType", [TEMPKEY]),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
+    seeStore([SITEDATA, PAGEDATA]),
+    pageRender()
+  );
+
   router.get(
     "/terms",
     addToSchema(SITEDATA, { page: "addMusic/terms", title: "Add Release" }),
@@ -154,7 +198,7 @@ module.exports = (Controller) => {
         at: ["package", "maxAlbums", "maxTracks"],
       },
     ]),
-    getOneFromSchema(USERPACKAGE, ["id", "status", "releases", "package"]),
+    getOneFromSchema(USERPACKAGE, ["id", "status"]),
     addMusic_structureReleaseType(),
     respondIf("USER_RELEASE_TYPES", false, "Error: retry again."),
     respond(["USER_RELEASE_TYPES"])
@@ -176,55 +220,6 @@ module.exports = (Controller) => {
     setStoreIf(SAMEAS, true, "trackId", [SCHEMARESULT, "id"], TEMPKEY),
     setStoreIf(SAMEAS, false, "albumId", [SCHEMARESULT, "id"], TEMPKEY),
     respond([TEMPKEY])
-  );
-
-  /// This GET ROUTE displays the add music components excluding the package comp
-  router.get(
-    "/",
-    schemaQueryConstructor("query", ["id"]),
-    redirectIf(SCHEMAQUERY, false, "/add-music/set-id"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMAINCLUDE, [
-      { m: USERPACKAGE, al: "subscription", at: ["packageId", "status"] },
-      {
-        m: USER,
-        at: ["id"],
-        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
-      },
-      {
-        m: LABELARTIST,
-        at: ["stageName"],
-      },
-      {
-        m: TRACK,
-      },
-      {
-        m: ALBUM,
-        i: [{ m: ALBUMTRACK, al: "tracks" }],
-      },
-    ]),
-    getOneFromSchema(RELEASE, [
-      "id",
-      "type",
-      "status",
-      "releaseDate",
-      "comment",
-      "subscription",
-      "user",
-      "labelArtist",
-      "track",
-      "album",
-    ]),
-    redirectIf(SCHEMARESULT, false, "/add-music"),
-    isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
-    seeStore([SCHEMARESULT, "status"]),
-    redirectIf(SAMEAS, false, "/submission", [SCHEMAQUERY], ["id"]),
-    addMusic_checkIncompleteCreation(),
-    redirectIf(TEMPKEY, true, "/add-music/createReleaseType", [TEMPKEY]),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
-    seeStore([SITEDATA, PAGEDATA]),
-    pageRender()
   );
 
   router.get(

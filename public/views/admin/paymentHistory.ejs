@@ -15,7 +15,8 @@
           </tr>
         </thead>
         <tbody>
-          <% rows.forEach(({id, status, createdAt, package, user}) => { %>
+          <% rows.forEach(({id, status, createdAt, subscription: {package},
+          user}) => { %>
           <tr>
             <td>
               <a href="/fmadmincp/payments/single?id=<%=Fns.idLookUp(id) %>"

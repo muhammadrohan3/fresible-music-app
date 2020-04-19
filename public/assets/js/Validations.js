@@ -7,14 +7,14 @@ const _valEmpty = (key, value, errorObj) => {
   return;
 };
 
-const _respond = errors => Object.keys(errors).length && null;
+const _respond = (errors) => (Object.keys(errors).length ? errors : null);
 
 const register = ({
   firstName,
   lastName,
   email,
   password,
-  confirmPassword
+  confirmPassword,
 }) => {
   const errors = {};
   if (!isEmail(email)) errors["email"] = "This is not a valid email address";
@@ -22,9 +22,9 @@ const register = ({
     errors["firstName"] = "First Name field should not be empty";
   if (isEmpty(lastName))
     errors["lastName"] = "Last Name field should not be empty";
-  if (!isAlphanumeric(password) || !isLength(password, { min: 6, max: 20 }))
+  if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d_@.#&+-]{6,20}$/.test(password))
     errors["password"] =
-      "Password should be alphanumeric and length between 6 - 20";
+      "Password contain alphabets, numbers and length between 6 - 20 (special characters like: _@.#&+- are accepted)";
   if (!equals(password, confirmPassword))
     errors["confirmPassword"] = "Passwords do not match";
   return _respond(errors);
@@ -36,27 +36,21 @@ const login = ({ email }) => {
   return _respond(errors);
 };
 
-const completeProfile = data => {
+const completeProfile = (data) => {
   const errors = {};
   const {
-    twitter,
-    instagram,
+    twitter = "",
+    instagram = "",
     phone,
-    bankAccountNo,
+    bankAccountNo = "",
     stageName,
-    bank,
-    bankAccount
   } = data;
   Object.entries({ stageName }).forEach(([key, value]) => {
     _valEmpty(key, value, errors);
   });
-  if (!isEmpty(twitter) && !twitter.startsWith("@") && twitter.length <= 1)
+  if (!isEmpty(twitter) && !twitter.startsWith("@"))
     errors["twitter"] = "@ should be at the start of the input";
-  if (
-    !isEmpty(instagram) &&
-    !instagram.startsWith("@") &&
-    instagram.length <= 1
-  )
+  if (!isEmpty(instagram) && !instagram.startsWith("@"))
     errors["instagram"] = "@ should be at the start of the input";
   if (!isLength(phone, { min: 11, max: 11 }))
     errors["phone"] =
@@ -114,5 +108,5 @@ module.exports = {
   musicInfo,
   emailValidator,
   passValidator,
-  validateReleaseDate
+  validateReleaseDate,
 };

@@ -153,7 +153,7 @@ module.exports = (Controller) => {
     updateSchemaData(USERPACKAGE),
     respondIf(SCHEMAMUTATED, false, "Error occured activating subscription"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email", "id"] }]),
-    getOneFromSchema(USERPACKAGE, ["id", "user"]),
+    getOneFromSchema(USERPACKAGE, ["id"]),
     urlFormer("/subscription", SCHEMAQUERY),
     sendMail("subscriptionActivated"),
     resetKey(SCHEMAQUERY),
@@ -255,7 +255,7 @@ module.exports = (Controller) => {
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured updating submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
-    getOneFromSchema(RELEASE, ["id", "user"]),
+    getOneFromSchema(RELEASE, ["id"]),
     urlFormer("/submission", SCHEMAQUERY),
     sendMail("submissionApproved"),
     respond(1)
@@ -275,7 +275,7 @@ module.exports = (Controller) => {
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured updating submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
-    getOneFromSchema(RELEASE, ["user", "id"]),
+    getOneFromSchema(RELEASE, ["id"]),
     urlFormer("/submission", SCHEMAQUERY),
     sendMail("submissionDeclined"),
     respond(1)
@@ -289,7 +289,7 @@ module.exports = (Controller) => {
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Error occured deleting submission"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["email", "firstName"] }]),
-    getOneFromSchema(RELEASE, ["id", "user"]),
+    getOneFromSchema(RELEASE, ["id"]),
     sendMail("submissionDeleted"),
     respond(1)
   );
@@ -324,7 +324,7 @@ module.exports = (Controller) => {
       "Error: Could not update release with link ID"
     ),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email"] }]),
-    getOneFromSchema(RELEASE, ["user"]),
+    getOneFromSchema(RELEASE, []),
     generateSmartLink(TEMPKEY),
     sendMail(LINKSADDED),
     respond(1)
@@ -501,7 +501,12 @@ module.exports = (Controller) => {
     fromReq("query", ["p"], "schemaOptions"),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
-      { m: PACKAGE, at: ["package"] },
+      {
+        m: USERPACKAGE,
+        at: ["id"],
+        al: "subscription",
+        i: [{ m: PACKAGE }],
+      },
     ]),
     getAndCountAllFromSchema(PAYMENT),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
@@ -519,8 +524,12 @@ module.exports = (Controller) => {
         at: ["id", "firstName", "lastName"],
         i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
-      { m: PACKAGE },
-      { m: USERPACKAGE, al: "subscription", at: ["id"] },
+      {
+        m: USERPACKAGE,
+        at: ["id"],
+        al: "subscription",
+        i: [{ m: PACKAGE }],
+      },
     ]),
     getOneFromSchema(PAYMENT),
     redirectIf(SCHEMARESULT, false, "/fmadmincp/payments"),
@@ -540,7 +549,12 @@ module.exports = (Controller) => {
     schemaQueryConstructor("params", ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["firstName", "lastName"] },
-      { m: PACKAGE, at: ["package"] },
+      {
+        m: USERPACKAGE,
+        at: [],
+        al: "subscription",
+        i: [{ m: PACKAGE, at: ["package"] }],
+      },
     ]),
     getAndCountAllFromSchema(PAYMENT),
     respondIf(SCHEMARESULT, false, "HELLO"),
