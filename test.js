@@ -38,15 +38,7 @@ function test(schemaResult, range) {
         store,
         count,
       } = currentDataItem[j];
-      const {
-        releaseId: preleaseId,
-        release: prelease,
-        trackId: ptrackId,
-        track: ptrack,
-        storeId: pstoreId,
-        store: pstore,
-        count: pcount,
-      } = previousDataItem[j];
+
       // CurrentDataHash[releaseId] = {};
       // PreviousDataHash[preleaseId] = {};
       // console.log(release, currentDataItem[j]);
@@ -60,64 +52,67 @@ function test(schemaResult, range) {
             ((holdRelease[releaseId] || {})["stream"] || 0) + (count || 0),
         },
       };
-      let Location;
-      //
-      CurrentDataHash = {
-        ...CurrentDataHash,
-        [releaseId]: {
-          title: release.title,
-          type: release.type,
-          count:
-            ((Location = CurrentDataHash[releaseId] || {})["count"] || 0) +
-            (count || 0),
-          tracks: {
-            ...(Location = Location["tracks"] || {}),
-            [trackId]: {
-              title: track.title,
-              count:
-                ((Location = Location[trackId] || {})["count"] || 0) +
-                (count || 0),
-              stores: {
-                ...(Location = Location["stores"] || {}),
-                [storeId]: {
-                  title: store.store,
-                  count:
-                    ((Location[storeId] || {})["count"] || 0) + (count || 0),
-                },
-              },
-            },
+
+      const _sumCount = (currentValue, dataItem, name, value) => {
+        return (currentValue || 0) + value;
+      };
+
+      const rep = {
+        key: "releaseId",
+        props: [
+          { name: "title", key: ["release", "title"] },
+          { name: "type", key: ["release", "type"] },
+          { name: "count", key: "count", cb: _sumCount },
+        ],
+        children: {
+          key: "trackId",
+          props: [
+            { name: "title", key: ["track", "title"] },
+            { name: "count", key: "count", cb: _sumCount },
+          ],
+          children: {
+            key: "storeId",
+            props: [
+              { name: "title", key: ["store", "store"] },
+              { name: "count", key: "count", cb: _sumCount },
+            ],
           },
         },
       };
 
-      ///
-      PreviousDataHash = {
-        ...PreviousDataHash,
-        [preleaseId]: {
-          title: prelease.title,
-          type: prelease.type,
-          count:
-            ((Location = PreviousDataHash[preleaseId] || {})["count"] || 0) +
-            (pcount || 0),
-          tracks: {
-            ...(Location = Location["tracks"] || {}),
-            [ptrackId]: {
-              title: ptrack.title,
-              count:
-                ((Location = Location[ptrackId] || {})["count"] || 0) +
-                (pcount || 0),
-              stores: {
-                ...(Location = Location["stores"] || {}),
-                [pstoreId]: {
-                  title: pstore.store,
-                  count:
-                    ((Location[pstoreId] || {})["count"] || 0) + (pcount || 0),
-                },
-              },
-            },
-          },
-        },
+      const _generateHash = (hash = {}, dataItem, rep, level = 1) => {
+        const { key, props, children } = rep;
+        let keyValue = hash[dataItem[key]] || {};
+        keyValue.level = level;
+        props.forEach(({ name, key, cb }) => {
+          let value;
+          if (Array.isArray(key)) {
+            let tempVal;
+            key.forEach((k) => (tempVal = tempVal ? tempVal[k] : dataItem[k]));
+            value = tempVal;
+          } else {
+            value = dataItem[key];
+          }
+          if (cb) keyValue[name] = cb(keyValue[name], dataItem, name, value);
+          else keyValue[name] = value;
+        });
+        if (children)
+          keyValue.children = _generateHash(
+            keyValue.children,
+            dataItem,
+            children,
+            level + 1
+          );
+        hash[dataItem[key]] = keyValue;
+        return hash;
       };
+
+      CurrentDataHash = _generateHash(CurrentDataHash, currentDataItem[j], rep);
+      PreviousDataHash = _generateHash(
+        PreviousDataHash,
+        previousDataItem[j],
+        rep
+      );
     }
     //populate data for chartjs
     Object.entries(holdRelease).forEach(([releaseId, { title, stream }]) => {
@@ -125,10 +120,7 @@ function test(schemaResult, range) {
         ...ChartDataHash,
         [releaseId]: {
           label: title,
-          stream: [
-            ...((ChartDataHash[releaseId] || {})["stream"] || []),
-            stream,
-          ],
+          count: [...((ChartDataHash[releaseId] || {})["count"] || []), stream],
         },
       };
     });
@@ -143,75 +135,105 @@ function test(schemaResult, range) {
 
   //Set range initials
   let rangeReport = [0, 0];
+
+  const rateKeys = ["count"];
+  const prepare = (CurrentDataHash, PreviousDataHash) => {
+    const list = Object.entries(CurrentDataHash).map(([id, data]) => {
+      const { children, level } = data;
+      if (level === 1 && rateKeys.length === 1)
+        rangeReport = [
+          rangeReport[0] + CurrentDataHash[rateKeys[0]],
+          rangeReport[1] + PreviousDataHash[rateKeys[0]],
+        ];
+      const previousData = PreviousDataHash[id];
+      rateKeys.forEach((rateKey) => {
+        const [rate, growing] = _growthCalc(
+          data[rateKey],
+          previousData[rateKey]
+        );
+        data[rateKey] = { count: data[rateKey], rate, growing };
+      });
+      if (children)
+        data["children"] = prepare(children, previousData["children"]);
+      return data;
+    });
+    return list;
+  };
+
   //Prepare Table Data;
   //Loops throught the CurrentDataHash by creating an array of entries
-  const TableData = Object.entries(CurrentDataHash).map(([id, data]) => {
-    //Gets the previous Data for the current Data ID
-    const previousData = PreviousDataHash[id];
-    //Get the key value pairs
-    const { count, tracks, type, title } = data;
-    rangeReport = [rangeReport[0] + count, rangeReport[1] + previousData.count];
-    const [rate, growing] = _growthCalc(count, previousData.count);
-    const tracksToLoop =
-      type === "track" ? [Object.entries(tracks)[0]] : Object.entries(tracks);
-    //TRACKS
-    const children = tracksToLoop.map(([trackId, trackData]) => {
-      const previousTrackData = previousData["tracks"][trackId];
-      const { count, title, stores } = trackData;
-      const [rate, growing] = _growthCalc(count, previousTrackData.count);
-      //STORES
-      const children = Object.entries(stores).map(([storeId, storeData]) => {
-        const previousTrackStoreData =
-          previousData["tracks"][trackId]["stores"][storeId];
-        const { count, title } = storeData;
-        const [rate, growing] = _growthCalc(
-          count,
-          previousTrackStoreData.count
-        );
-        return {
-          level: 3,
-          title,
-          count,
-          rate,
-          growing,
-        };
-      });
-      if (type === "track") return children;
-      return {
-        level: 2,
-        title,
-        count,
-        rate,
-        growing,
-        children,
-      };
-    });
-    return {
-      level: 1,
-      title,
-      type,
-      count,
-      rate,
-      growing,
-      children: type === "track" ? children[0] : children,
-    };
-  });
+  // const TableData = Object.entries(CurrentDataHash).map(([id, data]) => {
+  //   //Gets the previous Data for the current Data ID
+  //   const previousData = PreviousDataHash[id];
+  //   //Get the key value pairs
+  //   const { count, tracks, type, title } = data;
+  //   rangeReport = [rangeReport[0] + count, rangeReport[1] + previousData.count];
+  //   const [rate, growing] = _growthCalc(count, previousData.count);
+  //   const tracksToLoop =
+  //     type === "track" ? [Object.entries(tracks)[0]] : Object.entries(tracks);
+  //   //TRACKS
+  //   const children = tracksToLoop.map(([trackId, trackData]) => {
+  //     const previousTrackData = previousData["tracks"][trackId];
+  //     const { count, title, stores } = trackData;
+  //     const [rate, growing] = _growthCalc(count, previousTrackData.count);
+  //     //STORES
+  //     const children = Object.entries(stores).map(([storeId, storeData]) => {
+  //       const previousTrackStoreData =
+  //         previousData["tracks"][trackId]["stores"][storeId];
+  //       const { count, title } = storeData;
+  //       const [rate, growing] = _growthCalc(
+  //         count,
+  //         previousTrackStoreData.count
+  //       );
+  //       return {
+  //         level: 3,
+  //         title,
+  //         count,
+  //         rate,
+  //         growing,
+  //       };
+  //     });
+  //     if (type === "track") return children;
+  //     return {
+  //       level: 2,
+  //       title,
+  //       count,
+  //       rate,
+  //       growing,
+  //       children,
+  //     };
+  //   });
+  //   return {
+  //     level: 1,
+  //     title,
+  //     type,
+  //     count,
+  //     rate,
+  //     growing,
+  //     children: type === "track" ? children[0] : children,
+  //   };
+  // });
 
   //
-
-  const [rangeCurrentTotal, rangePreviousTotal] = rangeReport;
-  const [rangeRate, rangeGrowing] = _growthCalc(
-    rangeCurrentTotal,
-    rangePreviousTotal
+  console.log(
+    JSON.stringify(prepare(CurrentDataHash, PreviousDataHash)),
+    rangeReport
   );
-  const Report = {
-    stream: rangeCurrentTotal,
-    previous: rangePreviousTotal,
-    rate: rangeRate,
-    growing: rangeGrowing,
-  };
-  // setStore("ANALYTICS", { Report, TableData, ChartData });
-  return { Report, TableData, ChartData };
+  // console.log("////////////////////");
+  // console.log(JSON.stringify(PreviousDataHash));
+  // const [rangeCurrentTotal, rangePreviousTotal] = rangeReport;
+  // const [rangeRate, rangeGrowing] = _growthCalc(
+  //   rangeCurrentTotal,
+  //   rangePreviousTotal
+  // );
+  // const Report = {
+  //   stream: rangeCurrentTotal,
+  //   previous: rangePreviousTotal,
+  //   rate: rangeRate,
+  //   growing: rangeGrowing,
+  // };
+  // // setStore("ANALYTICS", { Report, TableData, ChartData });
+  // return { Report, TableData, ChartData };
 }
 
 const dataset = [

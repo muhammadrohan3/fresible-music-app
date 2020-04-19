@@ -74,57 +74,109 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
 
       let L;
 
-      //Create or updates the data for the CurrentDataHash variable declared at the top
-      CurrentDataHash = {
-        ...CurrentDataHash,
-        [releaseId]: {
-          title: release.title,
-          type: release.type,
-          stream:
-            ((L = CurrentDataHash[releaseId] || {})["stream"] || 0) +
-            (count || 0),
-          tracks: {
-            ...(L = L["tracks"] || {}),
-            [trackId]: {
-              title: track.title,
-              stream: ((L = L[trackId] || {})["stream"] || 0) + (count || 0),
-              stores: {
-                ...(L = L["stores"] || {}),
-                [storeId]: {
-                  title: store.store,
-                  stream: ((L[storeId] || {})["stream"] || 0) + (count || 0),
-                },
-              },
-            },
+      // //Create or updates the data for the CurrentDataHash variable declared at the top
+      // CurrentDataHash = {
+      //   ...CurrentDataHash,
+      //   [releaseId]: {
+      //     title: release.title,
+      //     type: release.type,
+      //     count:
+      //       ((L = CurrentDataHash[releaseId] || {})["count"] || 0) +
+      //       (count || 0),
+      //     tracks: {
+      //       ...(L = L["tracks"] || {}),
+      //       [trackId]: {
+      //         title: track.title,
+      //         count: ((L = L[trackId] || {})["count"] || 0) + (count || 0),
+      //         stores: {
+      //           ...(L = L["stores"] || {}),
+      //           [storeId]: {
+      //             title: store.store,
+      //             count: ((L[storeId] || {})["count"] || 0) + (count || 0),
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      // };
+
+      const _sumCount = (currentValue, data, key) => {
+        console.log("CALLBACK CALLED: ", currentValue, data, key);
+        return (currentValue || 0) + data[key];
+      };
+
+      const rep = {
+        key: "releaseId",
+        props: [
+          { name: "title", key: "title" },
+          { name: "type", key: "type" },
+          { name: "count", key: "count", cb: _sumCount },
+        ],
+        children: {
+          key: "trackId",
+          props: [
+            { name: "title", key: "title" },
+            { name: "count", key: "count", cb: _sumCount },
+          ],
+          children: {
+            key: "storeId",
+            props: [
+              { name: "title", key: "title" },
+              { name: "count", key: "count", cb: _sumCount },
+            ],
           },
         },
       };
 
-      ///
-      PreviousDataHash = {
-        ...PreviousDataHash,
-        [preleaseId]: {
-          title: prelease.title,
-          type: prelease.type,
-          stream:
-            ((L = PreviousDataHash[preleaseId] || {})["stream"] || 0) +
-            (pcount || 0),
-          tracks: {
-            ...(L = L["tracks"] || {}),
-            [ptrackId]: {
-              title: ptrack.title,
-              stream: ((L = L[ptrackId] || {})["stream"] || 0) + (pcount || 0),
-              stores: {
-                ...(L = L["stores"] || {}),
-                [pstoreId]: {
-                  title: pstore.store,
-                  stream: ((L[pstoreId] || {})["stream"] || 0) + (pcount || 0),
-                },
-              },
-            },
-          },
-        },
+      const _generateHash = (hash = {}, dataItem, rep) => {
+        const { key, props, children } = rep;
+        let keyValue = hash[key] || {};
+        props.forEach(({ name, key, cb }) => {
+          if (cb) keyValue[name] = cb(keyValue[name], dataItem, key);
+          else keyValue[name] = dataItem[key];
+        });
+        if (children)
+          keyValue.children = _generateHash(
+            keyValue.children,
+            dataItem,
+            children
+          );
+        hash[key] = keyValue;
+        return hash;
       };
+
+      CurrentDataHash = _generateHash(CurrentDataHash, currentDataItem[j], rep);
+      PreviousDataHash = _generateHash(
+        PreviousDataHash,
+        previousDataItem[j],
+        rep
+      );
+
+      ///
+      // PreviousDataHash = {
+      //   ...PreviousDataHash,
+      //   [preleaseId]: {
+      //     title: prelease.title,
+      //     type: prelease.type,
+      //     count:
+      //       ((L = PreviousDataHash[preleaseId] || {})["count"] || 0) +
+      //       (pcount || 0),
+      //     tracks: {
+      //       ...(L = L["tracks"] || {}),
+      //       [ptrackId]: {
+      //         title: ptrack.title,
+      //         count: ((L = L[ptrackId] || {})["count"] || 0) + (pcount || 0),
+      //         stores: {
+      //           ...(L = L["stores"] || {}),
+      //           [pstoreId]: {
+      //             title: pstore.store,
+      //             count: ((L[pstoreId] || {})["count"] || 0) + (pcount || 0),
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      // };
     }
     //populate data for chartjs
     Object.entries(holdRelease).forEach(([releaseId, { title, stream }]) => {
