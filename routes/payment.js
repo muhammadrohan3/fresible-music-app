@@ -76,6 +76,7 @@ module.exports = (Controller) => {
     fromStore(SCHEMARESULT, ["package"], "paystackKey"),
     fromStore(SCHEMARESULT, ["id", "userId"], SCHEMADATA, ["userPackageId"]),
     resetKey(SCHEMARESULT),
+    seeStore([SCHEMADATA]),
     createSchemaData(PAYMENT),
     fromStore(SCHEMARESULT, ["id"], "paystackKey"),
     paystackConstructor(),
