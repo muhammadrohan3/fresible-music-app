@@ -960,42 +960,6 @@
   }
 }
 
-///////////////// ----> SUBMISSION <----------//////////////
-
-.submission {
-  max-width: 800px;
-  &__alert {
-    max-width: 400px;
-    margin: 0 auto;
-    &__comment {
-      position: relative;
-      &--pen {
-        position: absolute;
-        width: auto;
-        z-index: 10;
-        right: 2px;
-        top: 0;
-        color: rgba($color-light-black, 0.8);
-        font-size: 15px;
-        cursor: pointer;
-      }
-      &--text {
-        width: 100%;
-      }
-    }
-  }
-  &--link {
-    max-width: 400px;
-    margin: 0 auto;
-    a,
-    a:hover,
-    a:active {
-      text-decoration: underline;
-      font-weight: 600;
-    }
-  }
-}
-
 ///////////////// ----> YOUR PACAKAGES <----------//////////////
 
 .ur-packages {

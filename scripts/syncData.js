@@ -30,6 +30,21 @@ const route = [
   ["logs", Log],
 ];
 
+const preRun = [
+  ["labelartists", [["avatar", "avatarId", "image"]]],
+  ["userprofiles", [["avatar", "avatarId", "image"]]],
+  ["releases"],
+  [
+    "tracks",
+    [
+      ["track", "trackUploadId", "audio"],
+      ["artwork", "artworkUploadId", "image"],
+    ],
+  ],
+  ["albums", [["artwork", "artworkUploadId", "image"]]],
+  ["albumtracks", [["track", "trackUploadId", "audio"]]],
+];
+
 const jsonData = JSON.parse(
   fs.readFileSync(
     path.join(__dirname, "../", "/blueoqom_fresible-music.json"),
@@ -44,92 +59,89 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
   return { ...acc, [name.toLowerCase()]: data };
 }, {});
 
+(async () => {
+  try {
+    const Uploads = [];
+    const tracksHash = {};
+    const albumTracksHash = {};
+    const _uploader = (secureUrl, resourceType) => {
+      let index = 42351;
+      let id = index + Uploads.length;
+      console.log(id, " ", secureUrl, ": ", resourceType);
+      Uploads.push({ id, secureUrl, resourceType });
+      return id;
+    };
+
+    const _updateRelease = (releaseId, data = {}) => {
+      const releases = dataHash["releases"];
+      for (let i = 0; releases.length; i++) {
+        const { id } = releases[i];
+        if (id !== releaseId) continue;
+        releases[i] = { ...releases[i], ...data };
+        return;
+      }
+    };
+
+    for (let item of preRun) {
+      const [name, options] = item;
+
+      for (let toBeProcessed of dataHash[name]) {
+        if (options) {
+          options.forEach((option) => {
+            const [key, newKey, resourceType] = option;
+            if (!toBeProcessed[key]) return;
+            const id = _uploader(toBeProcessed[key], resourceType);
+            toBeProcessed[newKey] = id;
+            delete toBeProcessed[key];
+          });
+        }
+
+        if (name === "releases") {
+          const { type, trackId, albumId, id } = toBeProcessed;
+          if (type === "track") trackId && (tracksHash[trackId] = id);
+          if (type === "album") albumId && (albumTracksHash[albumId] = id);
+          delete toBeProcessed["trackId"];
+          delete toBeProcessed["albumId"];
+          delete toBeProcessed["videoId"];
+        }
+        if (name === "tracks") {
+          const { id, title, artworkUploadId } = toBeProcessed;
+          const releaseId = tracksHash[id];
+          if (releaseId) _updateRelease(releaseId, { title, artworkUploadId });
+          toBeProcessed["releaseId"] = releaseId;
+        }
+        if (name === "albums") {
+          const { id, title, artworkUploadId } = toBeProcessed;
+          const releaseId = albumTracksHash[id];
+          if (releaseId) _updateRelease(releaseId, { title, artworkUploadId });
+        }
+        if (name === "albumtracks") {
+          const { albumId } = toBeProcessed;
+          const releaseId = albumTracksHash[albumId];
+          toBeProcessed["releaseId"] = releaseId;
+          delete toBeProcessed["id"];
+        }
+      }
+    }
+    await Upload.bulkCreate(Uploads, {
+      updateOnDuplicate: ["id", "secureUrl", "resourceType"],
+    });
+    console.log("processed uploads: ", Uploads.length);
+  } catch (err) {
+    console.log(err);
+  }
+})();
+
 //
 
 (async () => {
   try {
-    const tracksHash = {};
-    const albumTracksHash = {};
-    const _handleResponse = (response) => JSON.parse(JSON.stringify(response));
-    const _updateRelease = async ({ title, artwork, id }) => {
-      let artworkId = null;
-
-      if (artwork) {
-        const { id: artwork_id } = _handleResponse(
-          await Upload.create({ secureUrl: artwork })
-        );
-        artworkId = artwork_id;
-      }
-      return _handleResponse(
-        await Release.update(
-          { title, artworkId },
-          { where: { id: parseInt(id) } }
-        )
-      );
-    };
     for (let r of route) {
       const [name, Handler] = r;
-      let data;
-      if (!["releases", "albums", "albumtracks", "tracks"].includes(name)) {
-        if (["userprofiles", "labelartists"].includes(name)) {
-          let tempData = dataHash[name];
-          const newData = [];
-          for (let d of tempData) {
-            const { avatar } = d;
-            let avatarId = null;
-
-            if (avatar) {
-              const { id: avatar_id } = await Upload.create({
-                secureUrl: avatar,
-              });
-              avatarId = avatar_id;
-            }
-            delete d["avatar"];
-            console.log(name, ": ", avatarId);
-            newData.push({ ...d, avatarId });
-          }
-          data = newData;
-        } else {
-          data = dataHash[name];
-        }
-      } else {
-        const processData = dataHash[name];
-        for (let toBeProcessed of processData) {
-          if (name === "releases") {
-            const { type, trackId, albumId, id } = toBeProcessed;
-            if (type === "track") trackId && (tracksHash[trackId] = id);
-            if (type === "album") albumId && (albumTracksHash[albumId] = id);
-            delete toBeProcessed["trackId"];
-            delete toBeProcessed["albumId"];
-            delete toBeProcessed["videoId"];
-          }
-          if (name === "tracks") {
-            const { id, title, artwork } = toBeProcessed;
-            const releaseId = tracksHash[id];
-            await _updateRelease({ title, artwork, id: releaseId });
-            toBeProcessed["releaseId"] = releaseId;
-            delete toBeProcessed["artwork"];
-          }
-          if (name === "albums") {
-            const { id, title, artwork } = toBeProcessed;
-            const releaseId = albumTracksHash[id];
-            await _updateRelease({ title, artwork, id: releaseId });
-            continue;
-          }
-          if (name === "albumtracks") {
-            const { albumId } = toBeProcessed;
-            const releaseId = albumTracksHash[albumId];
-            toBeProcessed["releaseId"] = releaseId;
-            delete toBeProcessed["artwork"];
-            delete toBeProcessed["id"];
-          }
-        }
-        if (!Handler) continue;
-        data = processData;
-      }
-      const response = JSON.parse(
-        JSON.stringify(await Handler.bulkCreate(data))
-      );
+      if (!Handler) continue;
+      console.log("processing: ", name);
+      const data = dataHash[name];
+      await Handler.bulkCreate(data, { updateOnDuplicate: ["id"] });
     }
     console.log("DONE");
   } catch (e) {

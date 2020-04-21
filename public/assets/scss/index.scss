@@ -19,6 +19,11 @@ $table-cell-padding-sm: 0.4rem !default;
   font-size: 1.6rem !important;
 }
 
+//GLOBAL MIXINS
+@mixin box-shadow {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0);
+}
+
 @import "custom";
 @import "mixins";
 @import "utilities";

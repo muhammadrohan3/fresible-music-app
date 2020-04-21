@@ -1,60 +1,23 @@
 export default `<div class="container -u-mw-450">
-  <form
+<% const inputs = [{name: 'spotify', label: 'Spotify'},{name: 'apple', label: 'Apple Music'}, {name: 'itunes', label: 'iTunes'}, {name: 'amazon', label: 'Amazon'}, {name: 'deezer', label: 'Deezer'}, {name: 'boomplay', label: 'Boomplay'}, {name: 'audiomack', label: 'Audiomack'}, {name: 'youtube', label: 'Youtube'}, {name: 'youtubeMusic', label: 'Youtube Music'}, {name: 'tidal', label: 'Tidal'}, {name: 'napster', label: 'Napster'}, {name: 'slug', label: 'Slug', type: 'hidden'}] %>
+<% let L; %>
+<form
     action=""
     class="form -u-form-input-spacing"
     id="links-form"
-    data-type="add"
-    data-submiturl="/fmadmincp/submission/store-links/create"
-    data-query_include='true'
+    <%= formDataAttributes['details'] && \`data-details=${formDataAttributes["details"]}\` %>
+    data-type="<%= formDataAttributes['type'] || 'add' %>"
+    data-submiturl="<%= formDataAttributes['details'] || '/fmadmincp/submission/store-links/create' %>"
+    <%= formDataAttributes['data-query_include'] === undefined && 'data-query_include=true' %>   
   >
-    <div class="alert alert-info store-link"></div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Spotify</label>
-      <input type="text" class="form__input--element" name="spotify" />
+    <div class="alert alert-info store-link">
+      <%= (L = formData['slug']) && \`https://fresible.link/${L}\` %>  
     </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Apple</label>
-      <input type="text" class="form__input--element" name="apple" />
+    <% inputs.forEach(({name, label, type = 'text'}) => { %> 
+      <div class="form__input">
+      <label for="" class="form__input--label"><%= label %></label>
+      <input type="<%= type %>" class="form__input--element" name="<%= name %>" value="<%= formData[name] || '' %>" />
     </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">iTunes</label>
-      <input type="text" class="form__input--element" name="itunes" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Amazon</label>
-      <input type="text" class="form__input--element" name="amazon" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Deezer</label>
-      <input type="text" class="form__input--element" name="deezer" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Boomplay</label>
-      <input type="text" class="form__input--element" name="boomplay" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Audiomack</label>
-      <input type="text" class="form__input--element" name="audiomack" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Youtube</label>
-      <input type="text" class="form__input--element" name="youtube" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Youtube Music</label>
-      <input type="text" class="form__input--element" name="youtubeMusic" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Tidal</label>
-      <input type="text" class="form__input--element" name="tidal" />
-    </div>
-    <div class="form__input">
-      <label for="" class="form__input--label">Napster</label>
-      <input type="text" class="form__input--element" name="napster" />
-    </div>
-    <input class="form__input--element" type="hidden" name="slug" id="links-form-slug" />
-    <div class="text-center">
-      <button class="btn-primary" type="submit">Submit</button>
-    </div>
-  </form>
+    <% }) %>
+    </form>
 </div>`;

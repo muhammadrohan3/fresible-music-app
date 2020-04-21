@@ -45,7 +45,7 @@ module.exports = {
       isrcCode: {
         type: Sequelize.STRING,
       },
-      trackId: {
+      trackUploadId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {

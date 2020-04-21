@@ -1,6 +1,6 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const store = sequelize.define(
+  const Store = sequelize.define(
     "store",
     {
       store: DataTypes.STRING,
@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
         values: ["streaming", "downloading", "both"],
       },
       goLiveTime: DataTypes.STRING,
-      logoId: DataTypes.INTEGER,
+      storeLogoId: DataTypes.INTEGER,
     },
     {}
   );
-  store.associate = function (models) {
-    // associations can be defined here
+  Store.associate = function ({ Upload }) {
+    this.belongsTo(Upload, { foreignKey: "storeLogoId", as: "storeLogo" });
   };
-  return store;
+  return Store;
 };

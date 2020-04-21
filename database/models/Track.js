@@ -7,19 +7,18 @@ module.exports = (sequelize, DataTypes) => {
       artiste: DataTypes.STRING,
       featured: DataTypes.STRING,
       genre: DataTypes.STRING,
-      track: DataTypes.STRING,
-      artwork: DataTypes.STRING,
       explicit: DataTypes.STRING,
       copyrightYear: DataTypes.STRING,
       copyrightHolder: DataTypes.STRING,
-      trackId: DataTypes.INTEGER,
+      trackUploadId: DataTypes.INTEGER,
       releaseId: DataTypes.INTEGER,
     },
     {}
   );
-  Track.associate = function ({ Release }) {
+  Track.associate = function ({ Release, Upload }) {
     //Track belongsTo Release
-    this.hasOne(Release, { foreignKey: "trackId", as: "release" });
+    this.belongsTo(Release, { foreignKey: "releaseId", as: "release" });
+    this.belongsTo(Upload, { foreignKey: "trackUploadId", as: "trackUpload" });
   };
   return Track;
 };

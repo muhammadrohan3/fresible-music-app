@@ -13,8 +13,8 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM,
-        values: ["processing", "published"],
-        defaultValue: "processing",
+        values: ["initiating", "processing", "published"],
+        defaultValue: "initiating",
       },
       createdAt: {
         allowNull: false,

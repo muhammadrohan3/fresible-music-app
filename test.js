@@ -1,16 +1,18 @@
 function test(schemaResult, range) {
   const Colors = [
-    { color: "#3f91f3", light: "#d9e9fc" },
-    { color: "#FF006E", light: "#ffcce2" },
-    { color: "#12c1ae", light: "#c9f9f4" },
-    { color: "#C482DB", light: "#f3e6f7" },
-    { color: "#d4008b", light: "#fec4ea" },
-    { color: "#3F0099", light: "#d5b8ff" },
-    { color: "#940062", light: "#ffb7e7" },
+    { borderColor: "#3f91f3", backgroundColor: "#d9e9fc" },
+    { borderColor: "#FF006E", backgroundColor: "#ffcce2" },
+    { borderColor: "#12c1ae", backgroundColor: "#c9f9f4" },
+    { borderColor: "#C482DB", backgroundColor: "#f3e6f7" },
+    { borderColor: "#d4008b", backgroundColor: "#fec4ea" },
+    { borderColor: "#3F0099", backgroundColor: "#d5b8ff" },
+    { borderColor: "#940062", backgroundColor: "#ffb7e7" },
   ];
   let ChartDataHash = {};
   let CurrentDataHash = {};
   let PreviousDataHash = {};
+
+  const _getRandomColorId = () => Math.floor(Math.random() * Colors.length);
   const _growthCalc = (current, previous) => {
     if (current === 0 || previous === 0) return [null, null];
     let rate = ((current - previous) / previous) * 100;
@@ -22,43 +24,21 @@ function test(schemaResult, range) {
   const Dates = [];
   const currentData = schemaResult.slice(0, 2);
   const previousData = schemaResult.slice(2);
-
   for (let i = 0; i < range; i++) {
     let holdRelease = {};
     Dates.push(currentData[i].date);
-    const currentDataItem = currentData[i].analytics;
-    const previousDataItem = previousData[i].analytics;
-    for (let j = 0; j < currentDataItem.length; j++) {
-      const {
-        releaseId,
-        release,
-        trackId,
-        track,
-        storeId,
-        store,
-        count,
-      } = currentDataItem[j];
-
-      // CurrentDataHash[releaseId] = {};
-      // PreviousDataHash[preleaseId] = {};
-      // console.log(release, currentDataItem[j]);
-      // console.log(CurrentDataHash, PreviousDataHash);
-      holdRelease = {
-        ...holdRelease,
-        [releaseId]: {
-          ...(holdRelease[releaseId] || {}),
-          title: release.title,
-          stream:
-            ((holdRelease[releaseId] || {})["stream"] || 0) + (count || 0),
-        },
-      };
-
+    const currentItem = currentData[i].analytics;
+    const previousItem = previousData[i].analytics;
+    for (let j = 0; j < currentItem.length; j++) {
+      const currentDataItem = currentItem[j];
+      const previousDataItem = previousItem[j];
+      //
       const _sumCount = (currentValue, dataItem, name, value) => {
         return (currentValue || 0) + value;
       };
-
-      const rep = {
+      const Rep = {
         key: "releaseId",
+        name: "release",
         props: [
           { name: "title", key: ["release", "title"] },
           { name: "type", key: ["release", "type"] },
@@ -66,12 +46,14 @@ function test(schemaResult, range) {
         ],
         children: {
           key: "trackId",
+          name: "track",
           props: [
             { name: "title", key: ["track", "title"] },
             { name: "count", key: "count", cb: _sumCount },
           ],
           children: {
             key: "storeId",
+            name: "store",
             props: [
               { name: "title", key: ["store", "store"] },
               { name: "count", key: "count", cb: _sumCount },
@@ -79,12 +61,24 @@ function test(schemaResult, range) {
           },
         },
       };
+      let Location; //holds the current location of the object
+      const { key, name } = Rep; //destructures the key and name from the data representation sent in as param
+      // console.log(currentDataItem, currentDataItem[key]);
+      holdRelease = {
+        ...holdRelease,
+        [currentDataItem[key]]: {
+          ...(Location = holdRelease[currentDataItem[key]] || {}),
+          title: currentDataItem[name].title,
+          count: (Location["count"] || 0) + (currentDataItem["count"] || 0),
+        },
+      };
 
       const _generateHash = (hash = {}, dataItem, rep, level = 1) => {
         const { key, props, children } = rep;
         let keyValue = hash[dataItem[key]] || {};
         keyValue.level = level;
-        props.forEach(({ name, key, cb }) => {
+        props.forEach((prop) => {
+          const { name, key, cb } = prop;
           let value;
           if (Array.isArray(key)) {
             let tempVal;
@@ -107,51 +101,63 @@ function test(schemaResult, range) {
         return hash;
       };
 
-      CurrentDataHash = _generateHash(CurrentDataHash, currentDataItem[j], rep);
-      PreviousDataHash = _generateHash(
-        PreviousDataHash,
-        previousDataItem[j],
-        rep
-      );
+      CurrentDataHash = _generateHash(CurrentDataHash, currentDataItem, Rep);
+      PreviousDataHash = _generateHash(PreviousDataHash, previousDataItem, Rep);
     }
     //populate data for chartjs
-    Object.entries(holdRelease).forEach(([releaseId, { title, stream }]) => {
+    Object.entries(holdRelease).forEach(([id, { title, count }]) => {
       ChartDataHash = {
         ...ChartDataHash,
-        [releaseId]: {
+        [id]: {
           label: title,
-          count: [...((ChartDataHash[releaseId] || {})["count"] || []), stream],
+          count: [...((ChartDataHash[id] || {})["count"] || []), count],
         },
       };
     });
   }
 
+  //Set Range Initials
+  let RangeReport = [0, 0];
+
   //prepare chartjs data
-  const ChartDataset = Object.values(ChartDataHash).map((value) => value);
+  const ChartDataset = Object.entries(ChartDataHash).map(([id, valueObj]) => {
+    const colorIndex = _getRandomColorId(); //Gets a random color Id
+    ChartDataHash[id]["colorId"] = colorIndex; //Sets the data of this id in the ChartDataHash for the TableData;
+    valueObj = { ...valueObj, ...Colors[colorIndex] }; //Sets the borderColor and backgroundColor for the chart label
+    const currentDataForIdCount = CurrentDataHash[id].count; //gets the count value for the ID in the currentDataHash
+    const previousDataForIdCount = PreviousDataHash[id].count; //gets the count value for the ID in the previousDataHash
+    RangeReport = [
+      RangeReport[0] + currentDataForIdCount,
+      RangeReport[1] + previousDataForIdCount,
+    ]; //updates rangeReport
+    return valueObj;
+  });
   const ChartData = {
     dates: Dates,
     datasets: ChartDataset,
   };
+  const _getReport = (rangeReport = []) => {
+    const [currentTotal, previousTotal] = rangeReport;
+    const [rate, growing] = _growthCalc(currentTotal, previousTotal);
+    return { rate, growing, currentTotal, previousTotal };
+  };
+  const Report = _getReport(RangeReport);
 
-  //Set range initials
-  let rangeReport = [0, 0];
-
-  const rateKeys = ["count"];
+  const CountKeys = ["count"];
   const prepare = (CurrentDataHash, PreviousDataHash) => {
     const list = Object.entries(CurrentDataHash).map(([id, data]) => {
       const { children, level } = data;
-      if (level === 1 && rateKeys.length === 1)
-        rangeReport = [
-          rangeReport[0] + CurrentDataHash[rateKeys[0]],
-          rangeReport[1] + PreviousDataHash[rateKeys[0]],
-        ];
       const previousData = PreviousDataHash[id];
-      rateKeys.forEach((rateKey) => {
+      //Set the color to the corresponding Chart color for the dataset;
+      if (level === 1 && ChartDataHash[id]) {
+        data["color"] = Colors[ChartDataHash[id]["colorId"]].borderColor;
+      }
+      CountKeys.forEach((countKey) => {
         const [rate, growing] = _growthCalc(
-          data[rateKey],
-          previousData[rateKey]
+          data[countKey],
+          previousData[countKey]
         );
-        data[rateKey] = { count: data[rateKey], rate, growing };
+        data[countKey] = { count: data[countKey], rate, growing };
       });
       if (children)
         data["children"] = prepare(children, previousData["children"]);
@@ -160,80 +166,8 @@ function test(schemaResult, range) {
     return list;
   };
 
-  //Prepare Table Data;
-  //Loops throught the CurrentDataHash by creating an array of entries
-  // const TableData = Object.entries(CurrentDataHash).map(([id, data]) => {
-  //   //Gets the previous Data for the current Data ID
-  //   const previousData = PreviousDataHash[id];
-  //   //Get the key value pairs
-  //   const { count, tracks, type, title } = data;
-  //   rangeReport = [rangeReport[0] + count, rangeReport[1] + previousData.count];
-  //   const [rate, growing] = _growthCalc(count, previousData.count);
-  //   const tracksToLoop =
-  //     type === "track" ? [Object.entries(tracks)[0]] : Object.entries(tracks);
-  //   //TRACKS
-  //   const children = tracksToLoop.map(([trackId, trackData]) => {
-  //     const previousTrackData = previousData["tracks"][trackId];
-  //     const { count, title, stores } = trackData;
-  //     const [rate, growing] = _growthCalc(count, previousTrackData.count);
-  //     //STORES
-  //     const children = Object.entries(stores).map(([storeId, storeData]) => {
-  //       const previousTrackStoreData =
-  //         previousData["tracks"][trackId]["stores"][storeId];
-  //       const { count, title } = storeData;
-  //       const [rate, growing] = _growthCalc(
-  //         count,
-  //         previousTrackStoreData.count
-  //       );
-  //       return {
-  //         level: 3,
-  //         title,
-  //         count,
-  //         rate,
-  //         growing,
-  //       };
-  //     });
-  //     if (type === "track") return children;
-  //     return {
-  //       level: 2,
-  //       title,
-  //       count,
-  //       rate,
-  //       growing,
-  //       children,
-  //     };
-  //   });
-  //   return {
-  //     level: 1,
-  //     title,
-  //     type,
-  //     count,
-  //     rate,
-  //     growing,
-  //     children: type === "track" ? children[0] : children,
-  //   };
-  // });
-
-  //
-  console.log(
-    JSON.stringify(prepare(CurrentDataHash, PreviousDataHash)),
-    rangeReport
-  );
-  // console.log("////////////////////");
-  // console.log(JSON.stringify(PreviousDataHash));
-  // const [rangeCurrentTotal, rangePreviousTotal] = rangeReport;
-  // const [rangeRate, rangeGrowing] = _growthCalc(
-  //   rangeCurrentTotal,
-  //   rangePreviousTotal
-  // );
-  // const Report = {
-  //   stream: rangeCurrentTotal,
-  //   previous: rangePreviousTotal,
-  //   rate: rangeRate,
-  //   growing: rangeGrowing,
-  // };
-  // // setStore("ANALYTICS", { Report, TableData, ChartData });
-  // return { Report, TableData, ChartData };
+  const TableData = prepare(CurrentDataHash, PreviousDataHash);
+  return { Report, TableData, ChartData };
 }
 
 const dataset = [

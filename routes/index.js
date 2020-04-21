@@ -229,10 +229,14 @@ router.get(
       at: ["id", "status"],
       i: [{ m: PACKAGE, al: "package", at: ["package"] }],
     },
-    { m: VIDEO },
-    { m: TRACK },
+    { m: TRACK, al: "tracks" },
+    {
+      m: USER,
+      at: ["id"],
+      i: [{ m: USERPROFILE, al: "profile", at: ["stageName", "label"] }],
+    },
+    { m: LABELARTIST, at: ["stageName"] },
     { m: "link", at: ["slug"] },
-    { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] },
   ]),
   getOneFromSchema(RELEASE),
   redirectIf(SCHEMARESULT, false, "/submissions"),
@@ -242,6 +246,7 @@ router.get(
   redirectIf(SAMEAS, true, "/submissions"),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
   addToSchema(SITEDATA, { title: "Release" }),
+  seeStore([SITEDATA, PAGEDATA]),
   pageRender()
 );
 

@@ -46,7 +46,6 @@ export default (Controller) => {
     if (id === "decline-comment-edit")
       return Controller.handleDeclineCommentEdit(e.target);
     if (id === "store-link") {
-      Controller.prepareModal("links");
       return Controller.handleStoreLinksModal(e.target);
     }
     if (id === "convert-label")

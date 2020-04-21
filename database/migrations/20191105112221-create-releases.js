@@ -69,7 +69,7 @@ module.exports = {
       comment: {
         type: Sequelize.TEXT,
       },
-      artworkId: {
+      artworkUploadId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {

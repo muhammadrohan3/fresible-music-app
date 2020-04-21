@@ -1,6 +1,6 @@
 const Validator = require("validator");
 
-const { isEmail, equals, isEmpty, isAlphanumeric, isLength } = Validator;
+const { isEmail, equals, isEmpty, isLength } = Validator;
 
 const _valEmpty = (key, value, errorObj) => {
   if (isEmpty(value)) errorObj[key] = `field should not be empty`;
@@ -86,21 +86,6 @@ const passValidator = ({ password, confirmPassword }) => {
   return _respond(errors);
 };
 
-const validateReleaseDate = ({ releaseDate }) => {
-  const errors = {};
-  if (isEmpty(releaseDate))
-    errors["releaseDate"] = "Release date cannot be empty";
-  return _respond(errors);
-};
-
-const validateAlbumForm = ({ title, artwork }) => {
-  const errors = {};
-  if (isEmpty(title)) errors["releaseDate"] = "Title cannot be empty";
-  if (isEmpty(artwork))
-    errors["releaseDate"] = "You have to select an image for your album";
-  return _respond(errors);
-};
-
 module.exports = {
   register,
   login,
@@ -108,5 +93,4 @@ module.exports = {
   musicInfo,
   emailValidator,
   passValidator,
-  validateReleaseDate,
 };

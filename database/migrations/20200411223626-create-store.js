@@ -22,7 +22,7 @@ module.exports = {
       goLiveTime: {
         type: Sequelize.STRING,
       },
-      logoId: {
+      storeLogoId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {

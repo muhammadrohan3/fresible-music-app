@@ -7,16 +7,13 @@ import View from "../View";
 import serverRequest from "../utilities/serverRequest";
 import mobileMenu from "../utilities/handleMobileMenu";
 import submitForm from "../utilities/submitForm";
-import AdminModals from "../popups/admin";
-import modalPrepare from "../utilities/prepareModal";
+import Modal from "../components/Modal";
 import DashboardLoader from "../components/AdminDashboard";
 import AnalyticsLoader from "../components/AdminAnalytics";
 
 export default () => {
   let R;
   const SubmitForm = submitForm(View);
-
-  const prepareModal = modalPrepare(AdminModals);
 
   const handleMobileMenu = mobileMenu(View);
   const responseHandler = ({ status, data = true }, customMessage) => {
@@ -61,10 +58,15 @@ export default () => {
   //This handles the store links modal.
   const handleStoreLinksModal = async (elem) => {
     View.showLoader(true);
+    const modal = new Modal("admin");
+    modal.prepare("links");
+    const formDataAttributes = {};
+    let formData = {};
     const form = View.getElement("#links-form");
     //destructures the needed values from the element already set
     const { type, link_id: linkId, details } = elem.dataset;
-    form.setAttribute("data-details", details);
+    formDataAttributes["details"] = details;
+    // form.setAttribute("data-details", details);
     //checks if the links are to be edited if they exist or to add a new set of links.
     if (type === "edit") {
       //Makes a get request to the server for links associated with the linkId in the db
@@ -74,24 +76,19 @@ export default () => {
       });
       //handles the response, emits the error "links not found" if there is an error,
       if (!(R = responseHandler(response, "Links not found"))) return;
-      //Pre-fills the information to the input boxes, to show its being edited.
-      form.querySelectorAll("input").forEach((input) => {
-        input.value = R[input.name];
-      });
-      const storeLink = View.getElement(".store-link", form);
-      View.addContent(storeLink, `https://fresible.link/${R.slug}`, true);
+      //assigns R containing the server data response to formData
+      formData = R;
       //sets the data- attribute in order to submit the form to the right API endpoint.
-      form.setAttribute(
-        "data-submiturl",
-        `/fmadmincp/submission/store-links/update?id=${linkId}`
-      );
-      form.setAttribute("data-type", "edit");
-      form.removeAttribute("data-query_include");
+      formDataAttributes[
+        "submiturl"
+      ] = `/fmadmincp/submission/store-links/update?id=${linkId}`;
+      formDataAttributes["type"] = "edit";
+      formDataAttributes["query_include"] = false;
     }
 
     View.showLoader(false);
     //Launches the bootstrap modal on the page
-    return $("#modal").modal();
+    return modal.launch();
   };
 
   //This function handles the submit and edit functions of the release links form.
@@ -218,7 +215,6 @@ export default () => {
     handleDeclineCommentEdit,
     handleStoreLinks,
     handleStoreLinksModal,
-    prepareModal,
     handleConvertToLabel,
   };
 };

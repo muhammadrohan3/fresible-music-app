@@ -66,6 +66,15 @@ module.exports = (Controller) => {
   );
 
   router.get(
+    "/initiate",
+    addToSchema(SITEDATA, {
+      page: "analyticsInitiate",
+      title: "Initiate Analytics",
+    }),
+    pageRender()
+  );
+
+  router.get(
     "/add",
     addToSchema(SITEDATA, { page: "analyticsAdd", title: "Add Analytics" }),
     pageRender()

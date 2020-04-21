@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       title: DataTypes.STRING,
       price: DataTypes.STRING,
-      artwork: DataTypes.STRING,
       status: {
         type: DataTypes.ENUM,
         values: [
@@ -30,21 +29,33 @@ module.exports = (sequelize, DataTypes) => {
       approvedDate: DataTypes.DATE,
       manualBarcode: DataTypes.STRING,
       comment: DataTypes.TEXT,
-      uploadId: DataTypes.INTEGER,
-      artworkId: DataTypes.INTEGER,
+      linkId: DataTypes.INTEGER,
+      artworkUploadId: DataTypes.INTEGER,
       artistId: DataTypes.INTEGER,
     },
     {}
   );
 
-  Release.associate = function ({ Userpackage, User, Link, Labelartist }) {
+  Release.associate = function ({
+    Userpackage,
+    User,
+    Link,
+    Labelartist,
+    Upload,
+    Track,
+  }) {
     this.belongsTo(Userpackage, {
       foreignKey: "userPackageId",
       as: "subscription",
     });
     this.belongsTo(User, { foreignKey: "userId", as: "user" });
     this.belongsTo(Link, { foreignKey: "linkId", as: "link" });
+    this.belongsTo(Upload, {
+      foreignKey: "artworkUploadId",
+      as: "artworkUpload",
+    });
     this.belongsTo(Labelartist, { foreignKey: "artistId", as: "labelArtist" });
+    this.hasMany(Track, { foreignKey: "releaseId", as: "tracks" });
   };
   return Release;
 };

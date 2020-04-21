@@ -1,14 +1,17 @@
 <div class="submissions">
   <table
-    class="table table-hover text-center submissions__table <%= pageData.length ? '' : 'hide' %>"
+    data-toggle="table"
+    data-classes="table table-hovered table-striped"
+    data-mobile-responsive="true"
+    data-mobile="true"
   >
     <thead class="submissions__table--head">
       <tr>
         <th>Id</th>
-        <th>Status</th>
-        <th>Type</th>
-        <th>R.Date</th>
-        <th>Details</th>
+        <th data-align="center">Status</th>
+        <th data-align="center">Type</th>
+        <th data-align="center">Release Date</th>
+        <th data-align="right">Details</th>
       </tr>
     </thead>
     <tbody>

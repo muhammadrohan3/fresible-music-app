@@ -16,8 +16,11 @@ module.exports = (sequelize, DataTypes) => {
   Upload.associate = function ({ Userprofile, Labelartist, Release, Track }) {
     this.hasMany(Userprofile, { foreignKey: "avatarId", as: "userAvatar" });
     this.hasMany(Labelartist, { foreignKey: "avatarId", as: "avatar" });
-    this.hasMany(Release, { foreignKey: "artworkId", as: "artwork" });
-    this.hasMany(Track, { foreignKey: "trackId", as: "track" });
+    this.hasMany(Release, {
+      foreignKey: "artworkUploadId",
+      as: "artworkUpload",
+    });
+    this.hasMany(Track, { foreignKey: "trackUploadId", as: "trackUpload" });
   };
   return Upload;
 };
