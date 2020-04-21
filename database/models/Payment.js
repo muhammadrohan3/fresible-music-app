@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
 
-  Payment.associate = function ({ Userpackage, Package, User }) {
+  Payment.associate = function ({ Userpackage, User }) {
     //User belongsToMany Packages
     this.belongsTo(Userpackage, {
       foreignKey: "userPackageId",

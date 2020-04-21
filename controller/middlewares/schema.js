@@ -236,10 +236,11 @@ const _modelWrapper = (method, extras = {}) => ({
       ...schemaOptionsGen(schemaOptions, options),
       ...schemaAttributes(attributes),
     };
-    const data =
-      actionType === "get" || actionType === "delete"
-        ? await Model[method](Options)
-        : await Model[method](schemaData, Options);
+    let data;
+    if (actionType === "get" || actionType === "delete")
+      data = await Model[method](Options);
+    else if (actionType === "create") data = await Model[method](schemaData);
+    else data = await Model[method](schemaData, Options);
     return schemaResultHandler(
       { setStore, getStore, schema, req },
       data,

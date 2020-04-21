@@ -2,13 +2,13 @@ const {
   PAYSTACK_INITIALIZE,
   PAYSTACK_PARAMS,
   PAYSTACK_RESPONSE,
-  PAYSTACK_VERIFY
+  PAYSTACK_VERIFY,
 } = require("../../constants");
 const urlFormer = require("../util/urlFormer");
 const handleResponse = require("../util/handleResponse");
 
 const key =
-  process.env.NODE_ENV === "development"
+  process.env.NODE_ENV !== "production"
     ? process.env.PAYSTACK_TEST_SECRET
     : process.env.PAYSTACK_SECRET;
 
@@ -22,22 +22,22 @@ const paystackConstructor = ({ setStore, getStore, req }) => () => {
     let { price } = package;
     price = price * 100;
     const metadata = {
-      paymentId: id
+      paymentId: id,
     };
     return setStore(PAYSTACK_PARAMS, {
       email,
       callback_url,
       amount: price,
-      metadata: JSON.stringify(metadata)
+      metadata: JSON.stringify(metadata),
     });
   } catch (e) {
     return handleResponse("error", e);
   }
 };
 
-const paystack = ({ setStore, getStore }) => async type => {
+const paystack = ({ setStore, getStore }) => async (type) => {
   // const { transactions } = Paystack;
-  const handler = async fn => {
+  const handler = async (fn) => {
     try {
       let params = getStore(PAYSTACK_PARAMS);
       if (!params) return;
