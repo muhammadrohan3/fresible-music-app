@@ -8,16 +8,33 @@ export default class Modal {
     this.source = source;
     this.modalId = "#modal";
   }
-  prepare(template, data = {}) {
-    this.template = template;
-    this.data = data;
+  admin() {
+    this.source = "admin";
+    return this;
+  }
+  client() {
+    this.source = "client";
+    return this;
+  }
+  prepare(template, TemplateData = {}) {
     let source = this.source === "client" ? ClientPopups : AdminPopups;
-    View.addContent("#modal-body", ejs.render(source[template], { data }));
+    View.addContent(
+      "#modal-body",
+      ejs.render(source[template], { TemplateData }),
+      true
+    );
     return this;
   }
 
   launch() {
     $(this.modalId).modal();
-    return;
+    return this;
+  }
+
+  close() {
+    $(this.modalId).modal("hide");
+    return this;
   }
 }
+
+export const modal = new Modal();

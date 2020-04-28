@@ -1,7 +1,7 @@
 const addToSiteFns = require("../util/addToSiteFns");
 const handleResponse = require("../util/handleResponse");
 
-module.exports = ({ req, getStore }) => () => {
+const pageRender = ({ req, getStore }) => () => {
   //Gets the siteData key from the store if any
   const { siteData } = getStore();
   let { page, title, template } = siteData;
@@ -14,7 +14,7 @@ module.exports = ({ req, getStore }) => () => {
     let itemArr = [];
     let value = page || route;
     //Does the string sanitization in order to get the title
-    value.split("-").forEach(item => {
+    value.split("-").forEach((item) => {
       item = item.endsWith("/") ? item.substr(0, item.length - 1) : item;
       itemArr.push(item[0].toUpperCase() + item.substr(1));
     });
@@ -25,3 +25,5 @@ module.exports = ({ req, getStore }) => () => {
   //return Control to the handleResponse Handler
   return handleResponse("render", [template || "pageContainer", SiteData]);
 };
+
+module.exports = { pageRender };

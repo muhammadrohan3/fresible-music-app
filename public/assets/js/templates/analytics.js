@@ -13,3 +13,5 @@ export const ANALYTICS_REPORT_UI = `<div>
 </div>`;
 
 export const analyticsGraphCanvas = `<canvas id="analytics-graph"></canvas>`;
+
+export default { ANALYTICS_REPORT_UI, analyticsGraphCanvas };

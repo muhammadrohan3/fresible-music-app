@@ -1,9 +1,9 @@
 const idLookUp = require("../util/idLookUp");
 
-module.exports = ({ getStore, req }) => (prop, source, key) => {
+const idMiddleWare = ({ getStore, req }) => (prop, source, key) => {
   let sourceObj = !source ? req[prop || "query"] : getStore(prop);
   if (key && Array.isArray(key)) {
-    key.forEach(id => {
+    key.forEach((id) => {
       let num = sourceObj[id];
       num && (sourceObj[id] = idLookUp(num));
     });
@@ -13,3 +13,5 @@ module.exports = ({ getStore, req }) => (prop, source, key) => {
   }
   return;
 };
+
+module.exports = { idMiddleWare };

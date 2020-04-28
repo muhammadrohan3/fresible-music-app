@@ -90,6 +90,7 @@ const View = ((document) => {
       : getElement(e).getAttribute(attr);
 
   const refresh = () => location.reload();
+  const replace = (href) => location.replace(href);
 
   const confirmAction = async (title, text, buttonText) => {
     const result = await Swal.fire({
@@ -118,6 +119,7 @@ const View = ((document) => {
     getCookieValue,
     showAlert,
     refresh,
+    replace,
     loaderText: (text) => addContent("#loader-text", text),
     showLoader,
     getFormData,

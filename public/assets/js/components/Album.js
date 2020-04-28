@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import ejs from "../ejs.min.js";
-import { albumTemplate } from "../templates/albumTemplates";
+import albumTemplate from "../templates/albumTemplates";
 import { getStore, setStore } from "../Store";
 import serverRequest, { responseHandler } from "../utilities/serverRequest";
 import uploadFile from "../utilities/uploadFile";

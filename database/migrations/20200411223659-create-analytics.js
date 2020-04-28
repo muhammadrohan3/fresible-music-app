@@ -30,22 +30,23 @@ module.exports = {
       },
       trackId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: "tracks",
           key: "id",
         },
-        onDelete: "SET NULL",
+        onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
       type: {
         type: Sequelize.ENUM,
+        allowNull: false,
         values: ["stream", "download"],
         defaultValue: "stream",
       },
       storeId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "stores",
           key: "id",
@@ -55,13 +56,6 @@ module.exports = {
       },
       count: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "stores",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
       },
       dateId: {
         type: Sequelize.INTEGER,
@@ -72,14 +66,6 @@ module.exports = {
         },
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
       },
     });
   },

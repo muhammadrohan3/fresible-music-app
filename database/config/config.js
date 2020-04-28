@@ -9,6 +9,10 @@ module.exports = {
     host: "localhost",
     dialect: "mysql",
     dialectModule: mysql2,
+    dialectOptions: {
+      supportBigNumbers: true,
+      bigNumberStrings: false,
+    },
     logging: false,
   },
   test: {

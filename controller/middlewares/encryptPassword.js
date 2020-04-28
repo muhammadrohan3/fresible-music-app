@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-module.exports = ({ setStore, getStore }) => (key, value) => {
+const encryptPassword = ({ setStore, getStore }) => (key, value) => {
   return new Promise((resolve, reject) =>
     bcrypt.genSalt(10, (err, salt) => {
       if (err) reject(err);
@@ -12,3 +12,5 @@ module.exports = ({ setStore, getStore }) => (key, value) => {
     })
   );
 };
+
+module.exports = { encryptPassword };

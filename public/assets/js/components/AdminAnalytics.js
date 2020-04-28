@@ -1,29 +1,37 @@
 import moment from "moment";
-import serverRequest from "../utilities/serverRequest";
+import serverRequest, { responseHandler } from "../utilities/serverRequest";
 import View from "../View";
 import LineGraph from "./LineGraph";
 import DoughnutChart from "./DoughnutChart";
 import sortGraph from "../utilities/sortGraph";
 import { mainChart, subChart } from "../templates/dashboardCanvas";
 import rangeFormatter from "../utilities/rangeFormatter";
+import { modal } from "./Modal";
+import Template from "./Template";
+import { setStore, getStore } from "../Store";
+import Table from "./Table";
 
+let R;
 export default class AdminAnalytics {
   static async getTopBoxesData() {
     const boxes = [
-      "totalSubscribers",
-      "totalReleases",
-      "paidSubscribers",
-      "approvedReleases",
+      {
+        id: "analytics-total-streams",
+        href: `${location.pathname}/get/totalStreams`,
+      },
+      {
+        id: "analytics-total-downloads",
+        href: `${location.pathname}/get/totalDownloads`,
+      },
     ];
     return await Promise.all(
-      boxes.map(async (box) => {
+      boxes.map(async ({ id, href }) => {
         const { data } = await serverRequest({
-          href: `/fmadmincp/dashboard/${box}`,
+          href,
           method: "get",
         });
-        let { count } = data;
-        if (Array.isArray(count)) count = count.length;
-        return View.addContent(`#${box}`, count);
+        let { total } = data[0];
+        return View.addContent(`#${id}`, total);
       })
     );
   }
@@ -88,26 +96,20 @@ export default class AdminAnalytics {
   }
 
   static async buildStoresChart() {
-    // const { data: response } = await serverRequest({
-    //   href: "/fmadmincp/dashboard/get-packages-sub-count",
-    //   method: "get",
-    // });
-
-    const response = [
-      { storeId: 1, store: { store: "Apple Music" }, count: 452 },
-      { storeId: 2, store: { store: "Spotify" }, count: 300 },
-      { storeId: 3, store: { store: "Deezer" }, count: 20 },
-    ];
+    const response = await serverRequest({
+      href: `${location.pathname}/get/topStores`,
+      method: "get",
+    });
 
     const dataValues = [];
     const labels = [];
 
-    response.forEach(({ count, store: { store } }) => {
-      dataValues.push(count);
+    response.data.forEach(({ total, store: { store } }) => {
+      dataValues.push(total);
       labels.push(store);
     });
 
-    let data = {
+    const data = {
       datasets: [
         {
           data: dataValues,
@@ -129,14 +131,31 @@ export default class AdminAnalytics {
   }
 
   static async renderTable() {
+    const response = await serverRequest({
+      method: "get",
+      href: `${location.pathname}/get/dates`,
+    });
+
+    if (!(R = responseHandler(response))) return;
+    const tableData = R;
+    console.log(tableData);
+
     const formatDate = (value, row) => {
       return moment(value).format("Do MMM, YYYY");
     };
 
-    const formatCount = (value, row) => {
+    const idFormat = (value, row) => {
+      const { releaseId } = row;
+      let url = `/fmadmincp/analytics/${value}/edit`;
+      if (releaseId) url = `/fmadmincp/analytics/releases/${value}`;
+
+      return `<a class='default' href='${url}'>${value}</a>`;
+    };
+
+    const formatCount = (value) => {
       return `<div class='d-flex align-items-center'><span class='mr-1'>${
-        row.count
-      }</span>${rangeFormatter(value, row)}</div>`;
+        value.count
+      }</span>${rangeFormatter(value)}</div>`;
     };
 
     const statusFormat = (value) => {
@@ -144,25 +163,30 @@ export default class AdminAnalytics {
         processing: "info",
         published: "success",
       };
-      return `<span class='alert alert-${
+      return `<div><span class='badge badge-${
         statusHash[value.trim()]
-      }'>${value}</span>`;
+      } badge-pill'>${value}</span></div>`;
     };
 
     const columns = [
       [
-        { field: "id", title: "#ID", sortable: true },
+        {
+          field: "dateId",
+          title: "#ID",
+          sortable: true,
+          formatter: "idFormat",
+        },
         { field: "date", title: "Date", formatter: "formatDate" },
         { field: "status", title: "Status", formatter: "statusFormat" },
         {
-          field: "count",
+          field: "streams",
           title: "Stream",
           align: "center",
           sortable: true,
           formatter: "formatCount",
         },
         {
-          field: "count",
+          field: "downloads",
           title: "Download",
           align: "center",
           sortable: true,
@@ -170,17 +194,22 @@ export default class AdminAnalytics {
         },
       ],
       [
-        { field: "id", title: "#ID", sortable: true },
-        { field: "release", title: "Release", sortable: true },
         {
-          field: "stream",
+          field: "releaseId",
+          title: "#ID",
+          sortable: true,
+          formatter: "idFormat",
+        },
+        { field: "title", title: "Release" },
+        {
+          field: "streams",
           title: "Stream",
           align: "center",
           sortable: true,
           formatter: "formatCount",
         },
         {
-          field: "download",
+          field: "downloads",
           title: "Download",
           align: "center",
           sortable: true,
@@ -192,8 +221,57 @@ export default class AdminAnalytics {
       formatCount,
       formatDate,
       statusFormat,
+      idFormat,
     });
     return;
+  }
+
+  static openSelectStoresModal(target) {
+    let { stores } = View.getElement("#analyticsInitiate").dataset;
+    stores = JSON.parse(stores);
+    const { type } = target.dataset;
+    const selectedStores = getStore("ANALYTICS-SELECTED-STORES")?.[type];
+    modal.admin().prepare("stores", { type, stores, selectedStores }).launch();
+  }
+
+  static handleStoresSelected(form) {
+    let { stores } = View.getElement("#analyticsInitiate").dataset;
+    stores = JSON.parse(stores);
+    const { type } = form.dataset;
+    const { rawFormData } = View.getFormData(form);
+    const selectedStoresHash = {};
+    const selectedStores = stores.filter(
+      (store) => rawFormData[store.id] && (selectedStoresHash[store.id] = true)
+    );
+    if (!selectedStores) return;
+    setStore("ANALYTICS-SELECTED-STORES", { [type]: selectedStoresHash });
+    const insertSource =
+      type === "stream"
+        ? "#analyticsInitiate-stream"
+        : "#analyticsInitiate-download";
+    const TemplateData = { type, selectedStores };
+    View.addContent(
+      insertSource,
+      Template("analyticsStoresList", TemplateData),
+      true
+    );
+    modal.close();
+  }
+
+  static handleAddNewStoreInput(target) {
+    const { stores } = View.getElement("#analyticsAdd").dataset;
+    $(target)
+      .next()
+      .append(
+        Template("analyticsNewStoreInput", { stores: JSON.parse(stores) })
+      );
+  }
+
+  static handleRemoveStoreInput(target) {
+    const $container = $(target).parent();
+    if ($container.parent().children().length === 1)
+      return View.showAlert("There has to be atleast one store");
+    $container.remove();
   }
 }
 

@@ -2,6 +2,8 @@ export default (target, tableData, dataColumns, functions = {}) => {
   const mainTable = $(target).find("table");
   const bgColors = ["", "rgba(239,240,246, 0.4)", "rgb(239,240,246)"];
 
+  console.log(tableData);
+
   const _getParent = (elem, identifier, type = "tagName") => {
     const parents = $(elem).parents();
     for (parent of parents) {
@@ -33,7 +35,6 @@ export default (target, tableData, dataColumns, functions = {}) => {
 
     //Add the default dropdown button
     if (columnIndex < dataColumns.length - 1) columns.push(DetailsField);
-
     //Builds the table
     table.bootstrapTable({
       columns,
@@ -45,12 +46,6 @@ export default (target, tableData, dataColumns, functions = {}) => {
   };
 
   _buildTable(tableData, mainTable, 0);
-
-  //   function expandTable(data, $detail, index) {
-  //     _buildTable(data, $detail.html("<table></table>"), index);
-  //   }
-
-  /////
 
   function _handleNestClick(columnIndex, e, val, row) {
     const $tr = $(_getParent(e.target, "tr"));

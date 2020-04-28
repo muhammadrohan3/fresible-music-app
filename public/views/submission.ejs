@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
   <% const {id, type, status, title, comment, subscription, releaseDate,
-  approvedDate, createdAt, user, labelArtist, linkId, link, tracks} = pageData;
+  approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artworkUpload} = pageData;
   %>
   <div class="single-head">
     <a class="single-head__back" href="/submissions">
@@ -70,7 +70,7 @@
           <div class="submission__details__overview__image__box">
             <img
               class="submission__details__overview__image__box--img"
-              src="https://res.cloudinary.com/fresible/image/upload/v1575303173/music/artworks/artwork-3205643082.jpg"
+              src="<%= artworkUpload.secureUrl || '/dist/no-image.jpg' %>"
               alt="<%= title %> artwork"
             />
           </div>
@@ -168,7 +168,8 @@
           </ul>
         </div>
       </div>
-      <section
+      <% if(linkId) { %>
+        <section
         class="submission__link d-flex flex-column flex-md-row align-items-center mt-4 py-4"
       >
         <div class="submission__link__left mb-5 mr-md-4 mb-md-0">
@@ -182,7 +183,9 @@
           <button class="btn-outline py-2 px-5">VIEW LINK</button>
         </div>
       </section>
-      <section class="mt-5">
+      <% } %>
+      <section class="mt-5 border-0">
+        <div class="-u-font-bold mb-4"><%= type === 'track' ? 'TRACK' : 'TRACKS-LIST' %></div>
         <table
           data-toggle="table"
           data-classes="table table-hovered table-striped"

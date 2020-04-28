@@ -19,6 +19,8 @@ const {
   COMPDATA,
   SCHEMADATA,
   SITEDATA,
+  ANALYTICS,
+  ANALYTICSDATE,
   NEWRELEASE,
   PAGEDATA,
   LABELARTIST,
@@ -34,6 +36,7 @@ module.exports = (Controller) => {
     deleteSchemaData,
     getOneFromSchema,
     getAllFromSchema,
+    getOrCreateSchemaData,
     bulkCreateSchema,
     addToSchema,
     createSchemaData,
@@ -49,14 +52,16 @@ module.exports = (Controller) => {
     respond,
     respondIf,
     redirectIf,
+    analytics_edit,
+    analytics_initiate,
+    analytics_default_intercept,
+    analytics_default,
+    cloneKeyData,
     redirect,
     urlFormer,
     sendMail,
     isValueIn,
     setStoreIf,
-    addMusic_structureReleaseType,
-    addMusic_structureSubs,
-    addMusic_checkIncompleteCreation,
   } = Controller;
 
   router.get(
@@ -66,12 +71,214 @@ module.exports = (Controller) => {
   );
 
   router.get(
-    "/initiate",
+    "/get/dates",
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: ANALYTICS,
+        i: [
+          { m: RELEASE, at: ["title", "id"], al: "release" },
+          { m: TRACK, at: ["title", "id"], al: "track" },
+          { m: STORE, at: ["store", "id"] },
+          { m: ANALYTICSDATE, at: ["date", "id", "status"] },
+        ],
+      },
+    ]),
+    analytics_default_intercept(),
+    getAllFromSchema(ANALYTICSDATE, ["id"]),
+    analytics_default(),
+    respond(["ANALYTICS_DEFAULT"])
+  );
+
+  router.get(
+    "/get/totalStreams",
+    addToSchema(SCHEMAQUERY, { type: "stream" }),
+    getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/get/totalDownloads",
+    addToSchema(SCHEMAQUERY, { type: "download" }),
+    getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/get/topStores",
+    addToSchema("schemaOptions", { limit: 3 }),
+    addToSchema(SCHEMAINCLUDE, [{ m: STORE, at: ["store"] }]),
+    getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]], {
+      group: ["storeId"],
+      order: [[["SUM", "count", "DESC"]]],
+    }),
+    seeStore([SCHEMARESULT]),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/new",
+    getAllFromSchema(ANALYTICSDATE, ["date"]),
+    respond([SCHEMARESULT])
+  );
+
+  router.post(
+    "/new",
+    schemaDataConstructor("body", ["date"]),
+    respondIf(
+      SCHEMADATA,
+      false,
+      "Error: request body incomplete, date missing"
+    ),
+    schemaQueryConstructor("body", ["date"]),
+    getOrCreateSchemaData(ANALYTICSDATE),
+    respondIf("schemaCreated", false, "Error: date already exists"),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/:dateId",
+    schemaQueryConstructor("params", ["dateId"], ["id"]),
+    redirectIf(SCHEMAQUERY, false, "/"),
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: ANALYTICS,
+        i: [
+          { m: RELEASE, al: ["release"], at: ["id", "title"] },
+          { m: TRACK, al: ["track"], at: ["id", "title"] },
+          { m: STORE, al: ["store"], at: ["id", "store"] },
+        ],
+      },
+    ]),
+    getOneFromSchema(ANALYTICSDATE),
+    redirectIf(SCHEMARESULT, false, "/fmadmincp/analytics"),
+    sameAs("status", "published", SCHEMARESULT),
+    redirectIf(SAMEAS, false, "/fmadmincp/analytics/{id}/edit", [SCHEMAQUERY]),
+    resetKey(SCHEMARESULT),
+    getAllFromSchema(STORE, ["id", "store"]),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, {
+      page: "analyticsSingle",
+      title: "Analytics",
+    }),
+    pageRender()
+  );
+
+  router.get(
+    "/:dateId/initiate",
+    schemaQueryConstructor("params", ["dateId"], ["id"]),
+    redirectIf(SCHEMAQUERY, false, "/"),
+    getOneFromSchema(ANALYTICSDATE),
+    redirectIf(SCHEMARESULT, false, "/fmadmincp/analytics"),
+    sameAs("status", "initiating", SCHEMARESULT),
+    redirectIf(SAMEAS, false, "/fmadmincp/analytics/{id}/edit", [SCHEMAQUERY]),
+    resetKey([SCHEMARESULT, SCHEMAQUERY]),
+    getAllFromSchema(STORE, ["id", "store"]),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "analyticsInitiate",
       title: "Initiate Analytics",
     }),
     pageRender()
+  );
+
+  router.post(
+    "/:dateId/initiate",
+    schemaQueryConstructor("params", ["dateId"], ["id"]),
+    respondIf(
+      SCHEMAQUERY,
+      false,
+      "Error: Date Id missing from query parameters"
+    ),
+    fromReq("body", ["stream", "download"], TEMPKEY),
+    respondIf(TEMPKEY, false, "Error: Request data object empty"),
+    getOneFromSchema(ANALYTICSDATE),
+    sameAs("status", "initiating", SCHEMARESULT),
+    respondIf(
+      SAMEAS,
+      false,
+      "Analytics for this date has already been initiated"
+    ),
+    resetKey([SCHEMARESULT, SCHEMAQUERY]),
+    addToSchema(SCHEMAQUERY, { status: "in stores" }),
+    addToSchema(SCHEMAINCLUDE, [
+      { m: USER, at: ["id"] },
+      { m: TRACK, at: ["id", "title"] },
+    ]),
+    getAllFromSchema(RELEASE, ["id", "title"]),
+    respondIf(SCHEMARESULT, false, "Error: No releases are live in stores yet"),
+    fromReq("params", ["dateId"], "analyticsDateId"),
+    analytics_initiate(),
+    cloneKeyData(["ANALYTICS_INITIATE"], SCHEMADATA),
+    bulkCreateSchema(ANALYTICS),
+    respondIf(
+      SCHEMARESULT,
+      false,
+      "Error: couldn't initiate analytics for date"
+    ),
+    resetKey([SCHEMADATA, SCHEMAQUERY]),
+    schemaQueryConstructor("params", ["dateId"], ["id"]),
+    addToSchema(SCHEMADATA, { status: "processing" }),
+    updateSchemaData(ANALYTICSDATE),
+    respondIf(SCHEMAMUTATED, false, "Error: couldn't update analytics date"),
+    respond(1)
+  );
+
+  router.get(
+    "/:dateId/edit",
+    schemaQueryConstructor("params", ["dateId"], ["id"]),
+    redirectIf(SCHEMAQUERY, false, "/"),
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: ANALYTICS,
+        i: [
+          { m: RELEASE, al: ["release"], at: ["id", "title", "type"] },
+          { m: TRACK, al: ["track"], at: ["id", "title"] },
+          { m: STORE, al: ["store"], at: ["id", "store"] },
+        ],
+      },
+    ]),
+    getOneFromSchema(ANALYTICSDATE),
+    redirectIf(SCHEMARESULT, false, "/fmadmincp/analytics"),
+    sameAs("status", "initiating", SCHEMARESULT),
+    redirectIf(SAMEAS, true, "/fmadmincp/analytics/{id}/initiate", [
+      SCHEMAQUERY,
+    ]),
+    fromStore(SCHEMARESULT, ["id", "date"], PAGEDATA, ["dateId"]),
+    analytics_edit(),
+    resetKey([SCHEMAQUERY, SCHEMARESULT, SCHEMAINCLUDE]),
+    getAllFromSchema(STORE, ["id", "store"]),
+    copyKeyTo(SCHEMARESULT, PAGEDATA, "stores"),
+    copyKeyTo("ANALYTICS_EDIT", PAGEDATA, "analytics"),
+    copyKeyTo(PAGEDATA, SITEDATA),
+    addToSchema(SITEDATA, {
+      page: "analyticsEdit",
+      title: "Edit Analytics",
+    }),
+    pageRender()
+  );
+
+  router.post(
+    "/:dateId/edit",
+    schemaDataConstructor("body"),
+    respondIf(SCHEMADATA, false, "Error: empty request data"),
+    schemaQueryConstructor("params", ["dateId"]),
+    deleteSchemaData(ANALYTICS),
+    bulkCreateSchema(ANALYTICS),
+    respondIf(SCHEMARESULT, false, "Error: could not update data sheet"),
+    respond([SCHEMAQUERY])
+  );
+
+  router.post(
+    "/:dateId/publish",
+    schemaQueryConstructor("params", ["dateId"], ["id"]),
+    addToSchema(SCHEMADATA, { status: "published" }),
+    updateSchemaData(ANALYTICSDATE),
+    respondIf(
+      SCHEMAMUTATED,
+      false,
+      "Error: could not set datasheet to publish"
+    ),
+    respond(1)
   );
 
   router.get(

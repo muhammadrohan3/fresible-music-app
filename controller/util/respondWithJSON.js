@@ -1,5 +1,6 @@
 const handleResponse = require("../util/handleResponse");
 const idLookUp = require("../util/idLookUp");
+const valExtractor = require("../util/valExtractor");
 
 module.exports = (getStore, item) => {
   //Response use to be in the form of strings (mostly Errors) and Number (1 ==> Success)
@@ -15,10 +16,8 @@ module.exports = (getStore, item) => {
 
   //IF item is an array that means the response to be sent is a data key in the store
   if (Array.isArray(item)) {
-    const [key] = item;
-    let tempItem = getStore(key);
+    let tempItem = valExtractor(getStore(), item);
     if (!tempItem) return handleResponse("error", "RESPOND: key not found");
-    if ((id = tempItem["id"])) tempItem["id"] = idLookUp(id);
     tempItem && (item = { status: "success", data: tempItem });
   }
 

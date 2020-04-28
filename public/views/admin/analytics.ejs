@@ -2,11 +2,29 @@
   <section class="d-flex flex-column flex-md-row">
     <div class="analytics__card">
       <div class="analytics__card--title">Total Streams</div>
-      <div class="analytics__card--number"><%=Fns.formatNumber(40500) %></div>
+      <div class="analytics__card--icon">
+        <span
+          class="iconify"
+          data-icon="openmoji:headphone"
+          data-inline="false"
+        ></span>
+      </div>
+      <div class="analytics__card--number" id="analytics-total-streams">
+        ...
+      </div>
     </div>
     <div class="analytics__card">
       <div class="analytics__card--title">Total Downloads</div>
-      <div class="analytics__card--number"><%=Fns.formatNumber(40000) %></div>
+      <div class="analytics__card--icon">
+        <span
+          class="iconify"
+          data-icon="bi:download"
+          data-inline="false"
+        ></span>
+      </div>
+      <div class="analytics__card--number" id="analytics-total-downloads">
+        ...
+      </div>
     </div>
     <div class="analytics__card">
       <div class="analytics__card--title">Top 3 stores</div>
@@ -15,7 +33,23 @@
       </div>
     </div>
   </section>
-  <section class="mt-5">
-    <table id="analytics-table"></table>
+  <section class="mt-5 bg-white p-4">
+    <div class="analytics__date text-left">
+      <input
+        class="analytics__date--input"
+        type="date"
+        name=""
+        id="analytics-new-datasheet-input"
+      />
+      <button
+        id="analytics-new-datasheet"
+        class="btn-outline analytics__date--btn"
+      >
+        + New Datasheet
+      </button>
+    </div>
+    <section class="analytics__table mt-1" id="analytics-table">
+      <table data-mobile-responsive="true"></table>
+    </section>
   </section>
 </section>

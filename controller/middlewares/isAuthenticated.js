@@ -1,6 +1,6 @@
 const handleResponse = require("../util/handleResponse");
 
-module.exports = ({ req }) => (route, base) => {
+const isAuthenticated = ({ req }) => (route, base) => {
   const noAuth = ["/getReleaseLinks", "/confirm-account/vtc"];
   let baseRoute = req.baseUrl + req.path;
   route = (base && base + route) || route;
@@ -13,3 +13,5 @@ module.exports = ({ req }) => (route, base) => {
       : null;
   return baseRoute.startsWith(route) ? null : handleResponse("redirect", route);
 };
+
+module.exports = { isAuthenticated };

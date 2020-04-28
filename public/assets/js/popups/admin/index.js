@@ -1,3 +1,4 @@
 import links from "./links";
+import stores from "./stores";
 
-export default { links };
+export default { links, stores };

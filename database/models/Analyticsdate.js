@@ -1,6 +1,6 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const analyticsdates = sequelize.define(
+  const Analyticsdate = sequelize.define(
     "analyticsdates",
     {
       date: DataTypes.DATEONLY,
@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
-  analyticsdates.associate = function (models) {
-    // associations can be defined here
+  Analyticsdate.associate = function ({ Analytic }) {
+    this.hasMany(Analytic, { foreignKey: "dateId", as: "analytics" });
   };
-  return analyticsdates;
+  return Analyticsdate;
 };

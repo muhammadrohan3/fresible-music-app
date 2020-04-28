@@ -1,6 +1,6 @@
 const schemaConstructor = require("../util/schemaConstructor");
 
-module.exports = ({ req, setStore }) => () => {
+const addSiteDefaultData = ({ req, setStore }) => () => {
   const { user } = req;
   if (!user) return;
   return schemaConstructor(
@@ -13,7 +13,9 @@ module.exports = ({ req, setStore }) => () => {
       "loggedInUserAvatar",
       "loggedInUserRole",
       "loggedInUserId",
-      "loggedInAccountType"
+      "loggedInAccountType",
     ]
   );
 };
+
+module.exports = { addSiteDefaultData };

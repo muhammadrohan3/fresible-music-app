@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const handleResponse = require("../util/handleResponse");
 
-module.exports = ({ getStore, setStore }) => async () => {
+const comparePassword = ({ getStore, setStore }) => async () => {
   try {
     //Get the password to compare from store;
     const passwordToCompare = getStore("passwordToCompare")["password"];
@@ -14,3 +14,5 @@ module.exports = ({ getStore, setStore }) => async () => {
     return handleResponse("error", err);
   }
 };
+
+module.exports = { comparePassword };

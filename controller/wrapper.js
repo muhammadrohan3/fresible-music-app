@@ -16,21 +16,22 @@ const wrapperHandler = (payload, req, res, next, fname) => {
 };
 
 module.exports = (fn, name) => (...params) => async (req, res, next) => {
-  const store = res.locals;
+  let store = res.locals;
   const clearStore = () => (store = {});
   const setStore = (key, data) => {
     if (Array.isArray(data)) {
       res.locals = { ...store, [key]: data };
-      return;
-    }
-    if (typeof data === "object") {
+    } else if (typeof data === "object") {
       res.locals = { ...store, [key]: { ...(store[key] || {}), ...data } };
-      return;
+    } else {
+      res.locals = { ...store, [key]: data };
     }
-    res.locals = { ...store, [key]: data };
+    store = res.locals;
     return;
   };
-  const getStore = key => (key ? store[key] : store);
+  const getStore = (key) => {
+    return key ? store[key] : store;
+  };
 
   try {
     let fname = name || fn.name;
@@ -39,7 +40,9 @@ module.exports = (fn, name) => (...params) => async (req, res, next) => {
         "currently on: ",
         fname,
         " via route ",
-        req.baseUrl + req.path
+        req.baseUrl + req.path,
+        " method: ",
+        req.method
       );
     let run = fn({ setStore, getStore, req, res });
     if (typeof run === "function") run = await run.apply(null, params);
@@ -50,7 +53,7 @@ module.exports = (fn, name) => (...params) => async (req, res, next) => {
     else
       res.json({
         status: "error",
-        data: "ERROR: SOMETHING WENT WRONG (NOTIFY ADMIN)"
+        data: "ERROR: SOMETHING WENT WRONG (NOTIFY ADMIN)",
       });
     next(err);
   }

@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     Labelartist,
     Upload,
     Track,
+    Analytic,
   }) {
     this.belongsTo(Userpackage, {
       foreignKey: "userPackageId",
@@ -56,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     this.belongsTo(Labelartist, { foreignKey: "artistId", as: "labelArtist" });
     this.hasMany(Track, { foreignKey: "releaseId", as: "tracks" });
+    this.hasMany(Analytic, { foreignKey: "releaseId", as: "analytics" });
   };
   return Release;
 };

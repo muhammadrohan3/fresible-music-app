@@ -38,4 +38,4 @@ const setStoreIf = ({ getStore, setStore }) => (
   return setStore(destinationKey, destinationValue);
 };
 
-module.exports = setStoreIf;
+module.exports = { setStoreIf };

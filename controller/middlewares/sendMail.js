@@ -1,13 +1,13 @@
 const handleResponse = require("../util/handleResponse");
-const sendMail = require("../../mails");
+const send_mail = require("../../mails");
 
-module.exports = ({ setStore, getStore }) => async (
+const sendMail = ({ setStore, getStore }) => async (
   type,
   mailInfo,
   who = "user"
 ) => {
   try {
-    const status = sendMail(type, mailInfo, who, getStore());
+    const status = send_mail(type, mailInfo, who, getStore());
     if (typeof status === "string") return handleResponse("error", status);
     return setStore("mailStatus", status);
   } catch (err) {
@@ -15,3 +15,5 @@ module.exports = ({ setStore, getStore }) => async (
     return setStore("mailStatus", false);
   }
 };
+
+module.exports = { sendMail };

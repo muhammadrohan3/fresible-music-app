@@ -35,6 +35,7 @@ const {
   SAMEAS,
   USERPROFILE,
   NEWSUBSCRIPTION,
+  UPLOAD,
 } = require("../constants");
 
 const Controller = require("../controller")();
@@ -237,6 +238,7 @@ router.get(
     },
     { m: LABELARTIST, at: ["stageName"] },
     { m: "link", at: ["slug"] },
+    { m: UPLOAD, al: "artworkUpload", at: ["secureUrl"] },
   ]),
   getOneFromSchema(RELEASE),
   redirectIf(SCHEMARESULT, false, "/submissions"),
@@ -246,7 +248,6 @@ router.get(
   redirectIf(SAMEAS, true, "/submissions"),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
   addToSchema(SITEDATA, { title: "Release" }),
-  seeStore([SITEDATA, PAGEDATA]),
   pageRender()
 );
 

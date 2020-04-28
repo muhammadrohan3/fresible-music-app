@@ -1,1 +1,2 @@
-module.exports = ({ setStore }) => (key, value) => setStore(key, value);
+const addToSchema = ({ setStore }) => (key, value) => setStore(key, value);
+module.exports = { addToSchema };

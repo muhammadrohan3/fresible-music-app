@@ -6,4 +6,4 @@ const isLabel = ({ req }) => () => {
   return handleResponse("redirect", "/profile");
 };
 
-module.exports = isLabel;
+module.exports = { isLabel };

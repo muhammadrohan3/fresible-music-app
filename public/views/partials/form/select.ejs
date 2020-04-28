@@ -19,7 +19,7 @@ formData[key] || value}) , {}) %>
      <% options.forEach((item) => { %>
         <% let [key, desc] = typeof item === 'string' ? [item, item] : item; %>
         <% if(key !== optionVal[0]) { %>
-            <option value="<%= key %>"><%= desc %></option>
+            <option data-desc="<%= desc %>" value="<%= key %>"><%= desc %></option>
        <% } %>
      <% }) %>
     </select>

@@ -1,0 +1,188 @@
+<% const {analytics, dateId, date} = pageData %> <% const stores =
+Fns.convertObjArray(pageData.stores, ['id', 'store']) %>
+<div class="mt-4 -u-font-bold text-center">
+  Analytics Datasheet - <%= Fns.dateFormat(date) %>
+</div>
+<section
+  class="-u-page analyticsAdd"
+  id="analyticsAdd"
+  data-dateId="<%= dateId %>"
+  data-stores="<%= JSON.stringify(stores) %>"
+>
+  <div id="accordion" role="tablist" aria-multiselectable="true">
+    <% analytics.forEach(({title, userId, releaseId, type, children}, index) =>
+    { %>
+    <div
+      class="analyticsAdd__panel analyticsAdd__panel--release"
+      data-release="<%=JSON.stringify({userId, releaseId}) %>"
+    >
+      <div
+        class="analyticsAdd__panel__heading"
+        role="tab"
+        id="heading<%= index %>"
+      >
+        <a
+          role="button"
+          data-toggle="collapse"
+          data-parent="#accordion"
+          href="#collapse<%= index %>"
+          aria-expanded="true"
+          aria-controls="collapse<%= index %>"
+          class="analyticsAdd__panel__heading__link"
+        >
+          <span class="analyticsAdd__panel__heading__link--text"
+            ><%= title %> (<%= type %>)</span
+          >
+          <span
+            class="iconify"
+            data-icon="bx:bx-chevron-down-circle"
+            data-inline="false"
+          ></span>
+        </a>
+      </div>
+      <div
+        id="collapse<%= index %>"
+        class="analyticsAdd__panel__body collapse"
+        role="tabpanel"
+        aria-labelledby="heading<%= index %>"
+      >
+        <% children.forEach(({title, trackId, streams, downloads}, subIndex) =>
+        { %>
+        <div
+          class="analyticsAdd"
+          id="accordionSub<%= index %>-<%= subIndex %>"
+          role="tablist"
+          aria-multiselectable="true"
+        >
+          <div
+            data-track="<%=JSON.stringify({trackId}) %>"
+            class="analyticsAdd__panel analyticsAdd__panel--track bg-white ml-5 mr-2"
+          >
+            <div
+              class="analyticsAdd__panel__heading"
+              role="tab"
+              id="headingSub<%= index %>-<%= subIndex %>"
+            >
+              <a
+                role="button"
+                data-toggle="collapse"
+                data-parent="#accordionSub<%= index %>-<%= subIndex %>"
+                href="#collapseSub<%= index %>-<%= subIndex %>"
+                aria-expanded="true"
+                aria-controls="collapseSub<%= index %>-<%= subIndex %>"
+                class="analyticsAdd__panel__heading__link"
+              >
+                <span class="analyticsAdd__panel__heading__link--text"
+                  ><%= title %></span
+                >
+                <span
+                  class="iconify"
+                  data-icon="bx:bx-chevron-down-circle"
+                  data-inline="false"
+                ></span>
+              </a>
+            </div>
+            <div
+              id="collapseSub<%= index %>-<%= subIndex %>"
+              class="collapse"
+              role="tabpanel"
+              aria-labelledby="headingSub<%= index %>-<%= subIndex %>"
+            >
+              <div class="ml-5 d-flex flex-column flex-md-row px-2">
+                <section
+                  class="analyticsAdd__option"
+                  data-type="stream"
+                  style="flex: 1;"
+                >
+                  <div class="analyticsAdd__option--title">Streams</div>
+                  <div class="d-flex ml-2">
+                    <button class="analyticsAdd__option--icon">+</button>
+                    <div class="analyticsAdd__option__container">
+                      <% streams.forEach(({storeId, store, count}, index) => {
+                      %>
+                      <div class="analyticsAdd__option__container__item">
+                        <div>
+                          <%- include('../partials/form/select', {formData:
+                          {options: stores, value: [storeId, store]}}) %>
+                        </div>
+                        <div>
+                          <%- include('../partials/form/input', {formData:
+                          {value: count}}) %>
+                        </div>
+                        <button
+                          class="analyticsAdd__option__container__item--delete"
+                        >
+                          <span
+                            class="iconify"
+                            data-icon="bpmn:trash"
+                            data-inline="false"
+                          ></span>
+                        </button>
+                      </div>
+                      <% }) %>
+                    </div>
+                  </div>
+                </section>
+                <!-- DOWNLOADS -->
+                <section
+                  class="analyticsAdd__option"
+                  data-type="download"
+                  style="flex: 1;"
+                >
+                  <div class="analyticsAdd__option--title">Downloads</div>
+                  <div class="d-flex">
+                    <button class="analyticsAdd__option--icon">+</button>
+                    <div class="analyticsAdd__option__container">
+                      <% downloads.forEach(({storeId, store, count}, index) => {
+                      %>
+                      <div class="analyticsAdd__option__container__item">
+                        <div>
+                          <%- include('../partials/form/select', {formData:
+                          {options: stores, value: [storeId, store]}}) %>
+                        </div>
+                        <div>
+                          <%- include('../partials/form/input', {formData:
+                          {value: count}}) %>
+                        </div>
+                        <button
+                          class="analyticsAdd__option__container__item--delete"
+                        >
+                          <span
+                            class="iconify"
+                            data-icon="bpmn:trash"
+                            data-inline="false"
+                          ></span>
+                        </button>
+                      </div>
+                      <% }) %>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<div class="-u-group mb-5 btn-group">
+  <button class="btn-outline" id="analyticsAdd-save">
+    <span
+      class="iconify"
+      data-icon="ic:outline-save-alt"
+      data-inline="false"
+    ></span>
+    <span>Save Draft</span>
+  </button>
+  <button class="btn-primary" id="analyticsAdd-publish">
+    <span
+      class="iconify"
+      data-icon="ic:baseline-done"
+      data-inline="false"
+    ></span>
+    Publish
+  </button>
+</div>

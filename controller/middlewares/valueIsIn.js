@@ -9,4 +9,4 @@ const valueIsIn = ({ getStore, setStore }) => (key, values = [], source) => {
   return setStore(SAMEAS, false);
 };
 
-module.exports = valueIsIn;
+module.exports = { isValueIn: valueIsIn };

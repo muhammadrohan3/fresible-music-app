@@ -1,1 +1,3 @@
-module.exports = ({ req, setStore }) => () => setStore("user", req.user);
+const addUserToStore = ({ req, setStore }) => () => setStore("user", req.user);
+
+module.exports = { addUserToStore };

@@ -16,10 +16,8 @@ const {
   SCHEMADATA,
   SCHEMAMUTATED,
   PAGEDATA,
-  VIDEO,
   TRACK,
-  ALBUM,
-  ALBUMTRACK,
+  UPLOAD,
   PAYMENT,
   LOG,
   LINK,
@@ -198,48 +196,14 @@ module.exports = (Controller) => {
         at: ["id", "firstName", "lastName", "type"],
         i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
       },
-      { m: VIDEO },
-      { m: TRACK },
-      { m: ALBUM, i: [{ m: ALBUMTRACK, al: "tracks" }] },
+      { m: TRACK, i: [{ m: UPLOAD, al: "trackUpload", at: ["secureUrl"] }] },
+      { m: UPLOAD, al: "artworkUpload", at: ["secureUrl"] },
     ]),
     getOneFromSchema(RELEASE),
     redirectIf(SCHEMARESULT, false, null, "/fmadmincp/submissions"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "submission" }),
     seeStore([SITEDATA]),
-    pageRender()
-  );
-
-  router.get(
-    "/submission/album",
-    schemaQueryConstructor("query", ["id"]),
-    redirectIf(SCHEMAQUERY, false, "/fmadmincp/submissions"),
-    addToSchema(SCHEMAINCLUDE, [
-      { m: ALBUMTRACK, al: "tracks" },
-      { m: RELEASE, al: "release", at: ["status", "id"] },
-    ]),
-    getOneFromSchema(ALBUM),
-    redirectIf(SCHEMARESULT, false, "/submissions"),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { page: "../album/index", title: "Album" }),
-    pageRender()
-  );
-
-  router.get(
-    "/submission/album-track/:albumId/:trackId",
-    schemaQueryConstructor("params", ["albumId"], ["id"]),
-    redirectIf(SCHEMAQUERY, false, "/fmadmincp/submissions"),
-    fromReq("params", ["trackId"], "trackWhere", ["id"]),
-    sameAs("trackId", "", "trackWhere"),
-    fromStore(SCHEMAQUERY, ["albumId"], TEMPKEY, ["id"]),
-    redirectIf(SAMEAS, true, "/fmadmincp/submission/album", [TEMPKEY]),
-    addToSchema(SCHEMAINCLUDE, [
-      { m: ALBUMTRACK, al: "tracks", w: ["trackWhere"] },
-    ]),
-    getOneFromSchema(ALBUM),
-    redirectIf(SCHEMARESULT, false, "/fmadmincp/submission/album", [TEMPKEY]),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { page: "../album/track", title: "Album Track" }),
     pageRender()
   );
 

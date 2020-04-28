@@ -139,9 +139,11 @@ var Response = {
       level: 1,
       title: "Joko Sile",
       type: "track",
-      stream: 167,
-      rate: 81.52,
-      growing: true,
+      stream: {
+        count: 167,
+        rate: 81.52,
+        growing: true,
+      },
       children: [
         {
           level: 3,

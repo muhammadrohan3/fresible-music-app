@@ -60,6 +60,9 @@ module.exports = () => ({
   dateTimeFormat: (date) => date && moment(date).format("YYYY-MM-DD h:mma"),
   dirs: { viewsDir },
   filter: (list, key) => list.filter((item) => item !== key),
+  convertObjArray: (objArray = [], keys = []) => {
+    return objArray.map((obj) => keys.map((key) => obj[key]));
+  },
   formatNumber: (num) => {
     if (num >= 1000000000) {
       return (num / 1000000000).toFixed(1).replace(/\.0$/, "") + "G+";

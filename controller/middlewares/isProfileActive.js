@@ -1,6 +1,6 @@
 const handleResponse = require("../util/handleResponse");
 
-module.exports = ({ req, res }) => () => {
+const isProfileActive = ({ req, res }) => () => {
   if (!req.user || req.user.role !== "subscriber") return;
   const handle = (route, param) => {
     if (!route) {
@@ -55,3 +55,5 @@ module.exports = ({ req, res }) => () => {
       return handle(false);
   }
 };
+
+module.exports = { isProfileActive };

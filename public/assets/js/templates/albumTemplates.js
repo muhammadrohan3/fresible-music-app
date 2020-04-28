@@ -1,4 +1,4 @@
-export const albumTemplate = `
+export default `
 <div class="album__container__input-box" data-num='<%= i %>' id="track<%= i %>">
 <% const hashMap = {title: '', artiste: '', featured: '', copyrightYear: '',
 copyrightHolder: '', explicit: '', genre: '', track: ''} %>

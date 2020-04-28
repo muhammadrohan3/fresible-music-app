@@ -1,5 +1,7 @@
 import "regenerator-runtime/runtime";
 import Swal from "sweetalert2";
+import flatpickr from "flatpickr";
+import moment from "moment";
 import { async, promised } from "q";
 import * as ejs from "../ejs.min.js";
 import "../../../../node_modules/chart.js/dist/Chart";
@@ -7,7 +9,7 @@ import View from "../View";
 import serverRequest from "../utilities/serverRequest";
 import mobileMenu from "../utilities/handleMobileMenu";
 import submitForm from "../utilities/submitForm";
-import Modal from "../components/Modal";
+import { modal } from "../components/Modal";
 import DashboardLoader from "../components/AdminDashboard";
 import AnalyticsLoader from "../components/AdminAnalytics";
 
@@ -57,12 +59,9 @@ export default () => {
 
   //This handles the store links modal.
   const handleStoreLinksModal = async (elem) => {
-    View.showLoader(true);
-    const modal = new Modal("admin");
-    modal.prepare("links");
+    // View.showLoader(true);
     const formDataAttributes = {};
     let formData = {};
-    const form = View.getElement("#links-form");
     //destructures the needed values from the element already set
     const { type, link_id: linkId, details } = elem.dataset;
     formDataAttributes["details"] = details;
@@ -85,10 +84,11 @@ export default () => {
       formDataAttributes["type"] = "edit";
       formDataAttributes["query_include"] = false;
     }
-
+    let TemplateData = {};
+    TemplateData = { formData, formDataAttributes };
     View.showLoader(false);
+    modal.admin().prepare("links", { TemplateData }).launch();
     //Launches the bootstrap modal on the page
-    return modal.launch();
   };
 
   //This function handles the submit and edit functions of the release links form.
@@ -205,6 +205,135 @@ export default () => {
     return View.refresh();
   };
 
+  const getAnalyticDates = async (e) => {
+    View.showLoader(true);
+    e.stopPropagation();
+    const { data } = await serverRequest({
+      href: "/fmadmincp/analytics/new",
+      method: "get",
+    });
+    const disable = data.length && data.map(({ date }) => date);
+    View.showLoader(false);
+    const hiddenInput = "#analytics-new-datasheet-input";
+    const instance = flatpickr(hiddenInput, {
+      ...(data.length ? { disable } : {}),
+      clickOpens: false,
+      onChange: handleNewAnalyticsDate,
+    });
+    instance.toggle();
+  };
+
+  const handleNewAnalyticsDate = async (selectedDates, date) => {
+    View.showLoader(true);
+    const response = await serverRequest({
+      href: "/fmadmincp/analytics/new",
+      data: { date: moment(date).format("YYYY-MM-DD") },
+    });
+    if (!(R = responseHandler(response))) return;
+    return (location.pathname = `/fmadmincp/analytics/${R.id}`);
+  };
+
+  //HANDLE ANALYTICS INITIATE
+  const handleAnalyticsInitiate = async () => {
+    View.showLoader(true);
+    const storeList = View.getElement("#analyticsInitiate").querySelectorAll(
+      "ul"
+    );
+    const stores = {};
+    Array.from(storeList).forEach((ul) => {
+      const { type } = ul.dataset;
+      const storeIds = Array.from(ul.querySelectorAll("li")).map((li) => {
+        const { id } = li.dataset;
+        return id;
+      });
+      stores[type] = storeIds;
+    });
+    if (!(stores.stream && stores.download))
+      return View.showAlert("One or the two sections are empty");
+    const response = await serverRequest({
+      data: stores,
+      href: location.pathname,
+    });
+    if (!(R = responseHandler(response))) return;
+    return View.refresh();
+  };
+
+  const handleAnalyticsPublish = async () => {
+    const _publishCallback = async (data) => {
+      const { dateId } = data;
+      if (!dateId) throw new Error("HANDLEANALYTICSPUBLISH: dateId missing");
+      const response = await serverRequest({
+        href: `/fmadmincp/analytics/${dateId}/publish`,
+      });
+      if (!(R = responseHandler(response))) return;
+      return View.replace("/fmadmincp/analytics");
+    };
+    return await handleAnalyticsSave(_publishCallback);
+  };
+
+  const handleAnalyticsSave = async (callback = false) => {
+    View.showLoader(true);
+    const { dateid: dateId } = View.getElement("#analyticsAdd").dataset;
+    const DatasheetValues = [];
+    let error = false;
+    const releaseNodes = document.querySelectorAll(
+      "#analyticsAdd .analyticsAdd__panel--release"
+    );
+    releaseNodes.forEach((releaseNode) => {
+      const { releaseId, userId } = JSON.parse(releaseNode.dataset.release);
+      const trackNodes = releaseNode.querySelectorAll(
+        ".analyticsAdd__panel--track"
+      );
+      trackNodes.forEach((trackNode) => {
+        const { trackId } = JSON.parse(trackNode.dataset.track);
+        const trackOptionsNodes = trackNode.querySelectorAll(
+          ".analyticsAdd__option"
+        );
+        trackOptionsNodes.forEach((trackOptionsNode) => {
+          const { type } = trackOptionsNode.dataset;
+          const trackOptionsItemsNodes = trackOptionsNode.querySelectorAll(
+            ".analyticsAdd__option__container__item"
+          );
+          trackOptionsItemsNodes.forEach((trackOptionsItemsNode) => {
+            const countNode = trackOptionsItemsNode.querySelector("input");
+            const storeIdNode = trackOptionsItemsNode.querySelector("select");
+            const count = countNode.value;
+            const storeId = storeIdNode.value;
+            //clear error border for all if there is any
+            [storeIdNode, countNode, trackNode, releaseNode].forEach((node) => {
+              node.classList.remove("-u-border-error");
+            });
+            if (callback && (!storeId || !count)) {
+              error = true;
+              [storeIdNode, countNode, trackNode, releaseNode].forEach(
+                (node) => {
+                  !node.classList.contains("-u-border-error") &&
+                    node.classList.add("-u-border-error");
+                }
+              );
+            }
+            DatasheetValues.push({
+              count: Number(count),
+              storeId: Number(storeId),
+              type,
+              trackId,
+              releaseId,
+              userId,
+              dateId: Number(dateId),
+            });
+          });
+        });
+      });
+    });
+    if (!DatasheetValues.length) return View.showAlert("Nothing to submit");
+    if (error) return View.showAlert("It seems some input fields are empty");
+    console.log(DatasheetValues);
+    const response = await serverRequest({ data: DatasheetValues });
+    if (!(R = responseHandler(response))) return;
+    if (R && !callback) return View.refresh();
+    return await callback(R);
+  };
+
   return {
     handleMobileMenu,
     handleBasicAction,
@@ -216,5 +345,9 @@ export default () => {
     handleStoreLinks,
     handleStoreLinksModal,
     handleConvertToLabel,
+    handleAnalyticsInitiate,
+    getAnalyticDates,
+    handleAnalyticsSave,
+    handleAnalyticsPublish,
   };
 };

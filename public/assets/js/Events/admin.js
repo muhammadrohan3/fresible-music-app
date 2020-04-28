@@ -1,5 +1,6 @@
 import View from "../View";
 import Loader from "../components/Loader";
+import AdminAnalytics from "../components/AdminAnalytics";
 
 export default (Controller) => {
   const { getElement } = View;
@@ -26,9 +27,9 @@ export default (Controller) => {
   if (location.pathname === "/fmadmincp/analytics") {
     (async () => {
       await Promise.all([
-        // Controller.DashboardLoader.getTopBoxesData(),
-        // Controller.DashboardLoader.buildMainChart(),
-        Controller.AnalyticsLoader.buildStoresChart(),
+        AdminAnalytics.getTopBoxesData(),
+        AdminAnalytics.renderTable(),
+        AdminAnalytics.buildStoresChart(),
       ]);
     })();
   }
@@ -40,7 +41,7 @@ export default (Controller) => {
 
   document.body.addEventListener("click", (e) => {
     // e.preventDefault();
-    const { id } = e.target;
+    const { id, classList } = e.target;
     if (id === "decline") return Controller.handleDecline(e.target);
     if (id === "changeRole") return Controller.handleChangeRole(e.target);
     if (id === "decline-comment-edit")
@@ -50,6 +51,24 @@ export default (Controller) => {
     }
     if (id === "convert-label")
       return Controller.handleConvertToLabel(e.target);
+
+    if (id === "analytics-new-datasheet") return Controller.getAnalyticDates(e);
+
+    if (id === "analyticsInitiateSubmit")
+      return Controller.handleAnalyticsInitiate();
+    //SAVING ANALYTICS
+    if (id === "analyticsAdd-save") return Controller.handleAnalyticsSave();
+    //PUBLISHING ANALYTICS
+    if (id === "analyticsAdd-publish")
+      return Controller.handleAnalyticsPublish();
+    if (classList.contains("analyticsAdd__option--icon"))
+      return AdminAnalytics.handleAddNewStoreInput(e.target);
+    if (classList.contains("analyticsAdd__option__container__item--delete"))
+      return AdminAnalytics.handleRemoveStoreInput(e.target);
+
+    if (classList.contains("analyticsInitiate__header--btn")) {
+      return AdminAnalytics.openSelectStoresModal(e.target);
+    }
     return Controller.handleBasicAction(e.target);
   });
 
@@ -58,6 +77,8 @@ export default (Controller) => {
     e.preventDefault();
     const { id } = e.target;
     if (id === "links-form") return Controller.handleStoreLinks(e.target);
+    if (id === "analytics-select-stores")
+      return AdminAnalytics.handleStoresSelected(e.target);
   });
 
   //BOOTSTRAP EVENTS

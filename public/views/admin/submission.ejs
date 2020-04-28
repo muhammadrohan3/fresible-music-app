@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
-  <% const {id, type, status, comment, subscription, user, createdAt,
-  releaseDate, approvedDate, album, track, video, linkId, labelArtist} = pageData; const profile = user.profile %>
+  <% const {id, type, status, title, comment, subscription, releaseDate,
+    approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artworkUpload} = pageData;%>
   <div class="single-head">
     <a class="single-head__back" href="/fmadmincp/submissions">
       <span
@@ -42,190 +42,163 @@
     </div>
     <% } %>
   </div>
-  <div class="submission__body">
-    <div class="overview__cat">
-      <div class="overview__cat--name">
-        <span
-          class="iconify overview__cat--name-icon"
-          data-icon="ion:folder-open-outline"
-          data-inline="false"
-        ></span>
-        SUBMISSION INFO.
-      </div>
-      <ul class="overview__cat__list">
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Type:</span>
+  <section class="submission__body">
+    <section class="submission__details">
+      <div class="submission__details__overview flex-column flex-md-row">
+        <div
+          class="submission__details__overview__image mb-4 mr-0 mr-md-5 mb-md-5"
+        >
+          <div class="submission__details__overview__image__box">
+            <img
+              class="submission__details__overview__image__box--img"
+              src="<%= artworkUpload.secureUrl || '/dist/no-image.jpg' %>"
+              alt="<%= title %> artwork"
+            />
           </div>
-          <span><%= type %></span>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Status:</span>
+        </div>
+        <div class="submission__details__overview__info">
+          <div class="-u-font-big submission__details__overview__info--title">
+            <%= title %>
+          </div>
+          <div class="submission__details__overview__info__list">
+            <ul class="submission__list">
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">
+                  <%=type === 'track' ? 'single' : 'album' %> by
+                </div>
+                <div class="submission__list__item--details">
+                  <%= Fns.capitalize(labelArtist ? labelArtist.stageName :
+                  user.profile.stageName) %>
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">language</div>
+                <div class="submission__list__item--details">-</div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">label</div>
+                <div class="submission__list__item--details">
+                  <%=Fns.capitalize(user.profile.label) %>
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">UPC/EAN</div>
+                <div class="submission__list__item--details">-</div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Sub. package</div>
+                <div class="submission__list__item--details">
+                  <%= Fns.capitalize(subscription.package.package) %>
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Sub. status</div>
+                <div class="submission__list__item--details">
+                  <span
+                    class="badge badge-pill badge-<%=Fns.colorText(subscription.status) %>"
+                    ><%= subscription.status %></span
+                  >
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">SUBSCRIBER</div>
+                <div class="submission__list__item--details"><%= user.profile.stageName %></div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">profile</div>
+                <div class="submission__list__item--details">
+                  <a href="/fmadmincp/subscriber?id=<%= user.id %>">view</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="submission__details__options p-5">
+        <div>
+          <div
+            class="-u-font-big submission__details__overview__info--title mb-2"
+          >
+            Status
           </div>
           <div>
-            <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
+            <span class="badge badge-pill badge-<%=Fns.colorText(status) %>"
               ><%= status %></span
             >
+            <span><a class="ml-3" href="/fmadmincp/subscription?id=<%= subscription.id %>">view</a></span>
+          </div>                                 
+        </div>
+        <div>
+          <div
+            class="-u-font-big submission__details__overview__info--title mb-4"
+          >
+            Dates
           </div>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Date Added:</span>
-          </div>
-          <span><%= Fns.dateTimeFormat(createdAt) %></span>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Approved Date:</span>
-          </div>
-          <span><%= Fns.dateTimeFormat(approvedDate) %></span>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Release Date:</span>
-          </div>
-          <span><%= Fns.dateTimeFormat(releaseDate) %></span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="overview__cat">
-      <div class="overview__cat--name">
-        <span
-          class="iconify overview__cat--name-icon"
-          data-icon="ion:folder-open-outline"
-          data-inline="false"
-        ></span>
-        SUBSCRIBER INFO.
+          <ul class="submission__list">
+            <li class="submission__list__item">
+              <div class="submission__list__item--title">added</div>
+              <div class="submission__list__item--details">
+                <%= Fns.dateFormat(createdAt) %>
+              </div>
+            </li>
+            <li class="submission__list__item">
+              <div class="submission__list__item--title">approved</div>
+              <div class="submission__list__item--details">
+                <%= Fns.dateFormat(approvedDate) || '-' %>
+              </div>
+            </li>
+            <li class="submission__list__item">
+              <div class="submission__list__item--title">release</div>
+              <div class="submission__list__item--details">
+                <%= Fns.dateFormat(releaseDate) %>
+              </div>
+            </li>
+            <li class="submission__list__item">
+              <div class="submission__list__item--title">original release</div>
+              <div class="submission__list__item--details">-</div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <ul class="overview__cat__list">
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>First Name:</span>
-          </div>
-          <span><%= user.firstName %></span>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Last Name:</span>
-          </div>
-          <span><%= user.lastName %></span>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Stage Name:</span>
-          </div>
-          <span><%= profile.stageName %></span>
-        </li>
-      </ul>
-      <div class="text-center">
-        <a
-          href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(user.id) %>"
-          class="btn-outline"
-          >View Profile &rarr;</a
+      <section class="mt-5 border-0">
+        <div class="-u-font-bold mb-4"><%= type === 'track' ? 'TRACK' : 'TRACKS-LIST' %></div>
+        <table
+          data-toggle="table"
+          data-classes="table table-hovered table-striped"
+          data-mobile-responsive="true"
+          data-mobile="true"
         >
-      </div>
-    </div>
-
-    <div class="overview__cat">
-      <div class="overview__cat--name">
-        <span
-          class="iconify overview__cat--name-icon"
-          data-icon="ion:folder-open-outline"
-          data-inline="false"
-        ></span>
-        SUBSCRIPTION INFO.
-      </div>
-      <ul class="overview__cat__list">
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Package:</span>
-          </div>
-          <span><%= subscription.package.package %></span>
-        </li>
-        <li class="overview__cat__list__item">
-          <div class="u-flex-middle">
-            <span
-              class="iconify overview__cat__list__item--icon"
-              data-icon="ei:check"
-              data-inline="false"
-            ></span>
-            <span>Status:</span>
-          </div>
-          <div>
-            <span
-              class="badge badge-pill badge-<%= Fns.colorText(subscription.status) %>"
-              ><%= subscription.status %></span
-            >
-          </div>
-        </li>
-      </ul>
-      <div class="text-center">
-        <a
-          href="/fmadmincp/subscription?id=<%=Fns.idLookUp(subscription.id) %>"
-          class="btn-outline"
-          >View Subscription &rarr;</a
-        >
-      </div>
-    </div>
-
-    <% if(album && type === 'album') { %> <%-
-    include('../partials/addMusic/albumOverview', album); %> <% } %> <% if(track
-    && type === 'track') { %> <%- include('../partials/addMusic/trackOverview',
-    track); %> <% } %> <% if(video && type === 'video') { %> <%-
-    include('../partials/addMusic/videoOverview', video); %> <% } %> <%
-    if(!album && !track && !video) { %>
-    <div class="alert alert-info text-center -u-mw-450">
-      The subscriber is yet to add release details for the <b><%= type %></b>
-    </div>
-    <% } %>
-  </div>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Artiste</th>
+              <th>Featured</th>
+              <th>Genre</th>
+              <th>Explicit</th>
+              <th>Copyright</th>
+              <th>Year</th>
+              <th>Upload</td>
+            </tr>
+          </thead>
+          <tbody>
+            <% tracks.forEach(({title, artiste, featured, genre, explicit,
+            copyrightYear, copyrightHolder, trackUpload: {secureUrl}}) => { %>
+            <tr>
+              <td><%= title %></td>
+              <td><%= artiste %></td>
+              <td><%= featured %></td>
+              <td><%= genre %></td>
+              <td><%= explicit %></td>
+              <td><%= copyrightHolder %></td>
+              <td><%= copyrightYear %></td>
+              <td><%- secureUrl && `<a href='${secureUrl}'>view</a>` %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+    </section>
+  </section>
   <hr />
   <% if(subscription.status === 'inactive' || status === 'deleted' || status ===
   'incomplete') { %>
@@ -277,7 +250,7 @@
           class="btn btn-primary"
           data-type="add"
           data-submission_id="<%=id %>"
-          data-details="<%=JSON.stringify({stageName: user.type === 'label' ? labelArtist.stageName : profile.stageName, title: type === "album" ? album.title : track.title}) %>"
+          data-details="<%=JSON.stringify({stageName: user.type === 'label' ? labelArtist.stageName : user.profile.stageName, title}) %>"
         >
           Add Links
         </button>

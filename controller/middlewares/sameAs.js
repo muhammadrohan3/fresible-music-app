@@ -1,6 +1,6 @@
 const { SAMEAS } = require("../../constants");
 
-module.exports = ({ getStore, setStore }) => (key, value, source) => {
+const sameAs = ({ getStore, setStore }) => (key, value, source) => {
   let item;
   //If a source is provided, set item as the source
   if (source) item = getStore(source)[key];
@@ -11,3 +11,5 @@ module.exports = ({ getStore, setStore }) => (key, value, source) => {
 
   return setStore(SAMEAS, item === value);
 };
+
+module.exports = { sameAs };

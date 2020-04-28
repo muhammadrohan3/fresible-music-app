@@ -4,6 +4,7 @@ const handleResponse = require("../util/handleResponse");
 const idLookUp = require("../util/idLookUp");
 const {
   User,
+  Upload,
   Userprofile,
   Userpackage,
   Package,
@@ -18,6 +19,9 @@ const {
   Log,
   Link,
   Labelartist,
+  Store,
+  Analytic,
+  Analyticsdate,
   sequelize,
   Sequelize,
 } = require("../../database/models");
@@ -42,16 +46,23 @@ const schemaType = (schema, getStore) => {
   if (schema.search(/^logs?$/) >= 0) return Log;
   if (schema.search(/^links?$/) >= 0) return Link;
   if (schema.search(/^labelartists?$/) >= 0) return Labelartist;
+  if (schema.search(/^uploads?$/) >= 0) return Upload;
+  if (schema.search(/^stores?$/) >= 0) return Store;
+  if (schema.search(/^analytics?$/) >= 0) return Analytic;
+  if (schema.search(/^analyticsdates?$/) >= 0) return Analyticsdate;
   return "hi";
 };
 
-const valueGetter = (attributes) =>
-  attributes &&
-  attributes.map((item) => {
-    if (typeof item !== "object") return item;
-    const [fn, col, alias] = item;
-    return [sequelize.fn(fn, col), alias];
-  });
+const valueGetter = (attributes) => {
+  return (
+    attributes &&
+    attributes.map((item) => {
+      if (typeof item !== "object") return item;
+      const [fn, col, alias] = item;
+      return [sequelize.fn(fn, sequelize.col(col)), alias];
+    })
+  );
+};
 
 ////////////////////////////////////////SCHEMA INCLUDE GENERATOR ////////////////////////////////
 const includeGen = (getStore, includes) => {
@@ -101,11 +112,17 @@ const includeGen = (getStore, includes) => {
 
 const schemaOptionsGen = (schemaOptions, options) => {
   let Obj = {};
-  const { p = 1, limit = 20 } = schemaOptions || {};
-  Obj = { ...Obj, limit, offset: 20 * (p - 1) };
+  const { p = 1, limit = 20, offset } = schemaOptions || {};
+  Obj = { ...Obj, limit, offset: offset || 20 * (p - 1) };
 
   const { order = [["id", "DESC"]], group, distinct = false } = options || {};
-  Obj = { ...Obj, order, group: valueGetter(group), distinct };
+
+  Obj = {
+    ...Obj,
+    order: (() => order.map((item) => valueGetter(item)))(),
+    group: valueGetter(group),
+    distinct,
+  };
   return Obj;
 };
 
@@ -132,12 +149,12 @@ const whereGen = (store, data = {}) => {
       const propVal = schemaQuery[prop];
       if (Array.isArray(propVal)) {
         let [operator, vals] = propVal;
-        if (Array.isArray(vals)) {
-          vals = vals.map(
-            (item) => item
-            // Array.isArray(item) ? { [item]: store[item] } : item
-          );
-        }
+        // if (Array.isArray(vals)) {
+        //   vals = vals.map(
+        //     (item) => item
+        //     // Array.isArray(item) ? { [item]: store[item] } : item
+        //   );
+        // }
         items.push({ [prop]: { [Op[operator || "and"]]: vals } });
       } else {
         items.push({ [prop]: propVal });
@@ -175,8 +192,6 @@ const whereGen = (store, data = {}) => {
   if (mutation && !items.length)
     throw new Error("ERROR: WHEREGEN, where items empty ");
 
-  console.log(items);
-
   return {
     where: {
       [Op[queryMainOp || "and"]]: items,
@@ -196,8 +211,12 @@ const schemaResultHandler = async (
   const data = organizeData(schemaResult);
   //This condition checks if the type of action was an update or a delete
   if (actionType === "update") setStore("schemaMutated", didMutate);
-  else if (actionType === "delete") setStore("schemaDeleted", didMutate);
-  else setStore("schemaResult", data);
+  else if (actionType === "delete") {
+    setStore("schemaDeleted", didMutate);
+  } else if (actionType === "getorcreate") {
+    setStore("schemaCreated", data[1]);
+    setStore("schemaResult", data[0]);
+  } else setStore("schemaResult", data);
   if (actionType) {
     if (Array.isArray(schema)) schema = getStore(schema[0]);
     logger(
@@ -237,10 +256,26 @@ const _modelWrapper = (method, extras = {}) => ({
       ...schemaAttributes(attributes),
     };
     let data;
-    if (actionType === "get" || actionType === "delete")
-      data = await Model[method](Options);
-    else if (actionType === "create") data = await Model[method](schemaData);
-    else data = await Model[method](schemaData, Options);
+
+    switch (actionType) {
+      case "get":
+        data = await Model[method](Options);
+        break;
+      case "delete":
+        data = await Model[method](
+          whereGen({ ...getStore(), schema }, { mutation })
+        );
+        break;
+      case "create":
+        data = await Model[method](schemaData);
+        break;
+      case "getOrCreate":
+        data = await Model[method]({ ...Options, ...{ defaults: schemaData } });
+        break;
+      default:
+        data = await Model[method](schemaData, Options);
+    }
+
     return schemaResultHandler(
       { setStore, getStore, schema, req },
       data,
@@ -251,11 +286,16 @@ const _modelWrapper = (method, extras = {}) => ({
   }
 };
 
-const getAllFromSchema = _modelWrapper("findAll");
-const getAndCountAllFromSchema = _modelWrapper("findAndCountAll");
-const getOneFromSchema = _modelWrapper("findOne");
+const getAllFromSchema = _modelWrapper("findAll", { actionType: "get" });
+const getAndCountAllFromSchema = _modelWrapper("findAndCountAll", {
+  actionType: "get",
+});
+const getOneFromSchema = _modelWrapper("findOne", { actionType: "get" });
 const bulkCreateSchema = _modelWrapper("bulkCreate", { actionType: "create" });
 const createSchemaData = _modelWrapper("create", { actionType: "create" });
+const getOrCreateSchemaData = _modelWrapper("findOrCreate", {
+  actionType: "getOrCreate",
+});
 const updateSchemaData = _modelWrapper("update", {
   mutation: true,
   actionType: "update",
@@ -282,6 +322,7 @@ module.exports = {
   updateSchemaData,
   deleteSchemaData,
   createSchemaData,
+  getOrCreateSchemaData,
   bulkCreateSchema,
   getAndCountAllFromSchema,
   runSql,

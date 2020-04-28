@@ -1,6 +1,6 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const analytics = sequelize.define(
+  const Analytic = sequelize.define(
     "analytics",
     {
       userId: DataTypes.INTEGER,
@@ -12,11 +12,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       count: DataTypes.INTEGER,
       dateId: DataTypes.INTEGER,
+      storeId: DataTypes.INTEGER,
     },
-    {}
+    {
+      timestamps: false,
+    }
   );
-  analytics.associate = function (models) {
-    // associations can be defined here
+  Analytic.associate = function ({ Analyticsdate, Release, Track, Store }) {
+    this.belongsTo(Analyticsdate, { foreignKey: "dateId" });
+    this.belongsTo(Release, { foreignKey: "releaseId" });
+    this.belongsTo(Track, { foreignKey: "trackId" });
+    this.belongsTo(Store, { foreignKey: "storeId" });
   };
-  return analytics;
+  return Analytic;
 };

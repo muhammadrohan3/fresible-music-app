@@ -4,13 +4,13 @@ module.exports = (route, obj, req) => {
   let paramList = [];
   if (route.includes("{")) {
     if (req) route = `${req.protocol}://${req.get("host")}`;
-    const routeParams = route.split(/\/\{|\}\/\{|\}\//);
-    routeParams.forEach(r => {
-      if (!r) return;
+    const routeParams = route.match(/\{(.*?)\}/g);
+    routeParams.forEach((r) => {
+      r = r.substr(1, r.length - 2);
       if (!obj.hasOwnProperty(r))
         throw new Error("URLFORMER: object missing route key " + r);
       const keyValue = obj[r];
-      route.replace(`{${r}}`, keyValue);
+      route = route.replace(`{${r}}`, keyValue);
     });
     return route;
   }

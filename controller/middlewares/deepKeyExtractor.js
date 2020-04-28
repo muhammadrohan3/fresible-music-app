@@ -1,7 +1,7 @@
 const extractor = require("../util/valExtractor");
 const handleResponse = require("../util/handleResponse");
 
-module.exports = ({ req, setStore, getStore }) => (
+const deepKeyExtractor = ({ req, setStore, getStore }) => (
   source,
   keyRoute,
   destination,
@@ -25,3 +25,5 @@ module.exports = ({ req, setStore, getStore }) => (
     return handleResponse("error", e);
   }
 };
+
+module.exports = { deepKeyExtractor };
