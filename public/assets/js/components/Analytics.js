@@ -10,10 +10,83 @@ import {
 import LineGraph from "./LineGraph";
 import Table from "./Table";
 import rangeFormatter from "../utilities/rangeFormatter";
+import formatNumber from "../utilities/formatNumber";
 
-export default () => {
+export default (() => {
+  const internalCache = {};
+  let href;
+
+  const _getTopBoxesData = async ({ baseLink, dataInput = {} }) => {
+    const { releaseId, status } = dataInput;
+    let params = { releaseId };
+    const boxes = [
+      {
+        id: "analytics-total-streams",
+        href: `${baseLink}/totalStreams`,
+      },
+      {
+        id: "analytics-total-downloads",
+        href: `${baseLink}/totalDownloads`,
+      },
+    ];
+    return await Promise.all(
+      boxes.map(async ({ id, href }) => {
+        let total;
+        if (status && status !== "in stores") total = 0;
+        else {
+          const { data } = await serverRequest({
+            href,
+            method: "get",
+            params,
+          });
+          total = data[0].total;
+        }
+        return View.addContent(`#${id}`, formatNumber(total));
+      })
+    );
+  };
+
+  const _buildStoresChart = async ({ baseLink, dataInput = {} }) => {
+    const { releaseId, status } = dataInput;
+    const params = { releaseId };
+    if (status !== "in stores") return;
+    const response = await serverRequest({
+      href: `${baseLink}/topStores`,
+      method: "get",
+      params,
+    });
+
+    const dataValues = [];
+    const labels = [];
+
+    response.data.forEach(({ total, store: { store } }) => {
+      dataValues.push(total);
+      labels.push(store);
+    });
+
+    const data = {
+      datasets: [
+        {
+          data: dataValues,
+          backgroundColor: [
+            "#1e1e2c",
+            "rgb(86, 12, 104)",
+            "#91b252",
+            "#6262af",
+            "#84BC9C",
+            "#246EB9",
+          ],
+        },
+      ],
+      labels,
+    };
+
+    // View.addContent("#dash-doughnut", ejs.render(subChart), true);
+    DoughnutChart(data, "#analytics-top-stores", { legend: false });
+  };
+
   const _reportUI = (report, { type, range }) => {
-    const { rate, growing, stream } = report;
+    const { rate, growing, count } = report;
     const groupNames = {
       7: "Weekly",
       14: "Fornightly",
@@ -22,7 +95,7 @@ export default () => {
       download: "Downloads",
     };
     const groupName = groupNames[range];
-    const rangeGrowthValue = rangeFormatter(rate, growing);
+    const rangeGrowthValue = rangeFormatter(report);
     const typeName = groupNames[type];
 
     View.addContent(
@@ -32,16 +105,18 @@ export default () => {
         rangeGrowthValue,
         typeName,
         range,
-        stream,
+        stream: count,
       }),
       true
     );
   };
 
-  const _chartUI = ({ dates, type, datasets }) => {
+  const _chartUI = (chartData, query) => {
+    const { dates, datasets } = chartData;
+    const { range } = query;
     const formattedDates = dates.map((date) => {
       const m = moment(date);
-      if (type === "day") return m.format("ddd");
+      if (range === 7) return m.format("ddd");
       return m.format("mmm DD");
     });
     View.addContent(
@@ -53,21 +128,29 @@ export default () => {
       labels: formattedDates,
       datasets,
     };
+    console.log("GRAPH: ", data);
     LineGraph(data, "#analytics-graph");
   };
 
-  const _tableUI = (tableData, { type, range }) => {
+  const _tableUI = (tableData, tableDataDepth = 3, { type, range }) => {
     const columns = [
       [
+        // {
+        //   field: "color",
+        //   title: "color",
+        //   width: 20,
+        //   formatter: "colorFormatter",
+        // },
         { field: "title", title: "Release", sortable: true },
         {
-          field: "stream",
+          field: "",
           title: type,
           align: "center",
           sortable: true,
+          formatter: "countFormatter",
         },
         {
-          field: "rate",
+          field: "count",
           title: `vs Previous ${range} days`,
           align: "center",
           sortable: true,
@@ -75,15 +158,16 @@ export default () => {
         },
       ],
       [
-        { field: "title", title: "Release", sortable: true },
+        { field: "title", title: "Track", sortable: true },
         {
-          field: "stream",
+          field: "",
           title: type,
           align: "center",
           sortable: true,
+          formatter: "countFormatter",
         },
         {
-          field: "rate",
+          field: "count",
           title: `vs Previous ${range} days`,
           align: "center",
           sortable: true,
@@ -93,13 +177,14 @@ export default () => {
       [
         { field: "title", title: "Store", sortable: true },
         {
-          field: "stream",
+          field: "",
           title: type,
           align: "center",
           sortable: true,
+          formatter: "countFormatter",
         },
         {
-          field: "rate",
+          field: "count",
           title: `vs Previous ${range} days`,
           align: "center",
           sortable: true,
@@ -107,128 +192,61 @@ export default () => {
         },
       ],
     ];
+
+    if (tableDataDepth === 2) columns.shift();
+
+    const countFormatter = (value = null, row) => {
+      return row.count.count;
+    };
+
+    const colorFormatter = (value) => {
+      return `<span style="border: 2px solid ${value}; display: inline-block; width: 2.5rem" class='mx-auto'></span>`;
+    };
+
     Table("#analytics-table", tableData, columns, {
       rangeFormatter,
+      colorFormatter,
+      countFormatter,
     });
   };
 
-  const handle = (elem = false) => {
-    const dataQuery = {
+  const _handle = async (query) => {
+    if (!href)
+      return View.showAlert(
+        "ERROR: link missing in analytic handler - contact admin"
+      );
+    const { type, range } = query;
+    const cacheKey = type + range;
+    let Response = internalCache[cacheKey];
+    if (!Response) {
+      Response = await serverRequest({ href, params: query, method: "get" });
+    }
+    console.log("HANDLE: ", Response);
+    const { Report, TableData, ChartData } = Response.data;
+    _chartUI(ChartData, query);
+    _tableUI(TableData, undefined, query);
+    _reportUI(Report, query);
+  };
+
+  const reactToChange = () => {
+    const query = {};
+    View.getElement("#analyticsOptions")
+      .querySelectorAll("select")
+      .forEach(({ name, value }) => (query[name] = value));
+    return _handle(query);
+  };
+
+  const initiate = ({ top: { topBoxesBaseLink, dataInput }, bodyLink }) => {
+    if (View.getElement("#analytics-empty")) return;
+    _getTopBoxesData({ baseLink: topBoxesBaseLink, dataInput });
+    _buildStoresChart({ baseLink: topBoxesBaseLink, dataInput });
+    const defaultQuery = {
       type: "stream",
       range: 7,
     };
-    elem &&
-      Array.from(
-        View.getElement("#analyticsOptions").querySelectorAll("select")
-      ).forEach(
-        ({ name, value }) => name && value && (dataQuery[name] = value)
-      );
-    const { type, range } = dataQuery;
-    const { Report, TableData, ChartData } = Response;
-    _chartUI(ChartData);
-    _tableUI(TableData, { type, range });
-    _reportUI(Report, { type, range });
+    href = bodyLink;
+    return _handle(defaultQuery);
   };
-  return { handle };
-};
 
-var Response = {
-  Report: { stream: 345, previous: 358, rate: -3.63, growing: false },
-  TableData: [
-    {
-      level: 1,
-      title: "Joko Sile",
-      type: "track",
-      stream: {
-        count: 167,
-        rate: 81.52,
-        growing: true,
-      },
-      children: [
-        {
-          level: 3,
-          title: "Apple Music",
-          stream: 49,
-          rate: 1125,
-          growing: true,
-        },
-        { level: 3, title: "Spotify", stream: 23, rate: -4.17, growing: false },
-      ],
-    },
-    {
-      level: 1,
-      title: "Gbe Collection",
-      type: "album",
-      stream: 178,
-      rate: -33.08,
-      growing: false,
-      children: [
-        {
-          level: 2,
-          title: "Gbe",
-          stream: 95,
-          rate: -24.6,
-          growing: false,
-          children: [
-            {
-              level: 3,
-              title: "Apple Music",
-              stream: 23,
-              rate: -45.24,
-              growing: false,
-            },
-            {
-              level: 3,
-              title: "Spotify",
-              stream: 72,
-              rate: -14.29,
-              growing: false,
-            },
-          ],
-        },
-        {
-          level: 2,
-          title: "Gbe body",
-          stream: 83,
-          rate: -40.71,
-          growing: false,
-          children: [
-            {
-              level: 3,
-              title: "Apple Music",
-              stream: 83,
-              rate: -40.71,
-              growing: false,
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  ChartData: {
-    dates: [
-      "2020-10-10",
-      "2020-10-09",
-      "2020-10-08",
-      "2020-10-07",
-      "2020-10-06",
-      "2020-10-05",
-      "2020-10-04",
-    ],
-    type: "day",
-    datasets: [
-      {
-        label: "Joko Sile",
-        borderColor: "#000000",
-        backgroundColor: "#CCCCCC",
-        data: [48, 16, 51, 13, 90, 116, 2],
-      },
-      {
-        label: "Gbe Collection",
-        borderColor: "#1DB954",
-        backgroundColor: "#D2F1DD",
-        data: [133, 200, 400, 23, 90, 100, 75],
-      },
-    ],
-  },
-};
+  return { initiate, reactToChange };
+})();

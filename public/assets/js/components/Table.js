@@ -1,9 +1,6 @@
 export default (target, tableData, dataColumns, functions = {}) => {
   const mainTable = $(target).find("table");
   const bgColors = ["", "rgba(239,240,246, 0.4)", "rgb(239,240,246)"];
-
-  console.log(tableData);
-
   const _getParent = (elem, identifier, type = "tagName") => {
     const parents = $(elem).parents();
     for (parent of parents) {
@@ -15,11 +12,11 @@ export default (target, tableData, dataColumns, functions = {}) => {
 
   const _clickFormatter = `<button class='analytics--view-btn' data-view_open='false'><span class="iconify" data-icon="ant-design:down-square-outlined" data-inline="false"></span></button>`;
 
-  const _buildTable = (data, table, columnIndex = 0) => {
+  const _buildTable = (data, table, columnIndex = 0, functions) => {
     const columns = dataColumns[columnIndex].map((column, i) => {
       const { formatter } = column;
-      column["formatter"] = functions[formatter];
-      return column;
+      const formatterFn = functions[formatter];
+      return { ...column, formatter: formatterFn };
     });
 
     const DetailsField = {
@@ -29,7 +26,7 @@ export default (target, tableData, dataColumns, functions = {}) => {
       formatter: _clickFormatter,
       events: {
         "click .analytics--view-btn": (...args) =>
-          _handleNestClick(columnIndex, ...args),
+          _handleNestClick(columnIndex, functions, ...args),
       },
     };
 
@@ -45,9 +42,9 @@ export default (target, tableData, dataColumns, functions = {}) => {
     });
   };
 
-  _buildTable(tableData, mainTable, 0);
+  _buildTable(tableData, mainTable, 0, functions);
 
-  function _handleNestClick(columnIndex, e, val, row) {
+  function _handleNestClick(columnIndex, functions, e, val, row) {
     const $tr = $(_getParent(e.target, "tr"));
     const { view_open } = $(e.target).data();
     if (!view_open) {
@@ -58,7 +55,7 @@ export default (target, tableData, dataColumns, functions = {}) => {
         ></table></td></tr>`)
         .insertAfter($tr)
         .find("table");
-      _buildTable(row.children, $nTable, index);
+      _buildTable(row.children, $nTable, index, functions);
       $(e.target)
         .data("view_open", true)
         .html(

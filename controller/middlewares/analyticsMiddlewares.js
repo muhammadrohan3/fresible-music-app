@@ -2,12 +2,18 @@ const initiateAnalytics = require("../functions/analytics/initiateAnalytics");
 const generateStructureHash = require("../functions/analytics/generateStructureHash");
 const generateStructure = require("../functions/analytics/generateStructure");
 const growthCalc = require("../util/growthCalc");
+const analyticsStructureReps = require("../functions/analytics/analyticsRepresentations");
 
-const analyticsHandler = ({ getStore, setStore }) => () => {
+const analyticsHandler = ({ getStore, setStore }) => (
+  dataRepKey,
+  lineChartSubjects = []
+) => {
   //Gets the required data from the store
   const { schemaResult, schemaQuery } = getStore();
-  const { range } = schemaQuery;
-
+  if (!schemaResult.length) return;
+  // const { range } = schemaQuery;
+  const structure = analyticsStructureReps[dataRepKey];
+  const _generateHash = generateStructureHash(structure);
   const Colors = [
     { borderColor: "#3f91f3", backgroundColor: "#d9e9fc" },
     { borderColor: "#FF006E", backgroundColor: "#ffcce2" },
@@ -26,58 +32,45 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
   const Dates = [];
   const currentData = schemaResult.slice(0, 2);
   const previousData = schemaResult.slice(2);
-  for (let i = 0; i < range; i++) {
-    let holdRelease = {};
+  console.log(currentData.length, previousData.length);
+  for (let i = 0; i < currentData.length; i++) {
+    let subjectKeyHash = {};
     Dates.push(currentData[i].date);
     const currentItem = currentData[i].analytics;
-    const previousItem = previousData[i].analytics;
+    const previousItem = (previousData[i] || {}).analytics || {};
     for (let j = 0; j < currentItem.length; j++) {
       const currentDataItem = currentItem[j];
-      const previousDataItem = previousItem[j];
+      const previousDataItem = previousItem[j] || {};
       //
 
-      const Rep = {
-        key: "releaseId",
-        name: "release",
+      const [key, titleRoute = []] = lineChartSubjects; //destructures the key and name from the lineChartSubject sent in as param
+      if (!key || !titleRoute.length)
+        throw new Error(
+          "ANALYTICS-HANDLER-ERROR: lineChartSubjects parameter error"
+        );
+      const subjectKeyHashStructure = {
+        key: key,
         props: [
-          { name: "title", key: ["release", "title"] },
-          { name: "type", key: ["release", "type"] },
-          { name: "count", key: "count", cb: _sumCount },
+          { name: "title", key: titleRoute },
+          { name: "count", key: "count", cb: "sumCount" },
         ],
-        children: {
-          key: "trackId",
-          name: "track",
-          props: [
-            { name: "title", key: ["track", "title"] },
-            { name: "count", key: "count", cb: _sumCount },
-          ],
-          children: {
-            key: "storeId",
-            name: "store",
-            props: [
-              { name: "title", key: ["store", "store"] },
-              { name: "count", key: "count", cb: _sumCount },
-            ],
-          },
-        },
       };
-      let Location; //holds the current location of the object
-      const { key, name } = Rep; //destructures the key and name from the data representation sent in as param
       // console.log(currentDataItem, currentDataItem[key]);
-      holdRelease = {
-        ...holdRelease,
-        [currentDataItem[key]]: {
-          ...(Location = holdRelease[currentDataItem[key]] || {}),
-          title: currentDataItem[name].title,
-          count: (Location["count"] || 0) + (currentDataItem["count"] || 0),
-        },
-      };
-
-      CurrentDataHash = _generateHash(CurrentDataHash, currentDataItem, Rep);
-      PreviousDataHash = _generateHash(PreviousDataHash, previousDataItem, Rep);
+      subjectKeyHash = generateStructureHash(subjectKeyHashStructure)(
+        subjectKeyHash,
+        currentDataItem,
+        subjectKeyHashStructure
+      );
+      //
+      CurrentDataHash = _generateHash(CurrentDataHash, currentDataItem);
+      PreviousDataHash = _generateHash(
+        PreviousDataHash,
+        previousDataItem,
+        structure
+      );
     }
     //populate data for chartjs
-    Object.entries(holdRelease).forEach(([id, { title, count }]) => {
+    Object.entries(subjectKeyHash).forEach(([id, { title, count }]) => {
       ChartDataHash = {
         ...ChartDataHash,
         [id]: {
@@ -90,32 +83,37 @@ const analyticsHandler = ({ getStore, setStore }) => () => {
 
   //Set Range Initials
   let RangeReport = [0, 0];
-
   //prepare chartjs data
   const ChartDataset = Object.entries(ChartDataHash).map(([id, valueObj]) => {
     const colorIndex = _getRandomColorId(); //Gets a random color Id
     ChartDataHash[id]["colorId"] = colorIndex; //Sets the data of this id in the ChartDataHash for the TableData;
     valueObj = { ...valueObj, ...Colors[colorIndex] }; //Sets the borderColor and backgroundColor for the chart label
+    // console.log("RELEASE-ID: ", id, valueObj);
     const currentDataForIdCount = CurrentDataHash[id].count; //gets the count value for the ID in the currentDataHash
-    const previousDataForIdCount = PreviousDataHash[id].count; //gets the count value for the ID in the previousDataHash
+    const previousDataForIdCount = (PreviousDataHash[id] || {}).count; //gets the count value for the ID in the previousDataHash
     RangeReport = [
       RangeReport[0] + currentDataForIdCount,
       RangeReport[1] + previousDataForIdCount,
     ]; //updates rangeReport
     return valueObj;
   });
-  const ChartData = {
-    dates: Dates,
-    datasets: ChartDataset,
-  };
   const _getReport = (rangeReport = []) => {
     const [currentTotal, previousTotal] = rangeReport;
     const [rate, growing] = growthCalc(currentTotal, previousTotal);
     return { rate, growing, currentTotal, previousTotal };
   };
   const Report = _getReport(RangeReport);
+  const ChartData = {
+    dates: Dates,
+    datasets: ChartDataset,
+  };
 
-  const TableData = prepare(CurrentDataHash, PreviousDataHash);
+  const TableData = generateStructure({
+    CurrentDataHash,
+    PreviousDataHash,
+    ChartDataHash,
+    Colors,
+  });
   return setStore("ANALYTICS", { Report, TableData, ChartData });
 };
 
@@ -137,27 +135,7 @@ const analytics_default_intercept = ({ getStore, setStore }) => () => {
 };
 
 const analytics_default = ({ getStore, setStore }) => () => {
-  const structure = {
-    key: "dateId",
-    name: "date",
-    props: [
-      { name: "date", key: ["analyticsdate", "date"] },
-      { name: "status", key: ["analyticsdate", "status"] },
-      { name: "dateId", key: "dateId" },
-      { name: "streams", key: "count", cb: "typeSumCount" },
-      { name: "downloads", key: "count", cb: "typeSumCount" },
-    ],
-    children: {
-      key: "releaseId",
-      name: "release",
-      props: [
-        { name: "title", key: ["release", "title"] },
-        { name: "releaseId", key: "releaseId" },
-        { name: "streams", key: "count", cb: "typeSumCount" },
-        { name: "downloads", key: "count", cb: "typeSumCount" },
-      ],
-    },
-  };
+  const structure = analyticsStructureReps["analytics_default"];
   let PreviousDataHash = {};
   let CurrentDataHash = {};
   const { schemaResult } = getStore();
@@ -186,27 +164,7 @@ const analytics_default = ({ getStore, setStore }) => () => {
 };
 
 const analytics_edit = ({ getStore, setStore }) => () => {
-  const structure = {
-    key: "releaseId",
-    name: "release",
-    props: [
-      { name: "title", key: ["release", "title"] },
-      { name: "releaseId", key: "releaseId" },
-      { name: "userId", key: "userId" },
-      { name: "type", key: ["release", "type"] },
-    ],
-    children: {
-      key: "trackId",
-      name: "track",
-      props: [
-        { name: "title", key: ["track", "title"] },
-        { name: "trackId", key: "trackId" },
-        { name: "streams", key: "type", cb: "analyticsTypeStoreGen" },
-        { name: "downloads", key: "type", cb: "analyticsTypeStoreGen" },
-      ],
-    },
-  };
-
+  const structure = analyticsStructureReps["analytics_edit"];
   const { schemaResult } = getStore();
   const { analytics } = schemaResult;
   let dataHash = {};
@@ -226,4 +184,5 @@ module.exports = {
   analytics_initiate,
   analytics_default_intercept,
   analytics_default,
+  analyticsHandler,
 };

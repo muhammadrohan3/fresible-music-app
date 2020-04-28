@@ -1,14 +1,4 @@
-<% const {id, title, status} = pageData %>
-<section
-  class="analytics mx-2 mx-md-5"
-  id="analytics"
-  data-data="<%=JSON.stringify({id, status}) %>"
->
-  <div class="analytics--welcome mb-4 text-center">
-    <div class="-u-font-bold" style="font-size: 1.7rem;">
-      Analytics for <%= title %>
-    </div>
-  </div>
+<section class="analytics mx-2 mx-md-5" id="analytics">
   <section class="d-flex flex-column flex-md-row mb-5">
     <div class="analytics__card">
       <div class="analytics__card--title">Total Streams</div>

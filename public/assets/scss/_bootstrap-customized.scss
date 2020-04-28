@@ -24,6 +24,10 @@
   &-title {
     text-transform: uppercase;
     font-size: 1.4rem;
+    margin-right: 2rem;
+  }
+  &-value {
+    text-align: right;
   }
   &:not(:last-child) {
     margin-bottom: 10px;

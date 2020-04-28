@@ -1,6 +1,7 @@
 import View from "../View";
 import Loader from "../components/Loader";
 import AdminAnalytics from "../components/AdminAnalytics";
+import Analytics from "../components/Analytics";
 
 export default (Controller) => {
   const { getElement } = View;
@@ -30,6 +31,25 @@ export default (Controller) => {
         AdminAnalytics.getTopBoxesData(),
         AdminAnalytics.renderTable(),
         AdminAnalytics.buildStoresChart(),
+      ]);
+    })();
+  }
+
+  if (location.pathname === "/fmadmincp/analytics/releases") {
+    (async () =>
+      await Analytics.initiate({
+        top: { topBoxesBaseLink: "/fmadmincp/analytics/get" },
+        bodyLink: "/fmadmincp/analytics/releases/get",
+      }))();
+  }
+
+  if (location.pathname.search(/fmadmincp\/analytics\/releases\/\d+/gi) > 0) {
+    (async () => {
+      const { data } = View.getElement("#analytics-release").dataset;
+      const { id: releaseId, status } = JSON.parse(data);
+      await Promise.all([
+        AdminAnalytics.getTopBoxesData({ releaseId, status }),
+        AdminAnalytics.buildStoresChart({ releaseId, status }),
       ]);
     })();
   }

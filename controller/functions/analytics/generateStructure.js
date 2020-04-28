@@ -5,6 +5,7 @@ module.exports = ({
   PreviousDataHash,
   CountKeys = ["count"],
   ChartDataHash = false,
+  Colors = {},
 }) => {
   const prepare = (CurrentDataHash, PreviousDataHash = {}) => {
     const list = Object.entries(CurrentDataHash).map(([id, data]) => {

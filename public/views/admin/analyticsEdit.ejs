@@ -1,4 +1,4 @@
-<% const {analytics, dateId, date} = pageData %> <% const stores =
+<% const {analytics, dateId, status, date} = pageData %> <% const stores =
 Fns.convertObjArray(pageData.stores, ['id', 'store']) %>
 <div class="mt-4 -u-font-bold text-center">
   Analytics Datasheet - <%= Fns.dateFormat(date) %>
@@ -175,8 +175,9 @@ Fns.convertObjArray(pageData.stores, ['id', 'store']) %>
       data-icon="ic:outline-save-alt"
       data-inline="false"
     ></span>
-    <span>Save Draft</span>
+    <span>Save</span>
   </button>
+  <% if(status !== 'published') { %>
   <button class="btn-primary" id="analyticsAdd-publish">
     <span
       class="iconify"
@@ -185,4 +186,5 @@ Fns.convertObjArray(pageData.stores, ['id', 'store']) %>
     ></span>
     Publish
   </button>
+  <% } %>
 </div>

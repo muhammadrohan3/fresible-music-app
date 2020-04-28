@@ -52,6 +52,7 @@ module.exports = (Controller) => {
     respond,
     respondIf,
     redirectIf,
+    analyticsHandler,
     analytics_edit,
     analytics_initiate,
     analytics_default_intercept,
@@ -91,13 +92,16 @@ module.exports = (Controller) => {
 
   router.get(
     "/get/totalStreams",
+    schemaQueryConstructor("query", ["releaseId"]),
     addToSchema(SCHEMAQUERY, { type: "stream" }),
+    seeStore([SCHEMAQUERY]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
   );
 
   router.get(
     "/get/totalDownloads",
+    schemaQueryConstructor("query", ["releaseId"]),
     addToSchema(SCHEMAQUERY, { type: "download" }),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
@@ -105,6 +109,7 @@ module.exports = (Controller) => {
 
   router.get(
     "/get/topStores",
+    schemaQueryConstructor("query", ["releaseId"]),
     addToSchema("schemaOptions", { limit: 3 }),
     addToSchema(SCHEMAINCLUDE, [{ m: STORE, at: ["store"] }]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]], {
@@ -133,6 +138,68 @@ module.exports = (Controller) => {
     getOrCreateSchemaData(ANALYTICSDATE),
     respondIf("schemaCreated", false, "Error: date already exists"),
     respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/releases",
+    addToSchema(SCHEMAQUERY, { status: "in stores" }),
+    getAllFromSchema(RELEASE),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, {
+      page: "releasesAnalytics",
+      title: "Releases Analytics",
+    }),
+    pageRender()
+  );
+
+  router.get(
+    "/releases/get",
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: ANALYTICS,
+        i: [
+          { m: RELEASE, at: ["title", "id", "type"], al: "release" },
+          { m: TRACK, at: ["title", "id"], al: "track" },
+          { m: STORE, at: ["store", "id"] },
+          { m: ANALYTICSDATE, at: ["date", "id", "status"] },
+        ],
+      },
+    ]),
+    getAllFromSchema(ANALYTICSDATE, ["id", "date"]),
+    analyticsHandler("releases_analytics", ["releaseId", ["release", "title"]]),
+    respond(["ANALYTICS"])
+  );
+
+  router.get(
+    "/releases/get/:releaseId",
+    fromReq("params", ["releaseId"], TEMPKEY),
+    addToSchema(SCHEMAQUERY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: ANALYTICS,
+        w: [TEMPKEY],
+        i: [
+          { m: RELEASE, al: "release", at: ["title"] },
+          { m: TRACK, al: "track", at: ["title"] },
+          { m: STORE, al: "store", at: ["store"] },
+        ],
+      },
+    ]),
+    getAllFromSchema(ANALYTICSDATE),
+    analyticsHandler("release_analytics", ["trackId", ["track", "title"]]),
+    respond(["ANALYTICS"])
+  );
+
+  router.get(
+    "/releases/:id",
+    schemaQueryConstructor("params", ["id"]),
+    getOneFromSchema(RELEASE, ["id", "title", "status"]),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, {
+      page: "releaseAnalytics",
+      title: "Release Analytics",
+    }),
+    pageRender()
   );
 
   router.get(
@@ -284,15 +351,6 @@ module.exports = (Controller) => {
   router.get(
     "/add",
     addToSchema(SITEDATA, { page: "analyticsAdd", title: "Add Analytics" }),
-    pageRender()
-  );
-
-  router.get(
-    "/release",
-    addToSchema(SITEDATA, {
-      page: "releaseAnalytics",
-      title: "Release Analytics",
-    }),
     pageRender()
   );
 

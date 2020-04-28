@@ -217,6 +217,20 @@
       z-index: 2;
     }
   }
+
+  &__empty {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &__alert {
+      & > * {
+        &:not(:last-child) {
+          margin-bottom: 1.5rem;
+        }
+      }
+    }
+  }
 }
 
 ///////////////////////////////////////////

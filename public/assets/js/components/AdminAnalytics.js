@@ -10,95 +10,49 @@ import { modal } from "./Modal";
 import Template from "./Template";
 import { setStore, getStore } from "../Store";
 import Table from "./Table";
+import formatNumber from "../utilities/formatNumber";
 
 let R;
 export default class AdminAnalytics {
-  static async getTopBoxesData() {
+  static async getTopBoxesData(dataInput = {}) {
+    const { releaseId, status } = dataInput;
+    let params = { releaseId };
     const boxes = [
       {
         id: "analytics-total-streams",
-        href: `${location.pathname}/get/totalStreams`,
+        href: `/fmadmincp/analytics/get/totalStreams`,
       },
       {
         id: "analytics-total-downloads",
-        href: `${location.pathname}/get/totalDownloads`,
+        href: `/fmadmincp/analytics/get/totalDownloads`,
       },
     ];
     return await Promise.all(
       boxes.map(async ({ id, href }) => {
-        const { data } = await serverRequest({
-          href,
-          method: "get",
-        });
-        let { total } = data[0];
-        return View.addContent(`#${id}`, total);
+        let total;
+        if (status && status !== "in stores") total = 0;
+        else {
+          const { data } = await serverRequest({
+            href,
+            method: "get",
+            params,
+          });
+          console.log("data: ", data);
+          total = data[0].total;
+        }
+        return View.addContent(`#${id}`, formatNumber(total));
       })
     );
   }
 
-  static async buildMainChart() {
-    const { data: response } = await serverRequest({
-      href: "/fmadmincp/dashboard/get-graph-data",
-      method: "get",
-    });
-    if (!response) return;
-    const dates = [];
-    const days = [];
-    const dateObj = {
-      releases: Array(7).fill(0),
-      subscribers: Array(7).fill(0),
-      subscriptions: Array(7).fill(0),
-    };
-
-    for (let i = 6; i >= 0; --i) {
-      const m = moment().subtract(i, "days");
-      dates.push(m.format("YYYY-MM-DD"));
-      days.push(m.format("ddd"));
-    }
-    for (let item in response) {
-      if (response.hasOwnProperty(item)) {
-        //
-        response[item].forEach(({ count, date }) => {
-          //
-          dateObj[item][dates.indexOf(date)] = count;
-        });
-      }
-    }
-
-    const datasets = sortGraph([
-      {
-        label: "Subscribers",
-        backgroundColor: "#eab8f6",
-        borderColor: "rgb(86, 12, 104)",
-        data: dateObj.subscribers,
-      },
-      {
-        label: "Subscriptions",
-        backgroundColor: "#dae5c5",
-        borderColor: "#91b252",
-        data: dateObj.subscriptions,
-      },
-      {
-        label: "Releases",
-        backgroundColor: "#dfdfef",
-        borderColor: "#6262af",
-        data: dateObj.releases,
-      },
-    ]);
-
-    const data = {
-      labels: days,
-      datasets,
-    };
-
-    View.addContent("#dash-graph", ejs.render(mainChart), true);
-    LineGraph(data, "#main-chart", { legend: true });
-  }
-
-  static async buildStoresChart() {
+  static async buildStoresChart(dataInput = {}) {
+    const { releaseId, status } = dataInput;
+    const params = { releaseId };
+    if (status !== "in stores") return;
     const response = await serverRequest({
-      href: `${location.pathname}/get/topStores`,
+      href: `/fmadmincp/analytics/get/topStores`,
       method: "get",
+      params,
     });
 
     const dataValues = [];
@@ -127,8 +81,67 @@ export default class AdminAnalytics {
     };
 
     // View.addContent("#dash-doughnut", ejs.render(subChart), true);
-    DoughnutChart(data, "#admin-analytics-stores-graph", { legend: true });
+    DoughnutChart(data, "#admin-analytics-stores-graph", { legend: false });
   }
+
+  // static async buildMainChart() {
+  //   const { data: response } = await serverRequest({
+  //     href: "/fmadmincp/dashboard/get-graph-data",
+  //     method: "get",
+  //   });
+  //   if (!response) return;
+  //   const dates = [];
+  //   const days = [];
+  //   const dateObj = {
+  //     releases: Array(7).fill(0),
+  //     subscribers: Array(7).fill(0),
+  //     subscriptions: Array(7).fill(0),
+  //   };
+
+  //   for (let i = 6; i >= 0; --i) {
+  //     const m = moment().subtract(i, "days");
+  //     dates.push(m.format("YYYY-MM-DD"));
+  //     days.push(m.format("ddd"));
+  //   }
+  //   for (let item in response) {
+  //     if (response.hasOwnProperty(item)) {
+  //       //
+  //       response[item].forEach(({ count, date }) => {
+  //         //
+  //         dateObj[item][dates.indexOf(date)] = count;
+  //       });
+  //     }
+  //   }
+
+  //   const datasets = sortGraph([
+  //     {
+  //       label: "Subscribers",
+  //       backgroundColor: "#eab8f6",
+  //       borderColor: "rgb(86, 12, 104)",
+  //       data: dateObj.subscribers,
+  //     },
+  //     {
+  //       label: "Subscriptions",
+  //       backgroundColor: "#dae5c5",
+  //       borderColor: "#91b252",
+  //       data: dateObj.subscriptions,
+  //     },
+  //     {
+  //       label: "Releases",
+  //       backgroundColor: "#dfdfef",
+  //       borderColor: "#6262af",
+  //       data: dateObj.releases,
+  //     },
+  //   ]);
+
+  //   const data = {
+  //     labels: days,
+  //     datasets,
+  //   };
+
+  //   View.addContent("#dash-graph", ejs.render(mainChart), true);
+  //   LineGraph(data, "#main-chart", { legend: true });
+  // }
 
   static async renderTable() {
     const response = await serverRequest({
@@ -138,7 +151,6 @@ export default class AdminAnalytics {
 
     if (!(R = responseHandler(response))) return;
     const tableData = R;
-    console.log(tableData);
 
     const formatDate = (value, row) => {
       return moment(value).format("Do MMM, YYYY");
@@ -149,13 +161,13 @@ export default class AdminAnalytics {
       let url = `/fmadmincp/analytics/${value}/edit`;
       if (releaseId) url = `/fmadmincp/analytics/releases/${value}`;
 
-      return `<a class='default' href='${url}'>${value}</a>`;
+      return `<a class='-u-link-default' href='${url}'>${value}</a>`;
     };
 
     const formatCount = (value) => {
-      return `<div class='d-flex align-items-center'><span class='mr-1'>${
+      return `<span class='d-flex align-items-center justify-content-center'><span class='mr-1'>${
         value.count
-      }</span>${rangeFormatter(value)}</div>`;
+      }</span>${rangeFormatter(value)}</span>`;
     };
 
     const statusFormat = (value) => {
@@ -173,11 +185,22 @@ export default class AdminAnalytics {
         {
           field: "dateId",
           title: "#ID",
+          align: "center",
           sortable: true,
           formatter: "idFormat",
         },
-        { field: "date", title: "Date", formatter: "formatDate" },
-        { field: "status", title: "Status", formatter: "statusFormat" },
+        {
+          field: "date",
+          title: "Date",
+          align: "center",
+          formatter: "formatDate",
+        },
+        {
+          field: "status",
+          title: "Status",
+          align: "center",
+          formatter: "statusFormat",
+        },
         {
           field: "streams",
           title: "Stream",
@@ -197,10 +220,11 @@ export default class AdminAnalytics {
         {
           field: "releaseId",
           title: "#ID",
+          align: "center",
           sortable: true,
           formatter: "idFormat",
         },
-        { field: "title", title: "Release" },
+        { field: "title", title: "Release", align: "center", sortable: true },
         {
           field: "streams",
           title: "Stream",
