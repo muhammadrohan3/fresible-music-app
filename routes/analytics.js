@@ -78,6 +78,7 @@ module.exports = (Controller) => {
     fromReq("query", ["type"], TEMPKEY),
     fromReq("user", ["id"], TEMPKEY, ["userId"]),
     fromReq("query", ["range"], "ANALYTICS_RANGE"),
+    addToSchema(SCHEMAQUERY, { status: "published" }),
     addToSchema(SCHEMAINCLUDE, [
       {
         m: ANALYTICS,
@@ -102,7 +103,8 @@ module.exports = (Controller) => {
     schemaQueryConstructor("query", ["releaseId"]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAQUERY, { type: "stream" }),
-    seeStore([SCHEMAQUERY]),
+    addToSchema(TEMPKEY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [{ m: ANALYTICSDATE, w: [TEMPKEY] }]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
   );
@@ -112,6 +114,8 @@ module.exports = (Controller) => {
     schemaQueryConstructor("query", ["releaseId"]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAQUERY, { type: "download" }),
+    addToSchema(TEMPKEY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [{ m: ANALYTICSDATE, w: [TEMPKEY] }]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
   );
@@ -121,7 +125,11 @@ module.exports = (Controller) => {
     schemaQueryConstructor("query", ["releaseId"]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema("schemaOptions", { limit: 3 }),
-    addToSchema(SCHEMAINCLUDE, [{ m: STORE, at: ["store"] }]),
+    addToSchema(TEMPKEY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [
+      { m: STORE, at: ["store"] },
+      { m: ANALYTICSDATE, w: [TEMPKEY] },
+    ]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]], {
       group: ["storeId"],
       order: [[["SUM", "count", "DESC"]]],

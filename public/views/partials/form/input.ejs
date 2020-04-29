@@ -6,8 +6,8 @@ dontIgnore: '', dataAttributes: []} %>
 
 <% const {label, disabled, inputId, required, type, name, placeholder,
 inputText, value, classList, dontIgnore, dataAttributes} =
-Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc, [key]:
-formData[key] || value}) , {}) %>
+Object.entries(hashMap).reduce((acc, [key, value]) => { return {...acc, [key]:
+(formData[key] !== undefined ? formData[key] : value)} } , {}) %>
 
 <div class="form__input <%= classList.join(' ') %>">
   <label for="" class="form__input--label"

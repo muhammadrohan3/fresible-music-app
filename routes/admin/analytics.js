@@ -94,7 +94,8 @@ module.exports = (Controller) => {
     "/get/totalStreams",
     schemaQueryConstructor("query", ["releaseId"]),
     addToSchema(SCHEMAQUERY, { type: "stream" }),
-    seeStore([SCHEMAQUERY]),
+    addToSchema(TEMPKEY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [{ m: ANALYTICSDATE, w: [TEMPKEY] }]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
   );
@@ -103,6 +104,8 @@ module.exports = (Controller) => {
     "/get/totalDownloads",
     schemaQueryConstructor("query", ["releaseId"]),
     addToSchema(SCHEMAQUERY, { type: "download" }),
+    addToSchema(TEMPKEY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [{ m: ANALYTICSDATE, w: [TEMPKEY] }]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
   );
@@ -111,7 +114,11 @@ module.exports = (Controller) => {
     "/get/topStores",
     schemaQueryConstructor("query", ["releaseId"]),
     addToSchema("schemaOptions", { limit: 3 }),
-    addToSchema(SCHEMAINCLUDE, [{ m: STORE, at: ["store"] }]),
+    addToSchema(TEMPKEY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [
+      { m: STORE, at: ["store"] },
+      { m: ANALYTICSDATE, w: [TEMPKEY] },
+    ]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]], {
       group: ["storeId"],
       order: [[["SUM", "count", "DESC"]]],
@@ -169,7 +176,7 @@ module.exports = (Controller) => {
       },
     ]),
     analytics_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
-    seeStore(),
+    addToSchema(SCHEMAQUERY, { status: "published" }),
     getAllFromSchema(ANALYTICSDATE, ["id", "date"]),
     analyticsHandler("releases_analytics", ["releaseId", ["release", "title"]]),
     respond(["ANALYTICS"])
@@ -204,9 +211,11 @@ module.exports = (Controller) => {
       },
     ]),
     analytics_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
+    addToSchema(SCHEMAQUERY, { status: "published" }),
     getAllFromSchema(ANALYTICSDATE),
     analyticsHandler("release_analytics", ["trackId", ["track", "title"]]),
-    seeStore(["ANALYTICS"]),
+    seeStore([SCHEMARESULT]),
+    respondIf("ANALYTICS", false, "Nothing yet"),
     respond(["ANALYTICS"])
   );
 
@@ -325,6 +334,7 @@ module.exports = (Controller) => {
     getAllFromSchema(STORE, ["id", "store"]),
     copyKeyTo(SCHEMARESULT, PAGEDATA, "stores"),
     copyKeyTo("ANALYTICS_EDIT", PAGEDATA, "analytics"),
+    seeStore(["ANALYTICS_EDIT", 0, "children", 0, "streams", 0]),
     copyKeyTo(PAGEDATA, SITEDATA),
     addToSchema(SITEDATA, {
       page: "analyticsEdit",
