@@ -10,7 +10,8 @@
     "webpack": "webpack --watch",
     "webpack-web": "webpack --config ./webpack.f-config.js",
     "webpack-node": "webpack --config ./webpack.b-config.js",
-    "resolve:db": "node ./scripts/syncData"
+    "resolve:db": "node ./scripts/syncData",
+    "sequelize:migrate": "npx sequelize db:migrate"
   },
   "author": "",
   "license": "ISC",
