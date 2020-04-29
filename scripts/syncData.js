@@ -67,7 +67,6 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
     const _uploader = (secureUrl, resourceType) => {
       let index = 42351;
       let id = index + Uploads.length;
-      console.log(id, " ", secureUrl, ": ", resourceType);
       Uploads.push({ id, secureUrl, resourceType });
       return id;
     };

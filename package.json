@@ -11,7 +11,8 @@
     "webpack-web": "webpack --config ./webpack.f-config.js",
     "webpack-node": "webpack --config ./webpack.b-config.js",
     "resolve:db": "node ./scripts/syncData",
-    "sequelize:migrate": "npx sequelize db:migrate"
+    "sequelize:migrate": "npx sequelize db:migrate",
+    "sequelize:undo-migrate": "npx sequelize db:migrate:undo:all"
   },
   "author": "",
   "license": "ISC",
