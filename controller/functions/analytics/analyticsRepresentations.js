@@ -6,6 +6,7 @@ module.exports = {
       { name: "title", key: ["release", "title"] },
       { name: "type", key: ["release", "type"] },
       { name: "count", key: "count", cb: "sumCount" },
+      { name: "levels", defaultValue: 3 },
     ],
     children: {
       key: "trackId",
@@ -29,6 +30,7 @@ module.exports = {
     props: [
       { name: "title", key: ["track", "title"] },
       { name: "count", key: "count", cb: "sumCount" },
+      { name: "levels", defaultValue: 2 },
     ],
     children: {
       key: "storeId",

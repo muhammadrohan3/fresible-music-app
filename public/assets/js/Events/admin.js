@@ -28,9 +28,9 @@ export default (Controller) => {
   if (location.pathname === "/fmadmincp/analytics") {
     (async () => {
       await Promise.all([
-        AdminAnalytics.getTopBoxesData(),
         AdminAnalytics.renderTable(),
-        AdminAnalytics.buildStoresChart(),
+        Analytics.GetTopBoxesData({ baseLink: "/fmadmincp/analytics/get" }),
+        Analytics.BuildStoresChart({ baseLink: "/fmadmincp/analytics/get" }),
       ]);
     })();
   }
@@ -45,12 +45,15 @@ export default (Controller) => {
 
   if (location.pathname.search(/fmadmincp\/analytics\/releases\/\d+/gi) > 0) {
     (async () => {
-      const { data } = View.getElement("#analytics-release").dataset;
+      const { data } = View.getElement("#analytics").dataset;
       const { id: releaseId, status } = JSON.parse(data);
-      await Promise.all([
-        AdminAnalytics.getTopBoxesData({ releaseId, status }),
-        AdminAnalytics.buildStoresChart({ releaseId, status }),
-      ]);
+      await Analytics.initiate({
+        top: {
+          topBoxesBaseLink: "/fmadmincp/analytics/get",
+          dataInput: { releaseId, status },
+        },
+        bodyLink: `/fmadmincp/analytics/releases/${releaseId}/get`,
+      });
     })();
   }
 

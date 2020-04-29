@@ -29,7 +29,7 @@
     <div class="analytics__card">
       <div class="analytics__card--title">Top 3 stores</div>
       <div class="analytics__card--chart">
-        <canvas id="admin-analytics-stores-graph"></canvas>
+        <canvas id="analytics-top-stores"></canvas>
       </div>
     </div>
   </section>
@@ -37,7 +37,7 @@
     <div class="analytics__info__graph pl-md-4 pr-md-5">
       <div
         class="px-2 px-md-0 analytics__info__graph__options"
-        id="analyticsOptions"
+        id="analytics-options"
       >
         <div>
           <%- include('../partials/form/select', {formData: {name: 'type',
@@ -65,7 +65,5 @@
   <section
     class="container analytics__table mt-5 bg-white px-2 py-5 p-md-5"
     id="analytics-table"
-  >
-    <table data-mobile-responsive="true"></table>
-  </section>
+  ></section>
 </section>

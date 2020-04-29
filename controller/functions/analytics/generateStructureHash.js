@@ -33,18 +33,19 @@ module.exports = (structure = {}) => (sourceHash = {}, dataItem) => {
     let keyValue = hash[dataItem[key]] || {};
     keyValue.level = level;
     props.forEach((prop) => {
-      const { name, key, cb } = prop;
+      const { name, key, cb, defaultValue } = prop;
       let value;
-      if (Array.isArray(key)) {
+      if (defaultValue) value = defaultValue;
+      else if (Array.isArray(key)) {
         let tempVal;
         key.forEach((k) => (tempVal = tempVal ? tempVal[k] : dataItem[k]));
         value = tempVal;
       } else {
         value = dataItem[key];
       }
-      if (cb)
+      if (cb) {
         keyValue[name] = Callbacks[cb](keyValue[name], dataItem, name, value);
-      else keyValue[name] = value;
+      } else keyValue[name] = value;
     });
     if (children)
       keyValue.children = _generateHash(

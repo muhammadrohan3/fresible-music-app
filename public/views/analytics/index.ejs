@@ -1,13 +1,50 @@
-<section class="analytics mx-2 mx-md-5">
-  <div class="analytics--welcome mb-4 text-center">
-    Some stores don’t provide live sales & streaming data, so these reports may
-    not reflect your exact final sales figures.
-  </div>
+<% if(!pageData.length) { %> <%- include("../partials/analyticsEmpty") %> <% }
+else { %>
+<div class="analytics--welcome mb-4 text-center">
+  Some stores don’t provide live sales & streaming data, so these reports may
+  not reflect your exact final sales figures.
+</div>
+
+<section class="analytics mx-2 mx-md-5" id="analytics">
+  <section class="d-flex flex-column flex-md-row mb-5">
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Streams</div>
+      <div class="analytics__card--icon">
+        <span
+          class="iconify"
+          data-icon="openmoji:headphone"
+          data-inline="false"
+        ></span>
+      </div>
+      <div class="analytics__card--number" id="analytics-total-streams">
+        ...
+      </div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Downloads</div>
+      <div class="analytics__card--icon">
+        <span
+          class="iconify"
+          data-icon="bi:download"
+          data-inline="false"
+        ></span>
+      </div>
+      <div class="analytics__card--number" id="analytics-total-downloads">
+        ...
+      </div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Top 3 stores</div>
+      <div class="analytics__card--chart">
+        <canvas id="analytics-top-stores"></canvas>
+      </div>
+    </div>
+  </section>
   <section class="analytics__info d-flex flex-column flex-md-row">
     <div class="analytics__info__graph pl-md-4 pr-md-5">
       <div
         class="px-2 px-md-0 analytics__info__graph__options"
-        id="analyticsOptions"
+        id="analytics-options"
       >
         <div>
           <%- include('../partials/form/select', {formData: {name: 'type',
@@ -35,13 +72,6 @@
   <section
     class="container analytics__table mt-5 bg-white px-2 py-5 p-md-5"
     id="analytics-table"
-  >
-    <table data-mobile-responsive="true"></table>
-  </section>
-  <section class="hide" id="analytics-sub-table">
-    <table
-      style="width: 90%; margin: 0 auto;"
-      data-mobile-responsive="true"
-    ></table>
-  </section>
+  ></section>
 </section>
+<% } %>

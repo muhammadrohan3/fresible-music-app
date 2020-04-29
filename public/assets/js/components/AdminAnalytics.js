@@ -1,148 +1,14 @@
 import moment from "moment";
 import serverRequest, { responseHandler } from "../utilities/serverRequest";
 import View from "../View";
-import LineGraph from "./LineGraph";
-import DoughnutChart from "./DoughnutChart";
-import sortGraph from "../utilities/sortGraph";
-import { mainChart, subChart } from "../templates/dashboardCanvas";
 import rangeFormatter from "../utilities/rangeFormatter";
 import { modal } from "./Modal";
 import Template from "./Template";
 import { setStore, getStore } from "../Store";
 import Table from "./Table";
-import formatNumber from "../utilities/formatNumber";
 
 let R;
 export default class AdminAnalytics {
-  static async getTopBoxesData(dataInput = {}) {
-    const { releaseId, status } = dataInput;
-    let params = { releaseId };
-    const boxes = [
-      {
-        id: "analytics-total-streams",
-        href: `/fmadmincp/analytics/get/totalStreams`,
-      },
-      {
-        id: "analytics-total-downloads",
-        href: `/fmadmincp/analytics/get/totalDownloads`,
-      },
-    ];
-    return await Promise.all(
-      boxes.map(async ({ id, href }) => {
-        let total;
-        if (status && status !== "in stores") total = 0;
-        else {
-          const { data } = await serverRequest({
-            href,
-            method: "get",
-            params,
-          });
-          console.log("data: ", data);
-          total = data[0].total;
-        }
-        return View.addContent(`#${id}`, formatNumber(total));
-      })
-    );
-  }
-
-  static async buildStoresChart(dataInput = {}) {
-    const { releaseId, status } = dataInput;
-    const params = { releaseId };
-    if (status !== "in stores") return;
-    const response = await serverRequest({
-      href: `/fmadmincp/analytics/get/topStores`,
-      method: "get",
-      params,
-    });
-
-    const dataValues = [];
-    const labels = [];
-
-    response.data.forEach(({ total, store: { store } }) => {
-      dataValues.push(total);
-      labels.push(store);
-    });
-
-    const data = {
-      datasets: [
-        {
-          data: dataValues,
-          backgroundColor: [
-            "#1e1e2c",
-            "rgb(86, 12, 104)",
-            "#91b252",
-            "#6262af",
-            "#84BC9C",
-            "#246EB9",
-          ],
-        },
-      ],
-      labels,
-    };
-
-    // View.addContent("#dash-doughnut", ejs.render(subChart), true);
-    DoughnutChart(data, "#admin-analytics-stores-graph", { legend: false });
-  }
-
-  // static async buildMainChart() {
-  //   const { data: response } = await serverRequest({
-  //     href: "/fmadmincp/dashboard/get-graph-data",
-  //     method: "get",
-  //   });
-  //   if (!response) return;
-  //   const dates = [];
-  //   const days = [];
-  //   const dateObj = {
-  //     releases: Array(7).fill(0),
-  //     subscribers: Array(7).fill(0),
-  //     subscriptions: Array(7).fill(0),
-  //   };
-
-  //   for (let i = 6; i >= 0; --i) {
-  //     const m = moment().subtract(i, "days");
-  //     dates.push(m.format("YYYY-MM-DD"));
-  //     days.push(m.format("ddd"));
-  //   }
-  //   for (let item in response) {
-  //     if (response.hasOwnProperty(item)) {
-  //       //
-  //       response[item].forEach(({ count, date }) => {
-  //         //
-  //         dateObj[item][dates.indexOf(date)] = count;
-  //       });
-  //     }
-  //   }
-
-  //   const datasets = sortGraph([
-  //     {
-  //       label: "Subscribers",
-  //       backgroundColor: "#eab8f6",
-  //       borderColor: "rgb(86, 12, 104)",
-  //       data: dateObj.subscribers,
-  //     },
-  //     {
-  //       label: "Subscriptions",
-  //       backgroundColor: "#dae5c5",
-  //       borderColor: "#91b252",
-  //       data: dateObj.subscriptions,
-  //     },
-  //     {
-  //       label: "Releases",
-  //       backgroundColor: "#dfdfef",
-  //       borderColor: "#6262af",
-  //       data: dateObj.releases,
-  //     },
-  //   ]);
-
-  //   const data = {
-  //     labels: days,
-  //     datasets,
-  //   };
-
-  //   View.addContent("#dash-graph", ejs.render(mainChart), true);
-  //   LineGraph(data, "#main-chart", { legend: true });
-  // }
-
   static async renderTable() {
     const response = await serverRequest({
       method: "get",

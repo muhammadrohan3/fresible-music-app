@@ -36,6 +36,7 @@
     "passport-local": "^1.0.0",
     "paystack": "^2.0.1",
     "paystack-node": "^0.2.4",
+    "popper.js": "^1.16.1",
     "readable-stream": "^3.6.0",
     "regenerator-runtime": "^0.13.5",
     "sequelize": "^5.21.6",

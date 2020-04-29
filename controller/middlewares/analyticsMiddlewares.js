@@ -3,13 +3,15 @@ const generateStructureHash = require("../functions/analytics/generateStructureH
 const generateStructure = require("../functions/analytics/generateStructure");
 const growthCalc = require("../util/growthCalc");
 const analyticsStructureReps = require("../functions/analytics/analyticsRepresentations");
+const valExtractor = require("../util/valExtractor");
 
 const analyticsHandler = ({ getStore, setStore }) => (
   dataRepKey,
   lineChartSubjects = []
 ) => {
   //Gets the required data from the store
-  const { schemaResult, schemaQuery } = getStore();
+  const { schemaResult, ANALYTICS_RANGE = {} } = getStore();
+  const { range } = ANALYTICS_RANGE;
   if (!schemaResult.length) return;
   // const { range } = schemaQuery;
   const structure = analyticsStructureReps[dataRepKey];
@@ -30,8 +32,8 @@ const analyticsHandler = ({ getStore, setStore }) => (
   const _getRandomColorId = () => Math.floor(Math.random() * Colors.length);
 
   const Dates = [];
-  const currentData = schemaResult.slice(0, 2);
-  const previousData = schemaResult.slice(2);
+  const currentData = schemaResult.slice(0, Number(range));
+  const previousData = schemaResult.slice(Number(range));
   console.log(currentData.length, previousData.length);
   for (let i = 0; i < currentData.length; i++) {
     let subjectKeyHash = {};
@@ -52,7 +54,7 @@ const analyticsHandler = ({ getStore, setStore }) => (
         key: key,
         props: [
           { name: "title", key: titleRoute },
-          { name: "count", key: "count", cb: "sumCount" },
+          { name: "data", key: "count", cb: "sumCount" },
         ],
       };
       // console.log(currentDataItem, currentDataItem[key]);
@@ -70,12 +72,12 @@ const analyticsHandler = ({ getStore, setStore }) => (
       );
     }
     //populate data for chartjs
-    Object.entries(subjectKeyHash).forEach(([id, { title, count }]) => {
+    Object.entries(subjectKeyHash).forEach(([id, { title, data }]) => {
       ChartDataHash = {
         ...ChartDataHash,
         [id]: {
           label: title,
-          count: [...((ChartDataHash[id] || {})["count"] || []), count],
+          data: [...((ChartDataHash[id] || {})["data"] || []), data],
         },
       };
     });
@@ -127,10 +129,26 @@ const analytics_initiate = ({ getStore, setStore }) => () => {
   return setStore("ANALYTICS_INITIATE", data);
 };
 
-const analytics_default_intercept = ({ getStore, setStore }) => () => {
+const analytics_default_intercept = ({ getStore, setStore }) => (
+  operator,
+  operand,
+  keyRoute
+) => {
   const { schemaOptions = {} } = getStore();
-  const { limit = 20 } = schemaOptions;
-  setStore("schemaOptions", { ...schemaOptions, limit: limit + 1 });
+  let { limit = 20 } = schemaOptions;
+  limit = limit + 1;
+  if (keyRoute) {
+    const keyValue = Number(valExtractor(getStore(), keyRoute));
+    if (Number.isNaN(keyValue))
+      throw new Error("ANALYTICS-INTERCEPT-ERROR: Keyvalue is not a number");
+    switch (operator) {
+      case "multiply":
+        limit = keyValue * operand;
+      default:
+        limit;
+    }
+  }
+  setStore("schemaOptions", { ...schemaOptions, limit });
   return;
 };
 

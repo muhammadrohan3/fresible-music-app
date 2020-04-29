@@ -5,11 +5,10 @@ import AudioPlayer from "../components/AudioPlayer";
 import processInputIgnore from "../utilities/processFormElementChange";
 import injectLoader from "../components/Loader";
 import RoyaltiesGraph from "../components/RoyaltiesGraph";
-import analytics from "../components/Analytics";
+import Analytics from "../components/Analytics";
 
 export default (Controller) => {
   let E;
-  const Analytics = analytics();
   const Album = album(Controller, View);
   if (location.pathname.startsWith("/add-music")) {
     //This opens the bootstrap modal containing informations relevant to the add music page (Maybe I will work on a generic form of notification later)
@@ -29,7 +28,11 @@ export default (Controller) => {
   }
 
   if (location.pathname === "/analytics") {
-    Analytics.handle();
+    (async () =>
+      await Analytics.initiate({
+        top: { topBoxesBaseLink: "/analytics/get" },
+        bodyLink: "/analytics/get",
+      }))();
   }
 
   //CHANGE EVENT LISTENER GROUP

@@ -154,9 +154,12 @@ module.exports = (Controller) => {
 
   router.get(
     "/releases/get",
+    fromReq("query", ["type"], TEMPKEY),
+    fromReq("query", ["range"], "ANALYTICS_RANGE"),
     addToSchema(SCHEMAINCLUDE, [
       {
         m: ANALYTICS,
+        w: [TEMPKEY],
         i: [
           { m: RELEASE, at: ["title", "id", "type"], al: "release" },
           { m: TRACK, at: ["title", "id"], al: "track" },
@@ -165,28 +168,10 @@ module.exports = (Controller) => {
         ],
       },
     ]),
+    analytics_default_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
+    seeStore(),
     getAllFromSchema(ANALYTICSDATE, ["id", "date"]),
     analyticsHandler("releases_analytics", ["releaseId", ["release", "title"]]),
-    respond(["ANALYTICS"])
-  );
-
-  router.get(
-    "/releases/get/:releaseId",
-    fromReq("params", ["releaseId"], TEMPKEY),
-    addToSchema(SCHEMAQUERY, { status: "published" }),
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: ANALYTICS,
-        w: [TEMPKEY],
-        i: [
-          { m: RELEASE, al: "release", at: ["title"] },
-          { m: TRACK, al: "track", at: ["title"] },
-          { m: STORE, al: "store", at: ["store"] },
-        ],
-      },
-    ]),
-    getAllFromSchema(ANALYTICSDATE),
-    analyticsHandler("release_analytics", ["trackId", ["track", "title"]]),
     respond(["ANALYTICS"])
   );
 
@@ -200,6 +185,29 @@ module.exports = (Controller) => {
       title: "Release Analytics",
     }),
     pageRender()
+  );
+
+  router.get(
+    "/releases/:releaseId/get",
+    fromReq("params", ["releaseId", "type"], TEMPKEY),
+    fromReq("query", ["range"], "ANALYTICS_RANGE"),
+    addToSchema(SCHEMAQUERY, { status: "published" }),
+    addToSchema(SCHEMAINCLUDE, [
+      {
+        m: ANALYTICS,
+        w: [TEMPKEY],
+        i: [
+          { m: RELEASE, al: "release", at: ["title"] },
+          { m: TRACK, al: "track", at: ["title"] },
+          { m: STORE, al: "store", at: ["store"] },
+        ],
+      },
+    ]),
+    analytics_default_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
+    getAllFromSchema(ANALYTICSDATE),
+    analyticsHandler("release_analytics", ["trackId", ["track", "title"]]),
+    seeStore(["ANALYTICS"]),
+    respond(["ANALYTICS"])
   );
 
   router.get(
@@ -266,6 +274,7 @@ module.exports = (Controller) => {
       "Analytics for this date has already been initiated"
     ),
     resetKey([SCHEMARESULT, SCHEMAQUERY]),
+    addToSchema("schemaOptions", { limit: null }),
     addToSchema(SCHEMAQUERY, { status: "in stores" }),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["id"] },

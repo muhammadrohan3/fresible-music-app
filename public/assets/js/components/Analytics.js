@@ -11,6 +11,8 @@ import LineGraph from "./LineGraph";
 import Table from "./Table";
 import rangeFormatter from "../utilities/rangeFormatter";
 import formatNumber from "../utilities/formatNumber";
+import DoughnutChart from "./DoughnutChart";
+import { ca } from "date-fns/locale";
 
 export default (() => {
   const internalCache = {};
@@ -47,7 +49,7 @@ export default (() => {
   };
 
   const _buildStoresChart = async ({ baseLink, dataInput = {} }) => {
-    const { releaseId, status } = dataInput;
+    const { releaseId, status = "in stores" } = dataInput;
     const params = { releaseId };
     if (status !== "in stores") return;
     const response = await serverRequest({
@@ -60,9 +62,11 @@ export default (() => {
     const labels = [];
 
     response.data.forEach(({ total, store: { store } }) => {
-      dataValues.push(total);
+      dataValues.push(Number(total));
       labels.push(store);
     });
+
+    console.log("IT CAME HERE LA: ", response.data, dataValues, labels);
 
     const data = {
       datasets: [
@@ -117,7 +121,7 @@ export default (() => {
     const formattedDates = dates.map((date) => {
       const m = moment(date);
       if (range === 7) return m.format("ddd");
-      return m.format("mmm DD");
+      return m.format("MMM DD");
     });
     View.addContent(
       "#analytics-graph-container",
@@ -128,23 +132,24 @@ export default (() => {
       labels: formattedDates,
       datasets,
     };
-    console.log("GRAPH: ", data);
     LineGraph(data, "#analytics-graph");
   };
 
-  const _tableUI = (tableData, tableDataDepth = 3, { type, range }) => {
+  const _tableUI = (tableData, { type, range }) => {
+    const typeHash = { download: "Download", stream: "Stream" };
+    const tableDataDepth = tableData[0].levels;
     const columns = [
       [
-        // {
-        //   field: "color",
-        //   title: "color",
-        //   width: 20,
-        //   formatter: "colorFormatter",
-        // },
+        {
+          field: "color",
+          title: "",
+          width: 20,
+          formatter: "colorFormatter",
+        },
         { field: "title", title: "Release", sortable: true },
         {
-          field: "",
-          title: type,
+          field: "s",
+          title: typeHash[type],
           align: "center",
           sortable: true,
           formatter: "countFormatter",
@@ -161,7 +166,7 @@ export default (() => {
         { field: "title", title: "Track", sortable: true },
         {
           field: "",
-          title: type,
+          title: typeHash[type],
           align: "center",
           sortable: true,
           formatter: "countFormatter",
@@ -178,7 +183,7 @@ export default (() => {
         { field: "title", title: "Store", sortable: true },
         {
           field: "",
-          title: type,
+          title: typeHash[type],
           align: "center",
           sortable: true,
           formatter: "countFormatter",
@@ -192,8 +197,16 @@ export default (() => {
         },
       ],
     ];
-
-    if (tableDataDepth === 2) columns.shift();
+    console.log("TABLE-DEPTH: ", tableDataDepth);
+    if (tableDataDepth === 2) {
+      columns.shift();
+      columns[0].unshift({
+        field: "color",
+        title: "",
+        width: 20,
+        formatter: "colorFormatter",
+      });
+    }
 
     const countFormatter = (value = null, row) => {
       return row.count.count;
@@ -202,6 +215,8 @@ export default (() => {
     const colorFormatter = (value) => {
       return `<span style="border: 2px solid ${value}; display: inline-block; width: 2.5rem" class='mx-auto'></span>`;
     };
+
+    View.getElement("#analytics-table").innerHTML = "<table></table>";
 
     Table("#analytics-table", tableData, columns, {
       rangeFormatter,
@@ -221,22 +236,26 @@ export default (() => {
     if (!Response) {
       Response = await serverRequest({ href, params: query, method: "get" });
     }
-    console.log("HANDLE: ", Response);
+    console.log(Response.data);
     const { Report, TableData, ChartData } = Response.data;
     _chartUI(ChartData, query);
-    _tableUI(TableData, undefined, query);
+    _tableUI(TableData, query);
     _reportUI(Report, query);
+    internalCache[cacheKey] = Response;
+    View.showLoader(false);
   };
 
   const reactToChange = () => {
     const query = {};
-    View.getElement("#analyticsOptions")
+    View.getElement("#analytics-options")
       .querySelectorAll("select")
       .forEach(({ name, value }) => (query[name] = value));
+    View.showLoader(true);
     return _handle(query);
   };
 
   const initiate = ({ top: { topBoxesBaseLink, dataInput }, bodyLink }) => {
+    console.log("INITIATED");
     if (View.getElement("#analytics-empty")) return;
     _getTopBoxesData({ baseLink: topBoxesBaseLink, dataInput });
     _buildStoresChart({ baseLink: topBoxesBaseLink, dataInput });
@@ -245,8 +264,17 @@ export default (() => {
       range: 7,
     };
     href = bodyLink;
-    return _handle(defaultQuery);
+    View.showLoader(true);
+    _handle(defaultQuery);
+    let L;
+    (L = View.getElement("#analytics-options")) &&
+      L.addEventListener("change", reactToChange);
   };
 
-  return { initiate, reactToChange };
+  return {
+    initiate,
+    reactToChange,
+    GetTopBoxesData: _getTopBoxesData,
+    BuildStoresChart: _buildStoresChart,
+  };
 })();
