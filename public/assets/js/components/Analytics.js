@@ -12,10 +12,10 @@ import Table from "./Table";
 import rangeFormatter from "../utilities/rangeFormatter";
 import formatNumber from "../utilities/formatNumber";
 import DoughnutChart from "./DoughnutChart";
-import { ca } from "date-fns/locale";
 
 export default (() => {
   const internalCache = {};
+  const SelectBox = View.getElement("#analytics-options");
   let href;
 
   const _getTopBoxesData = async ({ baseLink, dataInput = {} }) => {
@@ -43,7 +43,7 @@ export default (() => {
           });
           total = data[0].total;
         }
-        return View.addContent(`#${id}`, formatNumber(total));
+        return View.addContent(`#${id}`, formatNumber(total || 0));
       })
     );
   };
@@ -65,8 +65,6 @@ export default (() => {
       dataValues.push(Number(total));
       labels.push(store);
     });
-
-    console.log("IT CAME HERE LA: ", response.data, dataValues, labels);
 
     const data = {
       datasets: [
@@ -90,7 +88,7 @@ export default (() => {
   };
 
   const _reportUI = (report, { type, range }) => {
-    const { rate, growing, count } = report;
+    const { count = 0 } = report;
     const groupNames = {
       7: "Weekly",
       14: "Fornightly",
@@ -137,7 +135,7 @@ export default (() => {
 
   const _tableUI = (tableData, { type, range }) => {
     const typeHash = { download: "Download", stream: "Stream" };
-    const tableDataDepth = tableData[0].levels;
+    const tableDataDepth = tableData[0]?.levels ?? 3;
     const columns = [
       [
         {
@@ -197,7 +195,7 @@ export default (() => {
         },
       ],
     ];
-    console.log("TABLE-DEPTH: ", tableDataDepth);
+
     if (tableDataDepth === 2) {
       columns.shift();
       columns[0].unshift({
@@ -236,7 +234,14 @@ export default (() => {
     if (!Response) {
       Response = await serverRequest({ href, params: query, method: "get" });
     }
-    console.log(Response.data);
+    if (Response.status === "error") {
+      Response.data = {
+        ChartData: { dates: [], datasets: [] },
+        TableData: [],
+        Report: {},
+      };
+      SelectBox.display = "none";
+    }
     const { Report, TableData, ChartData } = Response.data;
     _chartUI(ChartData, query);
     _tableUI(TableData, query);
@@ -247,15 +252,15 @@ export default (() => {
 
   const reactToChange = () => {
     const query = {};
-    View.getElement("#analytics-options")
-      .querySelectorAll("select")
-      .forEach(({ name, value }) => (query[name] = value));
+    SelectBox.querySelectorAll("select").forEach(
+      ({ name, value }) => (query[name] = value)
+    );
     View.showLoader(true);
     return _handle(query);
   };
 
   const initiate = ({ top: { topBoxesBaseLink, dataInput }, bodyLink }) => {
-    console.log("INITIATED");
+    View.showLoader(true);
     if (View.getElement("#analytics-empty")) return;
     _getTopBoxesData({ baseLink: topBoxesBaseLink, dataInput });
     _buildStoresChart({ baseLink: topBoxesBaseLink, dataInput });
@@ -264,7 +269,6 @@ export default (() => {
       range: 7,
     };
     href = bodyLink;
-    View.showLoader(true);
     _handle(defaultQuery);
     let L;
     (L = View.getElement("#analytics-options")) &&

@@ -14,7 +14,6 @@ export default class AdminAnalytics {
       method: "get",
       href: `${location.pathname}/get/dates`,
     });
-
     if (!(R = responseHandler(response))) return;
     const tableData = R;
 

@@ -34,7 +34,6 @@ const analyticsHandler = ({ getStore, setStore }) => (
   const Dates = [];
   const currentData = schemaResult.slice(0, Number(range));
   const previousData = schemaResult.slice(Number(range));
-  console.log(currentData.length, previousData.length);
   for (let i = 0; i < currentData.length; i++) {
     let subjectKeyHash = {};
     Dates.push(currentData[i].date);
@@ -129,7 +128,7 @@ const analytics_initiate = ({ getStore, setStore }) => () => {
   return setStore("ANALYTICS_INITIATE", data);
 };
 
-const analytics_default_intercept = ({ getStore, setStore }) => (
+const analytics_intercept = ({ getStore, setStore }) => (
   operator,
   operand,
   keyRoute
@@ -144,27 +143,23 @@ const analytics_default_intercept = ({ getStore, setStore }) => (
     switch (operator) {
       case "multiply":
         limit = keyValue * operand;
-      default:
-        limit;
     }
   }
   setStore("schemaOptions", { ...schemaOptions, limit });
   return;
 };
 
-const analytics_default = ({ getStore, setStore }) => () => {
-  const structure = analyticsStructureReps["analytics_default"];
+const analytics_dates = ({ getStore, setStore }) => () => {
+  const structure = analyticsStructureReps["analytics_dates"];
   let PreviousDataHash = {};
   let CurrentDataHash = {};
-  const { schemaResult } = getStore();
+  const { schemaResult, limit = 20 } = getStore();
   const hashGenerator = generateStructureHash(structure);
-  const dataLength = schemaResult.length;
-  const CurrentData = schemaResult.slice(0, dataLength - 1);
-  const PreviousData = schemaResult.slice(1, dataLength);
-
+  const CurrentData = schemaResult.slice(0, limit - 1);
+  const PreviousData = schemaResult.slice(1, limit);
   for (let i = 0; i < CurrentData.length; i++) {
     const CurrentDataAnalytics = CurrentData[i].analytics;
-    const PreviousDataAnalytics = PreviousData[i].analytics;
+    const PreviousDataAnalytics = (PreviousData[i] || {}).analytics || [];
     for (let j = 0; j < CurrentDataAnalytics.length; j++) {
       CurrentDataHash = hashGenerator(CurrentDataHash, CurrentDataAnalytics[j]);
       PreviousDataHash = hashGenerator(
@@ -178,7 +173,7 @@ const analytics_default = ({ getStore, setStore }) => () => {
     PreviousDataHash,
     CountKeys: ["streams", "downloads"],
   });
-  return setStore("ANALYTICS_DEFAULT", dataStructure);
+  return setStore("ANALYTICS_DATES", dataStructure);
 };
 
 const analytics_edit = ({ getStore, setStore }) => () => {
@@ -200,7 +195,7 @@ const analytics_edit = ({ getStore, setStore }) => () => {
 module.exports = {
   analytics_edit,
   analytics_initiate,
-  analytics_default_intercept,
-  analytics_default,
+  analytics_intercept,
+  analytics_dates,
   analyticsHandler,
 };

@@ -55,8 +55,8 @@ module.exports = (Controller) => {
     analyticsHandler,
     analytics_edit,
     analytics_initiate,
-    analytics_default_intercept,
-    analytics_default,
+    analytics_intercept,
+    analytics_dates,
     cloneKeyData,
     redirect,
     urlFormer,
@@ -84,10 +84,10 @@ module.exports = (Controller) => {
         ],
       },
     ]),
-    analytics_default_intercept(),
+    analytics_intercept(),
     getAllFromSchema(ANALYTICSDATE, ["id"]),
-    analytics_default(),
-    respond(["ANALYTICS_DEFAULT"])
+    analytics_dates(),
+    respond(["ANALYTICS_DATES"])
   );
 
   router.get(
@@ -168,7 +168,7 @@ module.exports = (Controller) => {
         ],
       },
     ]),
-    analytics_default_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
+    analytics_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
     seeStore(),
     getAllFromSchema(ANALYTICSDATE, ["id", "date"]),
     analyticsHandler("releases_analytics", ["releaseId", ["release", "title"]]),
@@ -203,7 +203,7 @@ module.exports = (Controller) => {
         ],
       },
     ]),
-    analytics_default_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
+    analytics_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
     getAllFromSchema(ANALYTICSDATE),
     analyticsHandler("release_analytics", ["trackId", ["track", "title"]]),
     seeStore(["ANALYTICS"]),

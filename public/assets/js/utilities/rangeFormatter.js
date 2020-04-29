@@ -1,5 +1,5 @@
 export default (valueObj) => {
-  const { growing, rate } = valueObj || {};
+  const { growing = null, rate = null } = valueObj || {};
   if (rate === null || growing === null)
     return `<span class="analytics--range-invalid">N/A</span>`;
   return growing

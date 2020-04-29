@@ -40,7 +40,7 @@ module.exports = {
       ],
     },
   },
-  analytics_default: {
+  analytics_dates: {
     key: "dateId",
     name: "date",
     props: [

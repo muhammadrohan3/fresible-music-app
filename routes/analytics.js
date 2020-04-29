@@ -59,7 +59,7 @@ module.exports = (Controller) => {
     analyticsHandler,
     analytics_edit,
     analytics_initiate,
-    analytics_default_intercept,
+    analytics_intercept,
     analytics_default,
   } = Controller;
 
@@ -90,10 +90,10 @@ module.exports = (Controller) => {
         ],
       },
     ]),
-    analytics_default_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
+    analytics_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
     getAllFromSchema(ANALYTICSDATE, ["id", "date"]),
-    seeStore([SCHEMARESULT]),
     analyticsHandler("releases_analytics", ["releaseId", ["release", "title"]]),
+    respondIf("ANALYTICS", false, "Nothing yet"),
     respond(["ANALYTICS"])
   );
 
