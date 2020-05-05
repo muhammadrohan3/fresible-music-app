@@ -1,0 +1,64 @@
+<section class="add-music__release-info">
+  <form class="form .-u-form-input-spacing -u-mw-450">
+    <!--RELEASE INFO-->
+    <section class="add-music__release-info__item">
+      <div class="add-music__release-info__item--title">*Release Info</div>
+      <div class="add-music__release-info__item__body">
+        <!-- TRACK TITLE -->
+        <%- include("../form/input", {formData: {required: '*', name: 'title',
+        label: `${type === 'track' ? 'Track' : 'Album'} Title`, value: title}})
+        %>
+        <div class="-u-flex-responsive">
+          <!--COPYRIGHT HOLDER -->
+          <%- include("../form/input", {formData: {name: 'copyrightHolder',
+          type: 'text', required: '*', value: copyrightHolder, label: `Copyright
+          Holder`}}) %>
+          <!--COPYRIGHT YEAR -->
+          <% const years = new Array(2020-2009).fill(0).map((n, index) => 2020 -
+          index) %> <%- include("../form/select", {formData: {name:
+          'copyrightYear', options: years, required: '*', value: copyrightYear,
+          label: `Copyright Year`}}) %>
+        </div>
+        <!-- ARTISTE -->
+        <%- include("../form/input", {formData: {required: '*', label: `Release
+        Artiste`, disabled: true, value: loggedInAccountType === 'label' ?
+        labelArtist.stageName : user.profile.stageName, dontIgnore: true}}) %>
+      </div>
+    </section>
+    <!--RELEASE ARTWORK -->
+    <section class="add-music__release-info__item">
+      <div class="add-music__release-info__item--title">*Release Artwork</div>
+      <div class="add-music__release-info__item__body">
+        <!-- ARTWORK UPLOAD -->
+        <%- include("../form/imageFile", {formData: {required: '*required',
+        name: 'artwork',classList:
+        ['add-music__release-info__item__body--artwork'], value:
+        artworkUpload.secureUrl, public_id: `music/artworks/artwork-${token}`,
+        size: '2', uploadTexts: [`File format must be .jpg/.jpeg`, `File size
+        must not be larger than 1.5mb`, `Image dimensions should be at least
+        3000 x 3000 pixels`, `Design must not contain website addresses, email
+        addresses, logos, social media icons, or any other reference to other
+        services (ie. social media)`], dataAttributes: ['url_target',
+        'artwork']}}) %>
+      </div>
+    </section>
+    <!--RELEASE GENRES -->
+    <section class="add-music__release-info__item">
+      <div class="add-music__release-info__item--title">*Release Info</div>
+      <div class="add-music__release-info__item__body">
+        <div class="-u-flex-responsive">
+          <% const genres = JSON.parse(Fns.genres); %>
+          <!-- PRIMARY GENRES -->
+          <%- include("../form/select", {formData: {required: '*',
+          classList:['music-form__body__3--2'], name: 'primaryGenre', label:
+          'Primary Genre', value: primaryGenre, options: genres}}) %>
+
+          <!-- SECONDARY GENRES -->
+          <%- include("../form/select", {formData: {
+          classList:['music-form__body__3--2'], name: 'secondaryGenre', label:
+          'Secondary Genre', value: secondaryGenre, options: genres}}) %>
+        </div>
+      </div>
+    </section>
+  </form>
+</section>

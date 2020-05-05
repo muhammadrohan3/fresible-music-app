@@ -41,7 +41,7 @@ module.exports = {
     },
   },
   analytics_dates: {
-    key: "dateId",
+    key: "dateGroupId",
     name: "date",
     props: [
       { name: "date", key: ["analyticsdate", "date"] },

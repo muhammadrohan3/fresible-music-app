@@ -1,7 +1,14 @@
 <section class="pb-5">
-  <% const {id, type, status, releaseDate, comment, subscription, user, track,
-  album, labelArtist} = pageData %>
-  <div class="-u-page" data-release_type="<%= type %>" id="addMusic">
+  <% const {id, type, status, releaseDate, comment, subscription, user, tracks,
+  labelArtist, copyrightHolder, copyrightYear, artworkUpload, primaryGenre,
+  secondaryGenre, stores, allStores} = pageData %>
+  <div
+    class="-u-page"
+    data-release_type="<%= type %>"
+    data-release_id="<%= id %>"
+    data-release_status="<%= status %>"
+    id="add-music"
+  >
     <% if(status === 'declined' && comment) { %>
     <div class="alert alert-danger w-75 mx-auto text-center mb-5">
       <%= comment %>
@@ -20,15 +27,37 @@
           >Release Info</a
         >
       </li>
-      <li class="nav-item custom-tab__item" id="addMusic-other-tab">
+      <li class="nav-item custom-tab__item" id="addMusic-track-tab">
         <a
           class="nav-link custom-tab__item--link"
           data-toggle="tab"
-          href="#other-info"
+          href="#track-info"
           role="tab"
           aria-controls="home"
           aria-selected="true"
-          >Other Info</a
+          >Track(s)</a
+        >
+      </li>
+      <li class="nav-item custom-tab__item" id="addMusic-schedule-tab">
+        <a
+          class="nav-link custom-tab__item--link"
+          data-toggle="tab"
+          href="#schedule-info"
+          role="tab"
+          aria-controls="home"
+          aria-selected="true"
+          >Schedule</a
+        >
+      </li>
+      <li class="nav-item custom-tab__item" id="addMusic-distribution-tab">
+        <a
+          class="nav-link custom-tab__item--link"
+          data-toggle="tab"
+          href="#distribution-info"
+          role="tab"
+          aria-controls="home"
+          aria-selected="true"
+          >Distribution</a
         >
       </li>
     </ul>
@@ -39,18 +68,28 @@
         class="tab-pane active"
         id="release-info"
         role="tabpanel"
-        aria-labelledby="home-tab"
+        aria-labelledby="release-tab"
       >
-        <% if(type === 'track') { %> <%-
-        include("../partials/addMusic/trackComp", { track, labelArtist, user })
-        %> <% } else { %> <%- include("../partials/addMusic/albumComp" , {album,
-        labelArtist, user, Fns}) %> <% } %>
+        <%- include("../partials/addMusic/releaseInfo", {type, copyrightHolder,
+        copyrightYear, primaryGenre, secondaryGenre, artworkUpload,
+        labelArtist}) %>
       </div>
       <div
         class="tab-pane"
-        id="other-info"
+        id="track-info"
         role="tabpanel"
-        aria-labelledby="home-tab"
+        aria-labelledby="track-tab"
+      >
+        <% if(type === 'track') { %> <%-
+        include("../partials/addMusic/trackComp", { track: tracks[0],
+        labelArtist, user }) %> <% } else { %> <%-
+        include("../partials/addMusic/albumComp" , {tracks}) %> <% } %>
+      </div>
+      <div
+        class="tab-pane"
+        id="schedule-info"
+        role="tabpanel"
+        aria-labelledby="schedule-tab"
       >
         <section id="release" class="-u-mw-450 mt-5 mb-5 mx-auto">
           <div class="-u-title mb-4 text-center">Select Release Date</div>
@@ -58,7 +97,6 @@
             class="form"
             data-type="submit"
             id="addMusic-release-date"
-            data-submiturl="/add-music/updateReleaseDate"
             data-query_include="true"
           >
             <%- include("../partials/form/input", {formData: {label: `Select
@@ -70,6 +108,14 @@
           </form>
         </section>
       </div>
+      <section
+        class="tab-pane"
+        id="distribution-info"
+        role="tabpanel"
+        aria-labelledby="distribution-tab"
+      >
+        <%- include("../partials/addMusic/distribution", {allStores, stores}) %>
+      </section>
     </div>
   </div>
   <div class="-u-group mb-5 btn-group">
@@ -81,12 +127,7 @@
       ></span>
       <span>Save Draft</span>
     </button>
-    <button
-      class="btn-primary"
-      id="addMusic-publish"
-      data-release_id="<%= id %>"
-      data-release_status="<%= status %>"
-    >
+    <button class="btn-primary" id="addMusic-publish">
       <span
         class="iconify"
         data-icon="ic:baseline-done"

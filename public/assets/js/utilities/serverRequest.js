@@ -1,6 +1,7 @@
 import axios from "axios";
 import "regenerator-runtime/runtime";
 import View from "../View";
+import pubSub from "../lib/pubSub";
 
 export default async ({
   url,
@@ -36,7 +37,10 @@ export default async ({
         let value = 0;
         const { loaded, total } = progressEvent;
         value = Math.floor((loaded * 100) / total) + "%";
-        if (total > 1000) View.loaderText(value);
+        if (total > 1000) {
+          View.loaderText(value);
+          pubSub.publish("loader/loading", [value]);
+        }
       },
       params,
     });

@@ -2,6 +2,7 @@ const { SCHEMARESULT, SCHEMAQUERY } = require("../../constants");
 const organizeData = require("../util/organizeData");
 const handleResponse = require("../util/handleResponse");
 const idLookUp = require("../util/idLookUp");
+const valExtractor = require("../util/valExtractor");
 const {
   User,
   Upload,
@@ -22,14 +23,14 @@ const {
   Store,
   Analytic,
   Analyticsdate,
+  Releasestore,
   sequelize,
   Sequelize,
 } = require("../../database/models");
 const logger = require("../logger");
 
-const schemaType = (schema, getStore) => {
-  if (Array.isArray(schema)) schema = getStore(schema[0]);
-  if (!schema) throw Error("SCHEMATYPE_ERROR: NO SCHEMA FOUND");
+const schemaType = (schema) => {
+  console.log(schema);
   schema = schema.toLowerCase();
   if (schema.search(/^users?$/) >= 0) return User;
   if (schema.search(/^userprofiles?$/) >= 0) return Userprofile;
@@ -50,7 +51,8 @@ const schemaType = (schema, getStore) => {
   if (schema.search(/^stores?$/) >= 0) return Store;
   if (schema.search(/^analytics?$/) >= 0) return Analytic;
   if (schema.search(/^analyticsdates?$/) >= 0) return Analyticsdate;
-  return "hi";
+  if (schema.search(/^releasestores?$/) >= 0) return Releasestore;
+  return undefined;
 };
 
 const valueGetter = (attributes) => {
@@ -110,20 +112,29 @@ const includeGen = (getStore, includes) => {
   }
 };
 
-const schemaOptionsGen = (schemaOptions, options) => {
-  let Obj = {};
-  const { p = 1, limit = 20, offset } = schemaOptions || {};
-  Obj = { ...Obj, limit, offset: offset || 20 * (p - 1) };
-
-  const { order = [["id", "DESC"]], group, distinct = false } = options || {};
-
-  Obj = {
-    ...Obj,
-    order: (() => order.map((item) => valueGetter(item)))(),
-    group: valueGetter(group),
-    distinct,
+const schemaOptionsGen = (getStore, options = {}) => {
+  const { schemaQuery = {}, schemaOptions = {} } = getStore();
+  const { l = 20, p = 1 } = schemaOptions;
+  const schemaOptionsHash = {
+    limit: Number(l),
+    offset: Number(l) * (Number(p) - 1),
+    order: [["id", "DESC"]],
+    group: undefined,
+    distinct: false,
   };
-  return Obj;
+  //options > schemaOptions > schemaQuery
+  Object.keys(schemaOptionsHash).forEach((key) => {
+    if (options.hasOwnProperty(key)) schemaOptionsHash[key] = options[key];
+    else if (schemaOptions.hasOwnProperty(key))
+      schemaOptionsHash[key] = schemaOptions[key];
+    else if (schemaQuery.hasOwnProperty(key))
+      schemaOptionsHash[key] = schemaQuery[key];
+  });
+
+  schemaOptionsHash["order"] = schemaOptionsHash["order"].map((orderItem) =>
+    valueGetter(orderItem)
+  );
+  return schemaOptionsHash;
 };
 
 const schemaAttributes = (attributes) => ({
@@ -247,12 +258,18 @@ const _modelWrapper = (method, extras = {}) => ({
 }) => async (schema, attributes, options) => {
   try {
     const { mutation = false, actionType = "get" } = extras;
-    const Model = schemaType(schema, getStore);
-    const { schemaInclude, schemaOptions, schemaData } = getStore();
+
+    //get the schemaName value;
+    const schemaName = Array.isArray(schema)
+      ? valExtractor(getStore(), valExtractor)
+      : schema;
+    if (!schemaName) throw new Error("SCHEMA-HANDLER: schemaName not found");
+    const Model = schemaType(schemaName, getStore); //get the model from the schemaType handler
+    const { schemaInclude, schemaData } = getStore();
     const Options = {
       ...whereGen({ ...getStore(), schema }, { mutation }),
       ...includeGen(getStore, schemaInclude),
-      ...schemaOptionsGen(schemaOptions, options),
+      ...schemaOptionsGen(getStore, options),
       ...schemaAttributes(attributes),
     };
     let data;

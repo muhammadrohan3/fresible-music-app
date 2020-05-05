@@ -15,23 +15,23 @@ module.exports = (sequelize, DataTypes) => {
       isVerified: DataTypes.BOOLEAN,
       role: {
         type: DataTypes.ENUM,
-        values: ["subscriber", "admin", "superAdmin"]
+        values: ["subscriber", "admin", "superAdmin"],
       },
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     {
-      timestamps: true
+      timestamps: true,
     }
   );
 
-  User.beforeCreate(User => (User.uid = uuid()));
+  User.beforeCreate((User) => (User.uid = uuid()));
 
-  User.associate = function({
+  User.associate = function ({
     Package,
     Userpackage,
     Payment,
     Release,
-    Userprofile
+    Userprofile,
   }) {
     //User hasMany Payments
     this.hasMany(Payment, { foreignKey: "userId", as: "payments" });
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     this.belongsToMany(Package, {
       through: Userpackage,
       foreignKey: "userId",
-      as: "users"
+      as: "users",
     });
 
     //User hasMany Releases

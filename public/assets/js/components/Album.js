@@ -7,34 +7,30 @@ import uploadFile from "../utilities/uploadFile";
 import View from "../View";
 import Validator from "../utilities/validator";
 
-export default () => {
+export default (TRACKLISTCONTAINER) => {
   const { getElement } = View;
-  //This condition makes sure this script is only executed when the album element is available on the page
-  let R;
-  let i = 0;
+
+  let lastTrackIndex = 0;
 
   //This array variable holds currently uploaded files;
-  let uploadingFiles = [];
-  let uploadError = false;
-  const TRACKLIST = getElement("#addMusic-album-track-list");
+  const UPLOADING_FILES = [];
+  //This array holds uploaded files
+  const UPLOADED_FILES = [];
 
   const initiate = () => {
-    if (!TRACKLIST) return;
-    if (TRACKLIST.dataset.existing) checkForTracksAndRender();
+    if (!TRACKLISTCONTAINER) return;
+    if (TRACKLISTCONTAINER.dataset.existing) checkForTracksAndRender();
     else handleNew();
     //Click events handler
-    TRACKLIST.addEventListener("click", (e) => {
+    TRACKLISTCONTAINER.addEventListener("click", (e) => {
       const clickedElem = e.target;
       const { num, type } = clickedElem.dataset;
       if (type === "edit") return handleEdit(num);
       if (type === "delete") return handleDelete(num);
     });
 
-    // getElement("#album-submit").addEventListener("click", () => handleSubmit());
-    getElement("#new").addEventListener("click", () => handleNew());
-
     //Change event handler for music title changes
-    TRACKLIST.addEventListener("change", (e) => {
+    TRACKLISTCONTAINER.addEventListener("change", (e) => {
       let elem = e.target;
       const { target } = elem.dataset;
       if (elem.tagName === "INPUT" && elem.name === "title")
@@ -42,8 +38,9 @@ export default () => {
     });
 
     //Submit event handlers
-    TRACKLIST.addEventListener("submit", async (e) => {
+    TRACKLISTCONTAINER.addEventListener("submit", async (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const form = e.target;
       const { num, type } = form.dataset;
       if (type === "done") {
@@ -63,9 +60,15 @@ export default () => {
     });
   };
 
+  //syncs title changes between the track and its hidden state component (ON-CHANGE EVENT)
+  const handleTitleChange = (elem, target) => {
+    const albumSmall = getElement(target);
+    return (albumSmall.textContent = elem.value);
+  };
+
   const checkForTracksAndRender = () => {
     //Checks and render template for already existing Album tracks.
-    const { existing } = TRACKLIST.dataset;
+    const { existing } = TRACKLISTCONTAINER.dataset;
     //If there are no existing dataset return false
     if (!existing) return false;
     //Parses the data set and insert component for each
@@ -78,7 +81,7 @@ export default () => {
   };
 
   const isAnyOpen = () => {
-    const trackForms = Array.from(TRACKLIST.children);
+    const trackForms = Array.from(TRACKLISTCONTAINER.children);
     let status = false;
     //this loop checks to see if any big track is currently open (i.e -- under editing);
     for (let track of trackForms) {
@@ -88,21 +91,22 @@ export default () => {
   };
 
   const insertComponent = (data = {}, tab) => {
-    const { url, upload_preset, stagename } = TRACKLIST.dataset;
-    i = i + 1;
-    TRACKLIST.insertAdjacentHTML(
+    const { url, upload_preset, stagename } = TRACKLISTCONTAINER.dataset;
+    lastTrackIndex++;
+    const templateData = {
+      i: lastTrackIndex,
+      token: generateToken(10),
+      url,
+      upload_preset,
+      stagename,
+      data,
+    };
+    TRACKLISTCONTAINER.insertAdjacentHTML(
       "beforeend",
-      ejs.render(albumTemplate, {
-        i,
-        token: generateToken(10),
-        url,
-        upload_preset,
-        stagename,
-        data,
-      })
+      Template(albumTemplate, templateData)
     );
-    tab && toggleTrack(i, true);
-    return;
+    tab && toggleTrack(lastTrackIndex, true);
+    return lastTrackIndex;
   };
 
   const handleNew = () => {
@@ -112,10 +116,8 @@ export default () => {
         "You can add a new track form when you are done with opened one(s)"
       );
     //Inserts a track from component
-    insertComponent();
-    //Resets count of each track from to reflect the recent changes
-    resetTrackCount();
-    return (window.location.hash = `track${i}`);
+    const trackNo = insertComponent();
+    return (window.location.hash = `track${trackNo}`);
   };
 
   const handleEdit = (num) => {
@@ -136,13 +138,8 @@ export default () => {
     });
     if (result.dismiss) return;
     const toRemove = getElement(`#track${num}`);
-    TRACKLIST.removeChild(toRemove);
+    TRACKLISTCONTAINER.removeChild(toRemove);
     return resetTrackCount();
-  };
-
-  const handleTitleChange = (elem, target) => {
-    const albumSmall = getElement(target);
-    return (albumSmall.textContent = elem.value);
   };
 
   const tracksNotValidated = () => {
@@ -150,10 +147,10 @@ export default () => {
     if (isAnyOpen()) {
       status = "Close open track forms";
     }
-    const trackFormContainers = Array.from(TRACKLIST.children);
-    if (!trackFormContainers.length)
+    if (!TRACKLISTCONTAINER.children.length) {
       return "You cannot publish an album without tracks";
-    for (let trackContainer of trackFormContainers) {
+    }
+    for (let trackContainer of TRACKLISTCONTAINER.children) {
       const trackForm = getElement("form", trackContainer);
       let validationPassed = Validator(trackForm);
       if (!validationPassed) {
@@ -165,76 +162,60 @@ export default () => {
   };
 
   const handleDone = async (num, check = false) => {
-    const trackContainer = getElement(`#track${num}`);
+    const trackContainer = getElement(`#track${num}`, TRACKLISTCONTAINER);
     const trackForm = getElement("form", trackContainer);
-    const musicInputElem = getElement(`#music${num}`);
-    let fileName = `musicFile${num}`;
+    const musicInputElem = getElement(`input[type='file']`, trackForm);
     //Checks to see if the user changed the audio file, by checking for the data-ignore attribute
     if (musicInputElem.dataset.ignore) return true;
-    const fileInStore = (getStore("files") || {})[fileName];
+    const fileName = musicInputElem.name;
+    const fileInStore = Files[fileName];
     if (!fileInStore && !check) return true;
-    const uploadedFiles = getStore("uploadedFiles");
     //Checks to see if the file is uploaded or being uploaded
-    if (uploadedFiles && uploadedFiles.includes(fileName)) return true;
+    if (UPLOADED_FILES.includes(fileName)) return true;
 
-    //pushes the currently uploading file to the array
-    uploadingFiles.push(fileName);
     //Uploads the file to the server
     const response = await uploadFile(fileName);
-    if (!(R = responseHandler(response))) {
-      uploadingFiles = uploadingFiles.filter((item) => item !== fileName);
-      return check ? false : true;
-    }
-    setStore("uploadedFiles", [fileName]);
+    //Adds the file to the uploaded files list to avoid duplicate uploads
+    UPLOADED_FILES.push(fileName);
     //Stores the response of the server to the hidden input element
-    const hiddenInput = trackForm.querySelector("input[type='hidden']");
-    hiddenInput.value = R.secure_url;
-    //removes the just uploaded file from the array
-    uploadingFiles = uploadingFiles.filter((item) => item !== fileName);
+    const hiddenInput = getElement(`input[type='hidden']`, trackForm);
+    hiddenInput.value = response.data.secure_url;
     return true;
   };
 
-  const handleSubmit = async (distribute = false) => {
-    const { album_id: albumId } = TRACKLIST.dataset;
-    const trackContainers = Array.from(TRACKLIST.children);
+  const getAlbumTracks = async (distribute = false) => {
+    const { release_id: releaseId } = TRACKLISTCONTAINER.dataset;
+    const trackNodes = Array.from(TRACKLISTCONTAINER.children);
     const formData = [];
 
-    for (let track of trackContainers) {
+    for (let track of trackNodes) {
       const { num } = track.dataset;
       const form = View.getElement("form", track);
       const doneStatus = await handleDone(num, distribute);
       if (!doneStatus) return { status: "error" };
       const { rawFormData } = doneStatus && View.getFormData(form, true);
-      formData.push({ ...rawFormData, albumId });
+      formData.push({ ...rawFormData, releaseId });
     }
-
-    const submitResponse = await serverRequest({
-      href: `/add-music/album-tracks${location.search}`,
-      method: "post",
-      data: formData,
-      params: {
-        albumId,
-      },
-    });
-
-    if (!(R = responseHandler(submitResponse))) return { status: "error" };
-    return { status: "success", data: R };
+    return formData;
   };
 
-  const toggleTrack = (trackNo, status) => {
-    const track = $(`#track${trackNo}`);
-    return status
-      ? track.addClass("-u-album-track-reverse")
-      : track.removeClass("-u-album-track-reverse");
+  const toggleTrack = (trackNo) => {
+    const track = getElement(`#track${trackNo}`, TRACKLISTCONTAINER);
+    track.classList.toggle("-u-album-track-reverse");
+    return true;
   };
 
   const resetTrackCount = () => {
-    const list = Array.from(TRACKLIST.children);
-    list.forEach((item, i) => {
+    TRACKLISTCONTAINER.children.forEach((item, i) => {
       const { num } = item.dataset;
-      item.querySelector(`#track-count-${num}`).value = i + 1;
-      item.querySelector(`#small-count-${num}`).textContent = i + 1;
+      const trackCountNode = item.querySelector(
+        `#track-count-${num}`,
+        TRACKLISTCONTAINER
+      );
+      trackCountNode.value = i + 1;
+      trackCountNode.textContent = i + 1;
     });
+    return true;
   };
 
   const generateToken = (n) => {
@@ -248,6 +229,7 @@ export default () => {
   return {
     initiate,
     tracksNotValidated,
-    handleSubmit,
+    getAlbumTracksData: getAlbumTracks,
+    addNewTrackForm: handleNew,
   };
 };

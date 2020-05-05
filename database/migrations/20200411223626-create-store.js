@@ -16,7 +16,7 @@ module.exports = {
       },
       type: {
         type: Sequelize.ENUM,
-        values: ["streaming", "downloading", "both"],
+        values: ["stream", "download", "both"],
         defaultValue: "both",
       },
       goLiveTime: {

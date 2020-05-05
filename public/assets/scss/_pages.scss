@@ -446,15 +446,30 @@
       padding: 3rem;
       &__image {
         flex: 1;
-        min-height: 70%;
         &__box {
-          @include border($color-light-grey);
+          height: 100%;
+          max-height: 20rem;
           padding: 0.6rem;
-          &--img {
-            display: block;
-            width: 100%;
+          @include border($color-light-grey);
+          &__container {
             height: 100%;
-            object-fit: contain;
+            overflow: hidden;
+            &--img {
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+              object-position: center;
+            }
+          }
+        }
+        &__container {
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+          @include border;
+          &--img {
+            display: none;
+            object-fit: cover;
             object-position: center;
           }
         }
@@ -504,5 +519,101 @@
     &__right {
       flex: 1;
     }
+  }
+}
+
+///////////////// ----> ADD MUSIC <----------//////////////
+
+.add-music {
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+
+  &--container {
+    display: flex;
+    width: 100%;
+    padding: 40px;
+    margin: 40px;
+    margin-bottom: 60px;
+    background-color: $color-white;
+    box-shadow: 0px 1px 13px -5px rgba(2, 3, 10, 1);
+    border-radius: 10px;
+  }
+  &__actions {
+    flex: 1;
+  }
+  &__view {
+    flex: 3;
+    border-left: 1px solid #efefef;
+  }
+
+  &__release-info {
+    margin: 2rem auto;
+    &__item {
+      &--title {
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: rgba($color-light-black, 0.6);
+        border-bottom: 1px solid $color-light-grey;
+      }
+      &__body {
+        & > * {
+          &:not(:last-child) {
+            margin-bottom: 1.5rem;
+          }
+        }
+        &--artwork {
+          width: 100%;
+          border: 1px dashed $color-light-grey;
+          padding: 1.5rem;
+        }
+      }
+      &:not(:last-child) {
+        margin-bottom: 4rem;
+      }
+    }
+  }
+
+  &__distribution {
+    max-width: 700px;
+    margin: 0 auto;
+    &__store-options {
+      & > * {
+        &:not(:last-child) {
+          margin-bottom: 1.5rem;
+        }
+        &:last-child {
+          color: rgba($color-light-black, 0.8);
+          font-size: 1.3rem;
+        }
+      }
+      @media screen and (max-width: $sm) {
+        margin-bottom: 2.5rem;
+      }
+    }
+  }
+
+  @media only screen and (max-width: $sm) {
+    &--container {
+      display: block;
+      padding: 30px 10px;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    &__view {
+      border: 0;
+      padding: 0;
+      border-top: 2px solid rgba(grey, 0.4);
+      padding-top: 20px;
+      margin-top: 30px;
+      width: 100%;
+    }
+  }
+  &__next {
+    margin: 30px 0;
+    margin-right: 10px;
   }
 }

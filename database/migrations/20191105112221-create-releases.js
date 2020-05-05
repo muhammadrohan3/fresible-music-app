@@ -69,6 +69,18 @@ module.exports = {
       comment: {
         type: Sequelize.TEXT,
       },
+      copyrightHolder: {
+        type: Sequelize.STRING,
+      },
+      copyrightYear: {
+        type: Sequelize.STRING,
+      },
+      primaryGenre: {
+        type: Sequelize.STRING,
+      },
+      secondaryGenre: {
+        type: Sequelize.STRING,
+      },
       artworkUploadId: {
         type: Sequelize.INTEGER,
         allowNull: true,

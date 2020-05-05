@@ -1,0 +1,119 @@
+<section class="add-music__distribution my-5 mx-auto">
+  <section class="add-music__release-info__item">
+    <div class="add-music__release-info__item--title">*Track pricing</div>
+    <div class="add-music__release-info__item__body">
+      <div>How much would you like to charge for each track?</div>
+      <div class="-u-flex-responsive flex-row" id="track-pricing">
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="price"
+            value="69"
+          />
+          <label for="" class="form__input--label">69c</label>
+        </div>
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="price"
+            value="99"
+          />
+          <label for="" class="form__input--label">99c</label>
+        </div>
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="price"
+            value="129"
+          />
+          <label for="" class="form__input--label">$1.29</label>
+        </div>
+      </div>
+      <div class="alert alert-info">
+        This price may vary on different stores.
+      </div>
+    </div>
+  </section>
+  <section class="add-music__release-info__item">
+    <div class="add-music__release-info__item--title">*Digital Stores</div>
+    <div class="add-music__release-info__item__body"></div>
+    <div class="alert alert-info mb-4">
+      Which stores would you like to distribute your release on?
+    </div>
+
+    <div class="-u-flex-responsive mt-3" id="store-options">
+      <div class="add-music__distribution__store-options">
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="storesType"
+            data-type="all"
+            value="all"
+          />
+          <label for="" class="form__input--label">All stores</label>
+        </div>
+        <div>
+          Select all stores.
+        </div>
+      </div>
+      <div class="add-music__distribution__store-options">
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="storesType"
+            data-type="download"
+            value="download"
+          />
+          <label for="" class="form__input--label">Download only stores</label>
+        </div>
+        <div>
+          Only select stores which allow fans to purchase your music.
+        </div>
+      </div>
+      <div class="add-music__distribution__store-options">
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="storesType"
+            data-type="stream"
+            value="stream"
+          />
+          <label for="" class="form__input--label">Streaming only stores</label>
+        </div>
+        <div>
+          Only select stores which allow fans to stream your music. Your tracks
+          will not be available for personal download.
+        </div>
+      </div>
+      <div class="add-music__distribution__store-options">
+        <div class="form__input__radio">
+          <input
+            type="radio"
+            class="form__input__radio--element"
+            name="storesType"
+            data-type="custom"
+            value="custom"
+          />
+          <label for="" class="form__input--label">Custom select</label>
+        </div>
+        <div>
+          Select the individual stores you want to distribute you music onto
+          yourself.
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mt-4"
+      id="stores-container"
+      data-selected="<%= JSON.stringify(stores) %>"
+      data-stores="<%= JSON.stringify(allStores) %>"
+    ></div>
+  </section>
+</section>

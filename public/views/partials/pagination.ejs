@@ -1,27 +1,30 @@
-<% let { p } = Fns.query; const { count } = pageData; p = p ? parseInt(p) : 1 ;
-len = Math.ceil(count/20);%>
-
-<ul
-  class="pagination pagination-md mt-5 justify-content-center"
-  data-set="<%= count +' ' + p + ' ' + len %>"
->
-  <li class="page-item <%= p === 1 ? 'disabled' : '' %>">
-    <% if(p === 1) { %>
-    <span class="page-link">&laquo;</span>
-    <% } else { %>
-    <a class="page-link" href="<%=Fns.pagination(p-1) %>">&laquo;</a>
-    <% } %>
-  </li>
-  <% for(let i = 1; i <= len; i++) { %>
-  <li class="page-item <%= i === p && 'active' %>">
-    <a class="page-link" href="<%=Fns.pagination(i) %>"><%= i %></a>
-  </li>
-  <% } %>
-  <li class="page-item <%= len === p  ? 'disabled' : '' %>">
-    <% if(len === p ) { %>
-    <span class="page-link">&raquo;</span>
-    <% } else { %>
-    <a class="page-link" href="<%=Fns.pagination(p+1) %>">&raquo;</a>
-    <% } %>
-  </li>
-</ul>
+<% let { p, l = 20 } = Fns.query; const { count } = pageData; p = p ?
+parseInt(p) : 1 ; const limit = Number(l); const len = Math.ceil(count/limit);%>
+<% pages = new Array(len).fill(0).map((item, index) => index + 1) %>
+<div class="pagination">
+  <form class="pagination__options" action="" method="get" id="pagination">
+    <div class="pagination__options__item">
+      <span class="pagination__options__item--text">Current:</span>
+      <%- include("./form/select", {formData: {options: pages, value: p, name:
+      'p', selectClassList: ['pagination__options__item--select']}}) %>
+    </div>
+    <div class="pagination__options__item">
+      <span class="pagination__options__item--text">Row count:</span>
+      <%- include("./form/select", {formData: {options: [20, 50, 100, 200],
+      value: limit, name: 'l', selectClassList:
+      ['pagination__options__item--select']}}) %>
+    </div>
+  </form>
+  <div class="pagination__btns">
+    <a
+      href="<%=p !== 1 ? Fns.pagination(p-1) : '#' %>"
+      class="btn btn-outline <%= p === 1 && 'btn-disabled' %>"
+      >&larr; Previous</a
+    >
+    <a
+      href="<%=p !== len ? Fns.pagination(p+1) : '#' %>"
+      class="btn btn-outline <%= p === len && 'btn-disabled' %>"
+      >Next &rarr;</a
+    >
+  </div>
+</div>

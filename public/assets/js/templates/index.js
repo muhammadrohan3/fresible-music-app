@@ -8,6 +8,7 @@ import log from "./log";
 import options from "./albumTemplates";
 import royalties from "./royalties";
 import analyticsNewStoreInput from "./analyticsNewStoreInput";
+import addMusic from "./addMusic/index";
 
 export default {
   albumTemplates,
@@ -20,4 +21,5 @@ export default {
   log,
   options,
   royalties,
+  addMusic,
 };

@@ -7,15 +7,22 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.TEXT,
       type: {
         type: DataTypes.ENUM,
-        values: ["streaming", "downloading", "both"],
+        values: ["stream", "download", "both"],
       },
       goLiveTime: DataTypes.STRING,
       storeLogoId: DataTypes.INTEGER,
     },
     {}
   );
-  Store.associate = function ({ Upload }) {
+  Store.associate = function ({ Upload, Release, Releasestore }) {
     this.belongsTo(Upload, { foreignKey: "storeLogoId", as: "storeLogo" });
+
+    //STORE belongsToMany RELEASES
+    this.belongsToMany(Release, {
+      through: Releasestore,
+      foreignKey: "storeId",
+      as: "releases",
+    });
   };
   return Store;
 };

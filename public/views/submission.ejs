@@ -68,11 +68,13 @@
           class="submission__details__overview__image mb-4 mr-0 mr-md-5 mb-md-5"
         >
           <div class="submission__details__overview__image__box">
-            <img
-              class="submission__details__overview__image__box--img"
-              src="<%= artworkUpload.secureUrl || '/dist/no-image.jpg' %>"
+            <div class="submission__details__overview__image__box__container">
+              <img
+              class="submission__details__overview__image__box__container--img"
+              src="<%= (artworkUpload || {}).secureUrl || '/dist/no-image.jpg' %>"
               alt="<%= title %> artwork"
             />
+            </div>
           </div>
         </div>
         <div class="submission__details__overview__info">
@@ -188,7 +190,7 @@
         <div class="-u-font-bold mb-4"><%= type === 'track' ? 'TRACK' : 'TRACKS-LIST' %></div>
         <table
           data-toggle="table"
-          data-classes="table table-hovered table-striped"
+          data-classes="table table-hovered table-striped table-custom--th-font-light"
           data-mobile-responsive="true"
           data-mobile="true"
         >

@@ -1,3 +1,4 @@
+const moment = require("moment");
 const initiateAnalytics = require("../functions/analytics/initiateAnalytics");
 const generateStructureHash = require("../functions/analytics/generateStructureHash");
 const generateStructure = require("../functions/analytics/generateStructure");
@@ -101,7 +102,7 @@ const analyticsHandler = ({ getStore, setStore }) => (
   const _getReport = (rangeReport = []) => {
     const [currentTotal, previousTotal] = rangeReport;
     const [rate, growing] = growthCalc(currentTotal, previousTotal);
-    return { rate, growing, currentTotal, previousTotal };
+    return { rate, growing, count: currentTotal, previousTotal };
   };
   const Report = _getReport(RangeReport);
   const ChartData = {
@@ -161,19 +162,30 @@ const analytics_dates = ({ getStore, setStore }) => () => {
     const CurrentDataAnalytics = CurrentData[i].analytics;
     const PreviousDataAnalytics = (PreviousData[i] || {}).analytics || [];
     for (let j = 0; j < CurrentDataAnalytics.length; j++) {
-      CurrentDataHash = hashGenerator(CurrentDataHash, CurrentDataAnalytics[j]);
-      PreviousDataHash = hashGenerator(
-        PreviousDataHash,
-        PreviousDataAnalytics[j]
-      );
+      CurrentDataHash = hashGenerator(CurrentDataHash, {
+        ...CurrentDataAnalytics[j],
+        dateGroupId: i,
+      });
+    }
+    for (let j = 0; j < PreviousDataAnalytics.length; j++) {
+      PreviousDataHash = hashGenerator(PreviousDataHash, {
+        ...PreviousDataAnalytics[j],
+        dateGroupId: i,
+      });
     }
   }
+
   const dataStructure = generateStructure({
     CurrentDataHash,
     PreviousDataHash,
     CountKeys: ["streams", "downloads"],
   });
-  return setStore("ANALYTICS_DATES", dataStructure);
+
+  const dates = dataStructure.sort((a, b) =>
+    moment(a.date).diff(moment(b.date), "days")
+  );
+
+  return setStore("ANALYTICS_DATES", dates.reverse());
 };
 
 const analytics_edit = ({ getStore, setStore }) => () => {

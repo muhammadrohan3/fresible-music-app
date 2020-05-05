@@ -181,6 +181,12 @@ svg {
     }
   }
   &__input {
+    &__radio {
+      display: flex;
+      &--element {
+        margin-right: 0.6rem;
+      }
+    }
     &--element {
       display: block;
       font-family: inherit;

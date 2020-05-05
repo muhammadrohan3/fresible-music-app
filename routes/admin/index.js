@@ -67,7 +67,7 @@ module.exports = (Controller) => {
   router.get(
     "/logs",
     schemaQueryConstructor("query", ["t", "r", "uid"]),
-    fromReq("query", ["p"], "schemaOptions"),
+    fromReq("query", ["l", "p"], "schemaOptions"),
     addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName"] }]),
     getAndCountAllFromSchema(LOG),
     redirectIf(SCHEMARESULT, false, "/fmadmincp"),

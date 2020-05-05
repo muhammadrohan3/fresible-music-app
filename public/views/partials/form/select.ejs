@@ -1,8 +1,8 @@
-<% const hashMap = {label: '', disabled: false, required: '', placeholder: '', type: 'text', name: '', id: '', value: '', classList: [], options: [], dataAttributes: []} %>
+<% const hashMap = {label: '', disabled: false, required: '', placeholder: '', type: 'text', name: '', id: '', value: '', classList: [], selectClassList: [], options: [], dataAttributes: []} %>
 
 <!--  -->
 
-<% const {label, disabled, required, placeholder, type, name, value, id, classList, options, dataAttributes} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc, [key]:
+<% const {label, disabled, required, placeholder, type, name, value, id, classList, selectClassList, options, dataAttributes} = Object.entries(hashMap).reduce((acc, [key, value]) => ({...acc, [key]:
 formData[key] || value}) , {}) %>
 
 <div class="form__input <%= classList.join(' ') %>">
@@ -10,14 +10,14 @@ formData[key] || value}) , {}) %>
       <span><%= label %></span>
       <span><%= required %></span>
     </label>
-    <select style="font-size: inherit;" class="form-control form__input--element" <%= value && 'data-ignore=true' %> name="<%= name %>" <%= id && `id=${id}` %> <%= required && 'required' %> <%= disabled && 'disabled'  %>
+    <select style="font-size: inherit;" class="form-control form__input--element <%= selectClassList.join(' ') %>" <%= value && 'data-ignore=true' %> name="<%= name %>" <%= id && `id=${id}` %> <%= required && 'required' %> <%= disabled && 'disabled'  %>
       <% const attributes = Object.entries(dataAttributes).map(([name, value]) => name && value && `data-${name}=${value}` ) %>
       <%= attributes.join(' ') %>
       >
       <% const optionVal = value && Array.isArray(value) ? value : [value, value] %>
      <option value="<%= optionVal ? optionVal[0] : ""%>"> <%= optionVal ? optionVal[1] : `${placeholder || '-- select --'}` %></option>
      <% options.forEach((item) => { %>
-        <% let [key, desc] = typeof item === 'string' ? [item, item] : item; %>
+        <% let [key, desc] = typeof item !== 'object' ? [item, item] : item; %>
         <% if(key !== optionVal[0]) { %>
             <option data-desc="<%= desc %>" value="<%= key %>"><%= desc %></option>
        <% } %>

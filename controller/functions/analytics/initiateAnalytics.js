@@ -30,7 +30,7 @@ const initiateAnalytics = (dateId, Releases, AnalyticsStores = {}) => {
           storeId: Number(storeId),
           type: "download",
           dateId,
-          count: 1,
+          count: 0,
         })
       );
     });

@@ -18,6 +18,7 @@ const {
   STORE,
   COMPDATA,
   SCHEMADATA,
+  SCHEMAOPTIONS,
   SITEDATA,
   ANALYTICS,
   ANALYTICSDATE,
@@ -85,7 +86,9 @@ module.exports = (Controller) => {
       },
     ]),
     analytics_intercept(),
-    getAllFromSchema(ANALYTICSDATE, ["id"]),
+    getAllFromSchema(ANALYTICSDATE, ["id", "date"], {
+      order: [["date", "DESC"]],
+    }),
     analytics_dates(),
     respond(["ANALYTICS_DATES"])
   );
@@ -96,6 +99,7 @@ module.exports = (Controller) => {
     addToSchema(SCHEMAQUERY, { type: "stream" }),
     addToSchema(TEMPKEY, { status: "published" }),
     addToSchema(SCHEMAINCLUDE, [{ m: ANALYTICSDATE, w: [TEMPKEY] }]),
+    seeStore([SCHEMAOPTIONS]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
     respond([SCHEMARESULT])
   );
@@ -113,7 +117,7 @@ module.exports = (Controller) => {
   router.get(
     "/get/topStores",
     schemaQueryConstructor("query", ["releaseId"]),
-    addToSchema("schemaOptions", { limit: 3 }),
+    addToSchema(SCHEMAOPTIONS, { limit: 3 }),
     addToSchema(TEMPKEY, { status: "published" }),
     addToSchema(SCHEMAINCLUDE, [
       { m: STORE, at: ["store"] },
@@ -123,7 +127,6 @@ module.exports = (Controller) => {
       group: ["storeId"],
       order: [[["SUM", "count", "DESC"]]],
     }),
-    seeStore([SCHEMARESULT]),
     respond([SCHEMARESULT])
   );
 
@@ -283,7 +286,7 @@ module.exports = (Controller) => {
       "Analytics for this date has already been initiated"
     ),
     resetKey([SCHEMARESULT, SCHEMAQUERY]),
-    addToSchema("schemaOptions", { limit: null }),
+    addToSchema(SCHEMAOPTIONS, { limit: null }),
     addToSchema(SCHEMAQUERY, { status: "in stores" }),
     addToSchema(SCHEMAINCLUDE, [
       { m: USER, at: ["id"] },

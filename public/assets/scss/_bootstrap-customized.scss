@@ -33,3 +33,13 @@
     margin-bottom: 10px;
   }
 }
+
+.table-custom {
+  &--th-font-light {
+    & thead tr th {
+      font-family: inherit;
+      font-weight: 300;
+      font-size: 1.24rem;
+    }
+  }
+}

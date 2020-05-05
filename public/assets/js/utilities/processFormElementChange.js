@@ -1,3 +1,3 @@
-export default input => {
+export default (input) => {
   return input.dataset.ignore && input.removeAttribute("data-ignore");
 };

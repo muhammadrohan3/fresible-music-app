@@ -49,11 +49,13 @@
           class="submission__details__overview__image mb-4 mr-0 mr-md-5 mb-md-5"
         >
           <div class="submission__details__overview__image__box">
-            <img
-              class="submission__details__overview__image__box--img"
-              src="<%= artworkUpload.secureUrl || '/dist/no-image.jpg' %>"
+            <div class="submission__details__overview__image__box__container">
+              <img
+              class="submission__details__overview__image__box__container--img"
+              src="<%= (artworkUpload || {}).secureUrl || '/dist/no-image.jpg' %>"
               alt="<%= title %> artwork"
             />
+            </div>
           </div>
         </div>
         <div class="submission__details__overview__info">
@@ -98,6 +100,7 @@
                     class="badge badge-pill badge-<%=Fns.colorText(subscription.status) %>"
                     ><%= subscription.status %></span
                   >
+                  <span><a class="ml-3" href="/fmadmincp/subscription?id=<%= subscription.id %>">view</a></span>
                 </div>
               </li>
               <li class="submission__list__item">
@@ -125,7 +128,6 @@
             <span class="badge badge-pill badge-<%=Fns.colorText(status) %>"
               ><%= status %></span
             >
-            <span><a class="ml-3" href="/fmadmincp/subscription?id=<%= subscription.id %>">view</a></span>
           </div>                                 
         </div>
         <div>
@@ -164,7 +166,7 @@
         <div class="-u-font-bold mb-4"><%= type === 'track' ? 'TRACK' : 'TRACKS-LIST' %></div>
         <table
           data-toggle="table"
-          data-classes="table table-hovered table-striped"
+          data-classes="table table-hovered table-striped table-custom--th-font-light"
           data-mobile-responsive="true"
           data-mobile="true"
         >
@@ -182,7 +184,8 @@
           </thead>
           <tbody>
             <% tracks.forEach(({title, artiste, featured, genre, explicit,
-            copyrightYear, copyrightHolder, trackUpload: {secureUrl}}) => { %>
+            copyrightYear, copyrightHolder, trackUpload}) => { %>
+              <% const {secureUrl = null} = trackUpload || {} %>
             <tr>
               <td><%= title %></td>
               <td><%= artiste %></td>

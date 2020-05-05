@@ -19,14 +19,39 @@ module.exports = (fn, name) => (...params) => async (req, res, next) => {
   let store = res.locals;
   const clearStore = () => (store = {});
   const setStore = (key, data) => {
-    if (Array.isArray(data)) {
-      res.locals = { ...store, [key]: data };
-    } else if (typeof data === "object") {
-      res.locals = { ...store, [key]: { ...(store[key] || {}), ...data } };
-    } else {
-      res.locals = { ...store, [key]: data };
-    }
-    store = res.locals;
+    const keyRoute = typeof key === "string" ? [key] : key;
+
+    //
+    const setter = (store, route = [], index = 0) => {
+      const currentRoute = route[index];
+      const currentRouteData = store[currentRoute];
+      if (index === route.length - 1) {
+        if (Array.isArray(data)) {
+          store = {
+            ...store,
+            [currentRoute]: [...(currentRouteData || []), ...data],
+          };
+        } else if (data === null) {
+          store = { ...store, [currentRoute]: null };
+        } else if (typeof data === "object") {
+          store = {
+            ...store,
+            [currentRoute]: { ...(currentRouteData || {}), ...data },
+          };
+        } else {
+          store = { ...store, [currentRoute]: data };
+        }
+        return store;
+      }
+
+      store = {
+        ...store,
+        [currentRoute]: setter(currentRouteData, route, index + 1),
+      };
+      return store;
+    };
+
+    res.locals = store = setter(store, keyRoute);
     return;
   };
   const getStore = (key) => {
