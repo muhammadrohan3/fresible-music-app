@@ -1,7 +1,7 @@
 <div class="-u-page profile">
-  <% const {avatar, firstName, lastName, email, role, type, profile, id} =
-  pageData; const {stageName, label, twitter, instagram, phone, bank,
-  bankAccount, bankAccountNo} = profile || {} %>
+  <% const {avatar, firstName, lastName, email, role, type, profileSetup,
+  profile, id} = pageData; const {stageName, label, twitter, instagram, phone,
+  bank, bankAccount, bankAccountNo} = profile || {} %>
   <div class="profile__left">
     <div class="profile__left__avatar">
       <%if(avatar) { %>
@@ -14,17 +14,17 @@
     </div>
     <div class="profile__left__links">
       <div>
-        <a href="/fmadmincp/subscriptions/<%= Fns.idLookUp(id) %>"
+        <a href="/fmadmincp/subscriptions/subscriber/<%= Fns.idLookUp(id) %>"
           >&raquo; Subscriptions</a
         >
       </div>
       <div>
-        <a href="/fmadmincp/submissions/<%= Fns.idLookUp(id) %>"
+        <a href="/fmadmincp/submissions/subscriber/<%= Fns.idLookUp(id) %>"
           >&raquo; Submissions</a
         >
       </div>
       <div>
-        <a href="/fmadmincp/payments/<%= Fns.idLookUp(id) %>"
+        <a href="/fmadmincp/payments/subscriber/<%= Fns.idLookUp(id) %>"
           >&raquo; Payment History</a
         >
       </div>
@@ -38,7 +38,6 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="col">Role:</div>
         <div class="text-center pr-3">
           <span
             class="col badge badge-pill badge-<%= role !== 'subscriber' ? 'success' : 'info' %>"
@@ -47,35 +46,50 @@
           </span>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 d-flex justify-content-between">
         <% if(loggedInUserRole.toLowerCase() === 'superadmin' && id !==
         loggedInUserId) { %>
-        <button
-          class="btn btn-primary p-1"
-          id="changeRole"
-          style="font-weight: 300; font-size: 13px;"
-          data-url="/fmadmincp/subscriber/action/change-role?id=<%= Fns.idLookUp(id) %>"
-          data-user_role="<%= role %>"
-        >
-          Change Role
-        </button>
+        <div class="mb-2">
+          <button
+            class="btn-outline py-1 px-1"
+            id="changeRole"
+            data-url="/fmadmincp/subscriber/action/change-role?id=<%= Fns.idLookUp(id) %>"
+            data-user_role="<%= role %>"
+          >
+            Change Role
+          </button>
+        </div>
         <% } %>
+
+        <div class="">
+          <% if(type === 'label') { %>
+          <span class="badge badge-primary">Label Account</span>
+          <% } else { %>
+          <button
+            id="convert-label"
+            class="btn-outline py-1 px-1 mb-2"
+            data-subscriber_id="<%= id %>"
+          >
+            Convert to a Label
+          </button>
+          <% } %>
+        </div>
       </div>
     </div>
-
-    <div class="">
-      <% if(type === 'label') { %>
-      <span class="badge badge-primary">Label Account</span>
-      <% } else { %>
-      <button
-        id="convert-label"
-        class="btn-outline"
-        data-subscriber_id="<%= id %>"
-      >
-        Convert to a Label
-      </button>
-      <% } %>
+    <% if(profileSetup !== 'completed') { %>
+    <div class="profile__left__options">
+      <div>Profile Setup</div>
+      <div class="profile__left__options__setup-status d-flex">
+        <div class="mr-2">Status:</div>
+        <span class="badge badge-info"><%= profileSetup %></span>
+      </div>
+      <div class="profile__left__options__btn">
+        <button class="btn btn-outline profile__left__options__btn--btn">
+          Return to
+        </button>
+      </div>
     </div>
+    <% } %>
   </div>
   <div class="profile__right">
     <ul class="profile__right__list">

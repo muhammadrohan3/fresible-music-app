@@ -19,7 +19,7 @@
           user}) => { %>
           <tr>
             <td>
-              <a href="/fmadmincp/payments/single?id=<%=Fns.idLookUp(id) %>"
+              <a href="/fmadmincp/payments/single/<%=Fns.idLookUp(id) %>"
                 ><%=Fns.idLookUp(id) %></a
               >
             </td>
@@ -32,7 +32,7 @@
             </td>
             <td><%=Fns.dateTimeFormat(createdAt) %></td>
             <td>
-              <a href="/fmadmincp/payments/single?id=<%=Fns.idLookUp(id) %>"
+              <a href="/fmadmincp/payments/single/<%=Fns.idLookUp(id) %>"
                 >View</a
               >
             </td>

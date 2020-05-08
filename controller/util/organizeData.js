@@ -1,4 +1,4 @@
-const dataJson = obj => JSON.parse(JSON.stringify(obj));
+const dataJson = (obj) => JSON.parse(JSON.stringify(obj));
 
 module.exports = (obj, keys, aliases, isObj) => {
   //keys should be an array;

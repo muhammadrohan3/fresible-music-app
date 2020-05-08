@@ -48,21 +48,8 @@ module.exports = (Controller) => {
     redirectIf,
     redirect,
     sendMail,
+    handleProfileSetupUpdate,
   } = Controller;
-
-  /// This GET route renders the payment page
-  router.get(
-    "/",
-    schemaQueryConstructor("query", ["id"]),
-    redirectIf(SCHEMAQUERY, false, "/payment/get-sub-id"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMAINCLUDE, [{ m: PACKAGE }]),
-    getOneFromSchema(USERPACKAGE),
-    redirectIf(SCHEMARESULT, false, "/subscriptions"),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { Fns, page: "payment/index", title: "Payment" }),
-    pageRender()
-  );
 
   // This POST route is called from the frontend to generate a payment URL for the user
   router.post(
@@ -114,14 +101,7 @@ module.exports = (Controller) => {
     getOneFromSchema(USERPACKAGE),
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
-    fromReq("user", ["profileActive"], "tempCompare"),
-    sameAs("profileActive", 4, "tempCompare"),
-    redirectIf(SAMEAS, false, "/payment", TEMPKEY),
-    resetKey(SCHEMAQUERY),
-    resetKey(SCHEMADATA),
-    schemaQueryConstructor("user", ["id"]),
-    addToSchema(SCHEMADATA, { profileActive: 1000 }),
-    updateSchemaData("user"),
+    handleProfileSetupUpdate("payment"),
     redirect("/payment", TEMPKEY)
   );
 
@@ -151,14 +131,7 @@ module.exports = (Controller) => {
     sendMail(SUBSCRIPTIONACTIVATED),
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
-    fromReq("user", ["profileActive"], "tempCompare"),
-    sameAs("profileActive", 4, "tempCompare"),
-    respondIf(SAMEAS, false, 1),
-    resetKey(SCHEMAQUERY),
-    resetKey(SCHEMADATA),
-    schemaQueryConstructor("user", ["id"]),
-    addToSchema(SCHEMADATA, { profileActive: 1000 }),
-    updateSchemaData(USER),
+    handleProfileSetupUpdate("payment"),
     respond(1)
   );
 
@@ -210,8 +183,8 @@ module.exports = (Controller) => {
 
   // This GET route renders the page containing a single payment history
   router.get(
-    "/history/single",
-    schemaQueryConstructor("query", ["id"]),
+    "/history/:id",
+    schemaQueryConstructor("params", ["id"]),
     redirectIf(SCHEMAQUERY, false, "/payment/history"),
     schemaQueryConstructor("user", ["id"], ["userid"]),
     addToSchema(SCHEMAINCLUDE, [
@@ -236,8 +209,8 @@ module.exports = (Controller) => {
 
   //This GET route renders the manual page containing the bank details page
   router.get(
-    "/manual",
-    schemaQueryConstructor("query", ["id"]),
+    "/manual/:id",
+    schemaQueryConstructor("params", ["id"]),
     redirectIf(SCHEMAQUERY, false, "/payment/get-sub-id"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [{ m: PACKAGE }]),
@@ -245,6 +218,20 @@ module.exports = (Controller) => {
     redirectIf(SCHEMARESULT, false, "/subscriptions"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { title: "Manual Payment" }),
+    pageRender()
+  );
+
+  /// This GET route renders the payment page
+  router.get(
+    "/:id",
+    schemaQueryConstructor("params", ["id"]),
+    redirectIf(SCHEMAQUERY, false, "/payment/get-sub-id"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    addToSchema(SCHEMAINCLUDE, [{ m: PACKAGE }]),
+    getOneFromSchema(USERPACKAGE),
+    redirectIf(SCHEMARESULT, false, "/subscriptions"),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    addToSchema(SITEDATA, { Fns, page: "payment/index", title: "Payment" }),
     pageRender()
   );
 

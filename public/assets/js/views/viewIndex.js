@@ -1,5 +1,6 @@
 import "regenerator-runtime/runtime";
 import Swal from "sweetalert2";
+import flatpickr from "flatpickr";
 import injectIconToAlert from "../components/AlertIcon";
 import templateComp from "../components/Template";
 import pubSub from "../lib/pubSub";
@@ -11,6 +12,10 @@ class View {
     this.MAIN_PAGE = this.getElement("#main-page");
     this.mobileMenuElement = this.getElement("#hamburger");
     this.LOADER_TEXT = this.getElement("#loader-text");
+
+    flatpickr("input[type=date]", {
+      minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12),
+    });
 
     //SUBSCRIPTIONS
     pubSub.subscribe("loader/loading", this.showLoaderText, this);
@@ -148,7 +153,7 @@ class View {
 
   processFormElementChange(input) {
     input.dataset.ignore && input.removeAttribute("data-ignore");
-    console.log(input);
+    return this;
   }
 
   handleFile(e) {
@@ -234,7 +239,9 @@ class View {
     let formFiles = [];
     const requiredData = {};
     const { form_select } = form.dataset;
-    const formdata = JSON.parse(form.dataset.formdata);
+    const formdata = form.dataset.formdata
+      ? JSON.parse(form.dataset.formdata)
+      : {};
     let target = form_select || ".form__input--element";
     let formInputs = form.querySelectorAll(target);
     try {

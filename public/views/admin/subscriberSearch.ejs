@@ -7,7 +7,7 @@
       </form>
     </div>
   </div>
-  <div class="-u-page" style="margin: 0">
+  <div class="-u-page" style="margin: 0;">
     <% if(pageData) { %> <% const {id, firstName, lastName, createdAt, profile}
     = pageData; %>
     <div class="submissions">
@@ -24,7 +24,7 @@
         <tbody>
           <tr>
             <td>
-              <a href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(id) %>"
+              <a href="/fmadmincp/subscriber/<%=Fns.idLookUp(id) %>"
                 ><%=Fns.idLookUp(id) %></a
               >
             </td>
@@ -32,7 +32,7 @@
             <td><%=profile && profile.stageName %></td>
             <td><%=Fns.dateFormat(createdAt) %></td>
             <td>
-              <a href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(id) %>">view</a>
+              <a href="/fmadmincp/subscriber/<%=Fns.idLookUp(id) %>">view</a>
             </td>
           </tr>
         </tbody>

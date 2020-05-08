@@ -1,27 +1,34 @@
-import View from "./viewIndex";
+import View from "../viewIndex";
 import {
   validateForms,
   distributionTabValidator,
   getDistributionTabData,
-} from "../lib/addMusicFn";
-import Album from "../components/Album";
+} from "../../lib/addMusicFn";
+import Album from "../../components/Album";
 
 export default class AddMusicView extends View {
   constructor() {
+    let L;
     super();
     this.STORE_LIST_CONTAINER = this.getElement("#stores-container");
     this.STORE_OPTIONS_CONTAINER = this.getElement("#store-options");
     //Get the stores and selected stores set by the server on the element with ID "store-list"
-    const { stores, selected } = this.getElement(
-      this.STORE_LIST_CONTAINER
-    ).dataset;
-    this.stores = JSON.parse(stores);
-    this.selectedStores = JSON.parse(selected);
+    const { stores, selected } =
+      ((L = this.getElement(this.STORE_LIST_CONTAINER)) && L.dataset) || {};
+    this.stores = stores && JSON.parse(stores);
+    this.selectedStores = selected && JSON.parse(selected);
+
+    //TERMS
+    this.TERMS_FORM = this.getElement("#terms");
+
+    //INITIATE
+    this.INITIATE_RELEASE = this.getElement("#initiate-release");
 
     ////
-    const { release_type, release_id, release_status } = this.getElement(
-      "#add-music"
-    ).dataset;
+    this.ADD_MUSIC_TERMS = this.getElement("#terms");
+    this.ADD_MUSIC_INDEX = this.getElement("#add-music");
+    const { release_type, release_id, release_status } =
+      ((L = this.ADD_MUSIC_INDEX) && L.dataset) || {};
     this.RELEASE_TYPE = release_type;
     this.RELEASE_ID = Number(release_id);
     this.RELEASE_STATUS = release_status;
@@ -31,25 +38,74 @@ export default class AddMusicView extends View {
     this.DESTRIBUTION_PANE_ID = "#distribution-info";
     this.TRACK_PRICING_NODE = this.getElement("#track-pricing");
     this.STORE_OPTIONS_NODE = this.getElement("#store-options");
+    this.STORES_PARENT = this.getElement("#stores-parent");
     this.STORES_CONTAINER = this.getElement("#stores-container");
     this.PUBLISH_BUTTON = this.getElement("#addMusic-publish");
     this.SAVE_BUTTON = this.getElement("#addMusic-save");
-    this.ALBUMTRACKSCONTAINER = this.getElement("#album-track-list-container");
+    this.ADD_NEW_TRACK_BTN = this.getElement("#add-new");
+    this.ALBUMTRACKSCONTAINER = this.getElement("#addMusic-album-track-list");
+
     //
-    this.albumFn = Album(this.ALBUMTRACKSCONTAINER);
+    this.albumFn = null;
   }
 
-  convertStoresArrayToHash(stores) {
-    return stores.reduce((prev, curr) => ({ ...prev, [curr.id]: curr }), {});
+  bindTermsForm() {
+    this.TERMS_FORM.addEventListener("submit", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const checkBoxes = e.target.querySelectorAll("input");
+      for (const checkBox of checkBoxes) {
+        if (!checkBox.checked)
+          return this.showAlert("Please agree to all terms and conditions.");
+      }
+      return this.replace("/add-music/create");
+    });
+  }
+
+  bindAlbumUI() {
+    this.albumFn = Album(this.ALBUMTRACKSCONTAINER, this.ADD_NEW_TRACK_BTN);
+    this.albumFn.initiate();
+  }
+
+  bindInitiateSelectAction(handler) {
+    this.INITIATE_RELEASE.addEventListener("change", async (e) => {
+      e.stopPropagation();
+      const { name, value, dataset } = e.target;
+      const { filter_name, filter_target } = dataset;
+      if (!filter_name || !filter_target) return;
+      this.showLoader(true);
+      const data = await handler(filter_name, { [name]: value });
+      const targetSelectElem = this.getElement(filter_target);
+      this.addHTML(targetSelectElem, this.template(["options"], data));
+      targetSelectElem.disabled = false;
+      this.showLoader(false);
+    });
+  }
+
+  bindInitiateSubmit(handler) {
+    this.INITIATE_RELEASE.addEventListener("submit", async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const { rawFormData } = this.getFormData(e.target, true);
+      this.showLoader(true);
+      const data = await handler(rawFormData);
+      this.replace(`/add-music/${data.id}`);
+    });
   }
 
   initiateStores() {
-    this.processStores(this.selectedStores);
+    const stores = this.selectedStores.length
+      ? this.selectedStores
+      : this.stores;
+    this.processStores(stores);
     return this;
   }
 
   processStores(selectedStores = []) {
-    const toBeCheckedHash = this.convertStoresArrayToHash(selectedStores);
+    const toBeCheckedHash = selectedStores.reduce(
+      (prev, curr) => ({ ...prev, [curr.id]: curr }),
+      {}
+    );
     const toBeCheckedStores = this.stores.map((store) => {
       return toBeCheckedHash[store.id] ? { ...store, checked: true } : store;
     });
@@ -65,9 +121,18 @@ export default class AddMusicView extends View {
     return this;
   }
 
+  bindDidStoreSelectionChange() {
+    this.STORES_PARENT.addEventListener("change", (e) => {
+      e.stopPropagation();
+      if (e.target.tagName === "INPUT") {
+        console.log("DIDSTORECHANGED: CHANGED");
+        this.STORES_CONTAINER.setAttribute("data-changed", "true");
+      }
+    });
+  }
+
   bindToStoreList() {
     this.STORE_LIST_CONTAINER.addEventListener("change", (e) => {
-      e.stopPropagation();
       const customSelect = this.getElement(
         "input[data-type='custom']",
         this.STORE_OPTIONS_CONTAINER
@@ -79,8 +144,8 @@ export default class AddMusicView extends View {
 
   bindToStoreOptions() {
     this.STORE_OPTIONS_CONTAINER.addEventListener("change", (e) => {
-      e.stopPropagation();
       const { type } = e.target.dataset;
+      console.log("CHANGE: ", type);
       if (type === "all") {
         this.processStores(this.stores);
       } else if (type === "stream") {
@@ -100,20 +165,22 @@ export default class AddMusicView extends View {
 
   async _getReleaseData() {
     const releaseTabForm = this.getElement("form", this.RELEASE_PANE_ID);
-    const releaseTabFormData = this.getFormData(releaseTabForm, true);
+    const releaseTabFormData = this.getFormData(releaseTabForm);
 
     //TRACK TAB
     let trackData;
     if (this.RELEASE_TYPE === "track") {
       const singleTrackForm = this.getElement("form", this.TRACK_PANE_ID);
-      trackData = [this.getFormData(singleTrackForm, true)];
+      trackData = this.getFormData(singleTrackForm);
     } else {
       trackData = await this.albumFn.getAlbumTracksData();
     }
 
     //SCHEDULE TAB
     const scheduleTabForm = this.getElement("form", this.SCHEDULE_PANE_ID);
-    const scheduleTabFormData = this.getFormData(scheduleTabForm);
+    const { rawFormData: scheduleTabFormData } = this.getFormData(
+      scheduleTabForm
+    );
 
     //DISTRIBUTION TAB
     const {
@@ -127,18 +194,22 @@ export default class AddMusicView extends View {
     );
 
     const releaseData = {
-      ...releaseTabFormData,
-      ...scheduleTabFormData,
-      ...distributionTabFormData,
+      rawFormData: {
+        ...releaseTabFormData.rawFormData,
+        ...scheduleTabFormData,
+        ...distributionTabFormData,
+      },
+      formFiles: [...releaseTabFormData.formFiles],
     };
     return { releaseData, trackData, checkedStores };
   }
 
-  bindPublishRelease(handler) {
-    this.showLoader(true);
+  bindPublishRelease(saveHandler, publishHandler) {
     const _getTabIdNode = (paneId) => this.getElement(`a[href="${paneId}"]`);
     const _getPaneNode = (paneId) => this.getElement(paneId);
     this.PUBLISH_BUTTON.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      this.showLoader(true);
       const releaseTabStatus = validateForms(
         _getPaneNode(this.RELEASE_PANE_ID),
         _getTabIdNode(this.RELEASE_PANE_ID)
@@ -151,15 +222,17 @@ export default class AddMusicView extends View {
       let trackTabStatus;
       if (this.RELEASE_TYPE === "track") {
         trackTabStatus = validateForms(
-          _getPaneNode(this.RELEASE_PANE_ID),
-          _getTabIdNode(this.RELEASE_PANE_ID)
+          _getPaneNode(this.TRACK_PANE_ID),
+          _getTabIdNode(this.TRACK_PANE_ID)
         );
       } else {
         const tracksNotValidated = this.albumFn.tracksNotValidated();
         trackTabStatus = true;
+        _getTabIdNode(this.TRACK_PANE_ID).classList.remove("-u-border-error");
         if (tracksNotValidated) {
           if (typeof tracksNotValidated === "string")
             this.showAlert(tracksNotValidated);
+          _getTabIdNode(this.TRACK_PANE_ID).classList.add("-u-border-error");
           trackTabStatus = false;
         }
       }
@@ -167,7 +240,7 @@ export default class AddMusicView extends View {
       const storeOptionsNode = this.getElement("#store-options");
       const distributionTabStatus = distributionTabValidator(
         null,
-        this.DESTRIBUTION_PANE_ID,
+        _getPaneNode(this.DESTRIBUTION_PANE_ID),
         [trackPricingsNode, storeOptionsNode]
       );
       if (
@@ -177,11 +250,18 @@ export default class AddMusicView extends View {
         distributionTabStatus
       ) {
         const data = await this._getReleaseData();
-        const response = await handler(data);
-        console.log("PUBLISH: ", response);
-        this.showLoader(false);
+        const saveResponse = await saveHandler(
+          data,
+          this.RELEASE_TYPE,
+          this.RELEASE_ID
+        );
+        if (!saveResponse) {
+          return this.showAlert("Error: something went wrong try again");
+        }
+        const publishResponse = await publishHandler(this.RELEASE_ID);
+        this.replace(`/submission/${publishResponse.id}`);
       } else {
-        this.showLoader(false);
+        this.showAlert("Some input fields require information from you", 8);
       }
     });
   }
@@ -189,13 +269,14 @@ export default class AddMusicView extends View {
   bindSaveRelease(handler) {
     this.SAVE_BUTTON.addEventListener("click", async (e) => {
       e.stopPropagation();
-      console.log("CLICKED");
+      this.showLoader(true);
       const data = await this._getReleaseData();
-      // const response = await handler(data);
       console.log("SAVE: ", data);
-      const response = await handler(data);
-      console.log("BIND SAVE: ", response);
-      this.showLoader(false);
+      const response = await handler(data, this.RELEASE_TYPE, this.RELEASE_ID);
+      if (!response) {
+        return this.showAlert("Error: something went wrong try again");
+      }
+      return this.refresh();
     });
   }
 }

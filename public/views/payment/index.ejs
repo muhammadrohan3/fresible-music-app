@@ -85,7 +85,7 @@
       </button>
       <a
         class="btn-outline d-flex align-items-center justify-content-center"
-        href="/payment/manual?id=<%=Fns.idLookUp(id) %>"
+        href="/payment/manual/<%=Fns.idLookUp(id) %>"
       >
         Manual Payment &rarr;
       </a>
@@ -113,7 +113,7 @@
       subscription is now eligible for approval...
     </div>
     <div>
-      <a href="/subscription?id=<%= Fns.idLookUp(id) %>"
+      <a href="/subscription/<%= Fns.idLookUp(id) %>"
         ><button class="btn-outline">Go to package &rarr;</button></a
       >
     </div>

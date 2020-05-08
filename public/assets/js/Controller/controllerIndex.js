@@ -12,7 +12,7 @@ export default class ControllerIndex {
       filesToUpload.map(async (fileName) => {
         const { options, file } = filesObj[fileName];
         const response = await FileUploader.config(options).upload(file);
-        debugger;
+
         if (response.status !== "success")
           throw new Error("Uploading file error: " + fileName);
         fileUrlMap[fileName] = response.data.secure_url;

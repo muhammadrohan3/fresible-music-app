@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: false }
   );
   Releasestore.associate = function ({ Release, Store }) {
-    Releasestore.belongsTo(Release, { foreignKey: "releaseId", as: "release" });
+    this.belongsTo(Release, { foreignKey: "releaseId", as: "release" });
     this.belongsTo(Store, { foreignKey: "storeId", as: "store" });
   };
   return Releasestore;

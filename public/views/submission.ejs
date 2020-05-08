@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
   <% const {id, type, status, title, comment, subscription, releaseDate,
-  approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artworkUpload} = pageData;
+  approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artwork, copyrightYear, copyrightHolder, primaryGenre, secondaryGenre} = pageData;
   %>
   <div class="single-head">
     <a class="single-head__back" href="/submissions">
@@ -19,48 +19,47 @@
     </div>
   </div>
   <div class="submission__alert">
-    <% if(status === 'declined' && comment) { %>
+    <% if(subscription.status === 'inactive') { %>
+      <div class="alert alert-danger text-center">
+        The subscription for this release is not yet activated, this release will
+        not be approved for distribution.
+        <a
+          class="alert-link -u-font-bold -u-text-underline"
+          href="/subscription/<%= subscription.id %>"
+          >View Subscription</a
+        >
+      </div>
+    <% } else if(status === 'declined' && comment) { %>
     <div class="alert alert-danger text-center">
       <%= comment %>
     </div>
-    <% } else { %> <% if(subscription.status === 'inactive') { %>
-    <div class="alert alert-danger text-center">
-      The subscription for this release is not yet activated, this release will
-      not be approved for distribution.
-      <a
-        class="alert-link -u-font-bold -u-text-underline"
-        href="/subscription?id=<%= subscription.id %>"
-        >View Subscription</a
-      >
-    </div>
-    <% } else if(status === 'approved' && subscription.status === 'active') { %>
-    <div class="alert alert-success text-center">
-      This release has been approved for distribution.
-    </div>
-    <% } else if(subscription.status === 'expired') { %>
-    <div class="alert alert-secondary text-center">
-      The subscription for this release has expired, all releases for this
-      subscription would be taken down unless you renew it.
-    </div>
-    <% } else { %>
-    <div class="alert alert-info text-center">
-      This release is pending approval, you will be notified when approved.
-    </div>
-    <% } %> <% } %>
+    <% } else if(status === 'processing') { %>
+      <div class="alert alert-info text-center">
+        This release is pending approval, you will be notified when approved.
+      </div>
+    <% } else if(status === 'approved') { %>
+      <div class="alert alert-success text-center">
+        This release has been approved for distribution.
+      </div>
+      <% } else if(status === 'in stores' && linkId) { %>
+        <div class="alert alert-info submission--link">
+          This release is now <strong>live</strong> in stores,
+          <a
+            href="https://fresible.link/<%= link.slug %>"
+            class="alert-link"
+            target="_blank"
+            >click to view your release card containing major links</a
+          >
+        </div>
+    <% } else if(status === 'expired') { %>
+      <div class="alert alert-secondary text-center">
+        The subscription for this release has expired, all releases for this
+        subscription would be taken down unless you renew it.
+      </div>
+    <% } %>
   </div>
 
-  <% if(linkId) { %>
-  <div class="alert alert-info submission--link">
-    This release is now <strong>live</strong> in stores,
-    <a
-      href="https://fresible.link/<%= link.slug %>"
-      class="alert-link"
-      target="_blank"
-      >click to view your release card containing major links</a
-    >
-  </div>
-  <% } %>
-
+<!-- PAGE -->
   <section class="submission__body">
     <section class="submission__details">
       <div class="submission__details__overview flex-column flex-md-row">
@@ -71,7 +70,7 @@
             <div class="submission__details__overview__image__box__container">
               <img
               class="submission__details__overview__image__box__container--img"
-              src="<%= (artworkUpload || {}).secureUrl || '/dist/no-image.jpg' %>"
+              src="<%= artwork || '/dist/no-image.jpg' %>"
               alt="<%= title %> artwork"
             />
             </div>
@@ -105,6 +104,26 @@
               <li class="submission__list__item">
                 <div class="submission__list__item--title">UPC/EAN</div>
                 <div class="submission__list__item--details">-</div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Copyright Holder</div>
+                <div class="submission__list__item--details"><%=Fns.capitalize(copyrightHolder) %></div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Copyright Year</div>
+                <div class="submission__list__item--details">
+                  <%=Fns.capitalize(copyrightYear) %>
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Primary Genre</div>
+                <div class="submission__list__item--details"><%=Fns.capitalize(primaryGenre) %></div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Secondary Genre</div>
+                <div class="submission__list__item--details">
+                  <%=Fns.capitalize(secondaryGenre) %>
+                </div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Sub. package</div>
@@ -170,7 +189,7 @@
           </ul>
         </div>
       </div>
-      <% if(linkId) { %>
+      <% if(status === "in stores" && linkId) { %>
         <section
         class="submission__link d-flex flex-column flex-md-row align-items-center mt-4 py-4"
       >
@@ -182,7 +201,7 @@
           </div>
         </div>
         <div class="submission__link__right text-right">
-          <button class="btn-outline py-2 px-5">VIEW LINK</button>
+          <a class="btn-outline py-2 px-5">VIEW LINK</a>
         </div>
       </section>
       <% } %>
@@ -197,9 +216,7 @@
           <thead>
             <tr>
               <th>TITLE</th>
-              <th>ARTISTE</th>
               <th>FEATURED</th>
-              <th>GENRE</th>
               <th>EXPLICIT</th>
               <th>COPYRIGHT</th>
               <th>YEAR</th>
@@ -211,10 +228,8 @@
             copyrightYear, copyrightHolder, isrcCode}) => { %>
             <tr>
               <td><%= title %></td>
-              <td><%= artiste %></td>
               <td><%= featured %></td>
-              <td><%= genre %></td>
-              <td><%= explicit %></td>
+              <td><%=Fns.capitalize(explicit) %></td>
               <td><%= copyrightHolder %></td>
               <td><%= copyrightYear %></td>
               <td><%= isrcCode || '-' %></td>
@@ -227,7 +242,7 @@
   </section>
   <% if(status === 'declined') { %>
   <div class="text-center mt-5">
-    <a href="/add-music?id=<%=id %>" class="btn-primary"
+    <a href="/add-music/<%=id %>" class="btn-primary"
       ><span
         class="iconify"
         data-icon="feather:edit-2"

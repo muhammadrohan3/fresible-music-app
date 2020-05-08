@@ -3,13 +3,11 @@ import isObjEmpty from "../utilities/isObjEmpty";
 
 export const validateForms = (sectionNode, tabIdNode) => {
   let validationPassed = true;
-  const forms = sectionNode.querySelectorAll("forms");
-  forms.forEach((form) => {
-    //if form validation fails (it applies the red border around inputs)
-    if (!formValidator(form)) validationPassed = false;
-  });
+  const form = sectionNode.querySelector("form");
+  if (!formValidator(form)) validationPassed = false;
   if (!validationPassed) tabIdNode.classList.add("-u-border-error");
   else tabIdNode.classList.remove("-u-border-error");
+
   return validationPassed;
 };
 
@@ -51,10 +49,12 @@ export const getDistributionTabData = (
   };
   const price = _getRadioValue(trackPricingNode) || {};
   const storeType = _getRadioValue(storeOptionsNode) || {};
-  const checkedStores = Array.from(storeListNode.querySelectorAll("input"))
-    .filter((input) => input.checked)
-    .map(({ value }) => ({ storeId: Number(value), releaseId }));
-
+  let checkedStores = [];
+  if (storeListNode.dataset.changed === "true") {
+    checkedStores = Array.from(storeListNode.querySelectorAll("input"))
+      .filter((input) => input.checked)
+      .map(({ value }) => ({ storeId: Number(value), releaseId }));
+  }
   console.log(price, storeType);
 
   return { releaseInfo: { ...price, ...storeType }, checkedStores };

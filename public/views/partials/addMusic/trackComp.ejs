@@ -1,6 +1,6 @@
 <div>
-  <% const token = Fns.token(10); %> <% const {artiste, featured, trackUpload,
-  id, explicit, copyrightHolder, copyrightYear} = track || {} %>
+  <% const token = Fns.token(10); %> <% const {artiste, featured, track, id,
+  explicit, copyrightHolder, copyrightYear} = trackData || {} %>
   <form
     class="music-form track-form -u-form-small_label"
     id="addMusic-track-form"
@@ -10,17 +10,18 @@
     <div class="track-form__head">
       <!-- AUDIO UPLOAD -->
       <%- include("../form/audioFile", {formData: {required: '*required', name:
-      'track', classList: ['track-form__head--1'], value: trackUpload.secureUrl,
-      public_id: `music/musics/music-${token}`, size: '50', uploadTexts:
-      [`Upload Track (.wav, .mp3)`, `file size no larger than 50MB`],
-      dataAttributes: ['url_target', 'track'] }}) %>
+      'track', classList: ['track-form__head--1'], value: track, public_id:
+      `music/musics/music-${token}`, size: '50', uploadTexts: [`Upload Track
+      (.wav, .mp3)`, `file size no larger than 50MB`], dataAttributes:
+      ['url_target', 'track'] }}) %>
     </div>
 
     <div class="track-form__body">
       <div class="track-form__body__1">
         <!-- TRACK TITLE -->
         <%- include("../form/input", {formData: {required: '*', name: 'title',
-        label: 'Track Title', value: title, disabled: true}}) %>
+        label: 'Track Title', value: title, disabled: true, dontIgnore: true}})
+        %>
       </div>
 
       <div class="music-form__body__2 align-items-baseline">
@@ -45,6 +46,14 @@
           <!--  COPYRIGHT HOLDER -->
           <%- include("../form/input", {formData: {name: 'copyrightHolder',
           required: '*', value: copyrightHolder, label: `Copyright Holder`}}) %>
+
+          <!--  HIDDEN [RELEASE-ID] -->
+          <input
+            class="form__input--element"
+            type="hidden"
+            name="releaseId"
+            value="<%= releaseId %>"
+          />
         </div>
       </div>
     </div>

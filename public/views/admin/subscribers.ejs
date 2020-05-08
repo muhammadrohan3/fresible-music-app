@@ -9,7 +9,7 @@
   </div> -->
   <%- include('../partials/filters/index', data = ['e', 'd']); %> <% const
   {count, rows} = pageData; %>
-  <div class="-u-page" style="margin: 0">
+  <div class="-u-page" style="margin: 0;">
     <div class="submissions">
       <table class="table table-hover text-center submissions__table">
         <thead class="submissions__table--head">
@@ -26,7 +26,7 @@
           %>
           <tr>
             <td>
-              <a href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(id) %>"
+              <a href="/fmadmincp/subscriber/<%=Fns.idLookUp(id) %>"
                 ><%=Fns.idLookUp(id) %></a
               >
             </td>
@@ -34,7 +34,7 @@
             <td><%=profile && profile.stageName %></td>
             <td><%=Fns.dateFormat(createdAt) %></td>
             <td>
-              <a href="/fmadmincp/subscriber?id=<%=Fns.idLookUp(id) %>">view</a>
+              <a href="/fmadmincp/subscriber/<%=Fns.idLookUp(id) %>">view</a>
             </td>
           </tr>
           <% }) %>

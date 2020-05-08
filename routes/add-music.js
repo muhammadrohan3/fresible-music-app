@@ -25,7 +25,6 @@ const {
   PAGEDATA,
   LABELARTIST,
   TEMPKEY,
-  UPLOAD,
 } = require("../constants");
 
 module.exports = (Controller) => {
@@ -59,68 +58,19 @@ module.exports = (Controller) => {
     setStoreIf,
     addMusic_structureReleaseType,
     addMusic_structureSubs,
-    addMusic_checkIncompleteCreation,
+    handleProfileSetupUpdate,
   } = Controller;
-
-  /// This GET route renders the add music builder page
-  router.get(
-    "/",
-    schemaQueryConstructor("query", ["id"]),
-    redirectIf(SCHEMAQUERY, false, "/add-music/set-id"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMAINCLUDE, [
-      { m: USERPACKAGE, al: "subscription", at: ["packageId", "status"] },
-      {
-        m: USER,
-        at: ["id"],
-        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
-      },
-      {
-        m: LABELARTIST,
-        at: ["stageName"],
-      },
-      {
-        m: TRACK,
-        i: [{ m: UPLOAD, al: "trackUpload", at: ["secureUrl"] }],
-      },
-      {
-        m: STORE,
-        al: "stores",
-      },
-      {
-        m: UPLOAD,
-        al: "artworkUpload",
-        at: ["secureUrl"],
-      },
-    ]),
-    getOneFromSchema(RELEASE),
-    redirectIf(SCHEMARESULT, false, "/add-music"),
-    isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
-    redirectIf(SAMEAS, false, "/submission", [SCHEMAQUERY], ["id"]),
-    sameAs("title", null, SCHEMARESULT),
-    redirectIf(SAMEAS, true, "/add-music/removeIncompleteRelease", [
-      SCHEMAQUERY,
-    ]),
-    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    resetKey([SCHEMAQUERY, SCHEMARESULT, SCHEMAINCLUDE, SCHEMAOPTIONS]),
-    getAllFromSchema(STORE, null, { limit: null, order: [["id", "ASC"]] }),
-    seeStore([SITEDATA, PAGEDATA, "tracks", 0]),
-    copyKeyTo(SCHEMARESULT, [SITEDATA, PAGEDATA], "allStores"),
-    addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
-    pageRender()
-  );
 
   /// This GET ROUTE is called internally to set current release ID if a profile isn't active yet to avoid server error
   router.get(
-    "/set-id",
-    sameAs("profileActive", 5, USER),
+    "/",
+    sameAs("profileActive", "add-release", USER),
     redirectIf(SAMEAS, false, "/add-music/terms"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     getOneFromSchema(RELEASE),
     redirectIf(SCHEMARESULT, false, "/add-music/terms"),
-    resetKey("tempKey"),
-    fromStore(SCHEMARESULT, ["id"], "tempKey"),
-    redirect("/add-music", "tempKey")
+    fromStore(SCHEMARESULT, ["id"], TEMPKEY),
+    redirect("/add-music/{id}", TEMPKEY)
   );
 
   /// This GET route deletes a release not initiated properly and redirects the subscriber to the add-music create page
@@ -179,9 +129,8 @@ module.exports = (Controller) => {
 
   //This GET route responds with data about artist's subscription packages for Label subscribers
   router.get(
-    "/create/getArtistPackages/:artistId",
-    idMiddleWare("params", false, "artistId"),
-    schemaQueryConstructor("params", ["artistId"]),
+    "/artistPackages",
+    schemaQueryConstructor("query", ["artistId"]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
       { m: RELEASE, at: ["type"] },
@@ -198,9 +147,8 @@ module.exports = (Controller) => {
 
   //This GET route responds with the release types the selected subscription package is eligible to
   router.get(
-    "/create/getPackageReleaseTypes/:packageId",
-    idMiddleWare("params", false, "packageId"),
-    schemaQueryConstructor("params", ["packageId"], ["id"]),
+    "/packageReleaseTypes",
+    schemaQueryConstructor("query", ["packageId"], ["id"]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
       { m: RELEASE, at: ["type"] },
@@ -211,27 +159,19 @@ module.exports = (Controller) => {
     ]),
     getOneFromSchema(USERPACKAGE, ["id", "status"]),
     addMusic_structureReleaseType(),
-    respondIf("USER_RELEASE_TYPES", false, "Error: retry again."),
-    respond(["USER_RELEASE_TYPES"])
+    respondIf("PACKAGE_RELEASE_TYPES", false, "Error: retry again."),
+    respond(["PACKAGE_RELEASE_TYPES"])
   );
 
   //This POST route creates/initiates the new release for subsequent updates
   router.post(
     "/create",
-    schemaDataConstructor("body", [
-      "artistId",
-      "userPackageId",
-      "trackId",
-      "albumId",
-      "type",
-    ]),
+    schemaDataConstructor(
+      "body",
+      ["packageId", "title", "artistId", "type"],
+      ["userPackageId"]
+    ),
     respondIf(SCHEMADATA, false, "Form data not received"),
-    idMiddleWare(SCHEMADATA, true, [
-      "artistId",
-      "userPackageId",
-      "trackId",
-      "albumId",
-    ]),
     schemaDataConstructor("user", ["id"], ["userId"]),
     createSchemaData(RELEASE),
     respondIf(
@@ -244,8 +184,8 @@ module.exports = (Controller) => {
   );
 
   /// This POST route updates the release with data sent by the subscriber
-  router.post(
-    "/updateRelease",
+  router.put(
+    "/update",
     schemaDataConstructor("body"),
     respondIf(
       SCHEMADATA,
@@ -268,9 +208,9 @@ module.exports = (Controller) => {
     respond(1)
   );
 
-  //This POST route updates the release status to processing
-  router.post(
-    "/publishRelease",
+  //This PUT route updates the release status to processing
+  router.put(
+    "/publish",
     fromReq("body", ["oldStatus"], TEMPKEY), //oldStatus is for the logger to make correct decisions.
     schemaQueryConstructor("query", ["id"]),
     respondIf(
@@ -286,88 +226,103 @@ module.exports = (Controller) => {
     fromStore(SCHEMAQUERY, ["id"], TEMPKEY),
     urlFormer("/submission", TEMPKEY),
     sendMail(NEWRELEASE),
-    sameAs("profileActive", 5, USER),
-    redirectIf(SAMEAS, true, "/add-music/publishRelease/proceed", [TEMPKEY]),
+    handleProfileSetupUpdate("add-release"),
     respond([TEMPKEY])
   );
 
-  //This route is called if the user is still activating his/her profile
-  router.get(
-    "/publishRelease/proceed",
-    fromReq("query", ["id"], TEMPKEY),
-    sameAs("profileActive", 5, USER),
-    respondIf(SAMEAS, false, [TEMPKEY]),
-    schemaQueryConstructor(USER, ["id"]),
-    addToSchema(SCHEMADATA, { profileActive: 6 }),
-    updateSchemaData(USER),
-    respond([TEMPKEY])
-  );
-
-  //Creates a new Track release
+  //Creates a new track for a release (happens when a subscriber is adding a new release)
   router.post(
-    "track/create",
-    schemaDataConstructor("body", ["title"]),
-    createSchemaData(TRACK),
-    idMiddleWare(SCHEMARESULT, true, "id"),
-    fromStore(SCHEMARESULT, ["id"], TEMPKEY, ["trackId"]),
-    respond([TEMPKEY])
-  );
-  /////
-  router.post(
-    "/updateTrack",
-    schemaQueryConstructor("query", ["id"]),
-    respondIf(SCHEMAQUERY, false, "Error: could not process"),
+    "/createTrack",
     schemaDataConstructor("body"),
-    respondIf(SCHEMADATA, false, "Error: Data not found in the request"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    getOneFromSchema(RELEASE),
-    respondIf(SCHEMARESULT, false, "Error: authorize access rejected"),
-    resetKey(SCHEMAQUERY),
-    fromStore(SCHEMARESULT, ["trackId"], SCHEMAQUERY, ["id"]),
+    createSchemaData(TRACK),
+    respondIf(SCHEMARESULT, false, "Error: could not create release track"),
+    respond(1)
+  );
+
+  //Updates release track for a subscriber
+  router.put(
+    "/updateTrack",
+    schemaQueryConstructor("query", ["releaseId", "id"]),
+    respondIf(SCHEMAQUERY, false, "Error: query params incomplete"),
+    schemaDataConstructor("body"),
+    respondIf(SCHEMADATA, false, "Error: request missing payload"),
     updateSchemaData(TRACK),
     respondIf(SCHEMAMUTATED, false, "Could not update track"),
     respond({ success: "track updated" })
   );
 
-  //Handles update new album request
+  //this enpoint deletes existing tracks for a particular releaseId, then creates a new one to keep data in sync (BE CAREFUL)
   router.post(
-    "/updateAlbum",
-    schemaQueryConstructor("query", ["id"]),
-    respondIf(SCHEMAQUERY, false, "Error: could not process"),
+    "/createOrUpdateAlbumTracks",
+    schemaQueryConstructor("query", ["releaseId"]),
+    respondIf(
+      SCHEMAQUERY,
+      false,
+      "Error: could not process, releaseId param missing"
+    ),
     schemaDataConstructor("body"),
     respondIf(SCHEMADATA, false, "Error: Data not found in the request"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    getOneFromSchema(RELEASE),
-    respondIf(
-      SCHEMARESULT,
-      false,
-      "Error: authorization denied to make changes to release"
-    ),
-    resetKey(SCHEMAQUERY),
-    fromStore(SCHEMARESULT, ["albumId"], SCHEMAQUERY, ["id"]),
-    updateSchemaData(ALBUM),
-    respondIf(SCHEMAMUTATED, false, "Could not update album"),
-    respond({ success: "album updated" })
+    deleteSchemaData(TRACK),
+    bulkCreateSchema(TRACK),
+    respondIf(SCHEMARESULT, false, "Could not add release album tracks"),
+    respond(1)
   );
 
+  //this enpoint deletes existing tracks for a particular releaseId, then creates a new one to keep data in sync (BE CAREFUL)
   router.post(
-    "/album-tracks",
-    schemaQueryConstructor("query", ["id"]),
-    respondIf(SCHEMAQUERY, false, "Error: could not process, id missing"),
-    schemaQueryConstructor("query", ["albumId"]),
-    sameAs("albumId", false, SCHEMAQUERY),
-    respondIf(SAMEAS, true, "Error: could not process, album id missing"),
+    "/createOrUpdateStores",
+    schemaQueryConstructor("query", ["releaseId"]),
+    respondIf(
+      SCHEMAQUERY,
+      false,
+      "Error: could not process, releaseId param missing"
+    ),
     schemaDataConstructor("body"),
     respondIf(SCHEMADATA, false, "Error: Data not found in the request"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    getOneFromSchema(RELEASE),
-    respondIf(SCHEMARESULT, false, "Error: Could not authorize access"),
-    resetKey(SCHEMAQUERY),
-    schemaQueryConstructor("query", ["albumId"]),
-    deleteSchemaData(ALBUMTRACK),
-    bulkCreateSchema(ALBUMTRACK),
-    respondIf(SCHEMARESULT, false, "Could not add album tracks"),
+    deleteSchemaData(RELEASESTORES),
+    bulkCreateSchema(RELEASESTORES),
+    respondIf(SCHEMARESULT, false, "Could not add release album tracks"),
     respond(1)
+  );
+
+  /// This GET route renders the add music builder page
+  router.get(
+    "/:id",
+    schemaQueryConstructor("params", ["id"]),
+    redirectIf(SCHEMAQUERY, false, "/add-music"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    addToSchema(SCHEMAINCLUDE, [
+      { m: USERPACKAGE, al: "subscription", at: ["packageId", "status"] },
+      {
+        m: USER,
+        at: ["id"],
+        i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
+      },
+      {
+        m: LABELARTIST,
+        at: ["stageName"],
+      },
+      { m: TRACK },
+      {
+        m: STORE,
+        al: "stores",
+      },
+    ]),
+    getOneFromSchema(RELEASE),
+    redirectIf(SCHEMARESULT, false, "/add-music"),
+    isValueIn("status", ["incomplete", "declined"], SCHEMARESULT),
+    redirectIf(SAMEAS, false, "/submission/{id}", [SCHEMAQUERY], ["id"]),
+    sameAs("title", null, SCHEMARESULT),
+    redirectIf(SAMEAS, true, "/add-music/removeIncompleteRelease", [
+      SCHEMAQUERY,
+    ]),
+    copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
+    resetKey([SCHEMAQUERY, SCHEMARESULT, SCHEMAINCLUDE, SCHEMAOPTIONS]),
+    getAllFromSchema(STORE, null, { limit: null, order: [["id", "ASC"]] }),
+    copyKeyTo(SCHEMARESULT, [SITEDATA, PAGEDATA], "allStores"),
+    seeStore([SITEDATA, PAGEDATA, "releaseDate"]),
+    addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
+    pageRender()
   );
 
   return router;

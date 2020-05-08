@@ -1,7 +1,7 @@
 <div class="-u-page-s">
   <%- include('../partials/filters/index', data = ['s', 'd']) %> <% const
   {count, rows} = pageData; %>
-  <div class="-u-page" style="margin: 0">
+  <div class="-u-page" style="margin: 0;">
     <div class="submissions">
       <table class="table table-hover text-center submissions__table">
         <thead class="submissions__table--head">
@@ -19,7 +19,7 @@
           { %>
           <tr>
             <td>
-              <a href="/fmadmincp/subscription?id=<%=Fns.idLookUp(id) %>"
+              <a href="/fmadmincp/subscription/<%=Fns.idLookUp(id) %>"
                 ><%=Fns.idLookUp(id) %></a
               >
             </td>
@@ -32,9 +32,7 @@
             </td>
             <td><%= releases.length %></td>
             <td>
-              <a href="/fmadmincp/subscription?id=<%=Fns.idLookUp(id) %>"
-                >edit</a
-              >
+              <a href="/fmadmincp/subscription/<%=Fns.idLookUp(id) %>">edit</a>
             </td>
           </tr>
           <% }) %>

@@ -42,15 +42,8 @@ module.exports = {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      avatarId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "uploads",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      avatar: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

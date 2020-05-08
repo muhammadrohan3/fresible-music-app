@@ -260,8 +260,8 @@ export default (() => {
   };
 
   const initiate = ({ top: { topBoxesBaseLink, dataInput }, bodyLink }) => {
-    View.showLoader(true);
     if (View.getElement("#analytics-empty")) return;
+    View.showLoader(true);
     _getTopBoxesData({ baseLink: topBoxesBaseLink, dataInput });
     _buildStoresChart({ baseLink: topBoxesBaseLink, dataInput });
     const defaultQuery = {

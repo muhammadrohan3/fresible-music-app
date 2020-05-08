@@ -10,13 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         values: ["stream", "download", "both"],
       },
       goLiveTime: DataTypes.STRING,
-      storeLogoId: DataTypes.INTEGER,
+      storeLogo: DataTypes.STRING,
     },
-    {}
+    { timestamps: false }
   );
-  Store.associate = function ({ Upload, Release, Releasestore }) {
-    this.belongsTo(Upload, { foreignKey: "storeLogoId", as: "storeLogo" });
-
+  Store.associate = function ({ Release, Releasestore }) {
     //STORE belongsToMany RELEASES
     this.belongsToMany(Release, {
       through: Releasestore,

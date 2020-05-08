@@ -32,14 +32,13 @@
         <!-- ARTWORK UPLOAD -->
         <%- include("../form/imageFile", {formData: {required: '*required',
         name: 'artwork',classList:
-        ['add-music__release-info__item__body--artwork'], value:
-        artworkUpload.secureUrl, public_id: `music/artworks/artwork-${token}`,
-        size: '2', uploadTexts: [`File format must be .jpg/.jpeg`, `File size
-        must not be larger than 1.5mb`, `Image dimensions should be at least
-        3000 x 3000 pixels`, `Design must not contain website addresses, email
-        addresses, logos, social media icons, or any other reference to other
-        services (ie. social media)`], dataAttributes: ['url_target',
-        'artwork']}}) %>
+        ['add-music__release-info__item__body--artwork'], value: artwork,
+        public_id: `music/artworks/artwork-${token}`, size: '2', uploadTexts:
+        [`File format must be .jpg/.jpeg`, `File size must not be larger than
+        1.5mb`, `Image dimensions should be at least 3000 x 3000 pixels`,
+        `Design must not contain website addresses, email addresses, logos,
+        social media icons, or any other reference to other services (ie. social
+        media)`], dataAttributes: ['url_target', 'artwork']}}) %>
       </div>
     </section>
     <!--RELEASE GENRES -->

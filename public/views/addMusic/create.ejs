@@ -2,7 +2,6 @@
   <div class="text-center -u-title">
     Create Release
   </div>
-  <% if(loggedInAccountType === 'label') { %>
   <form
     id="initiate-release"
     class="form -u-form-input-spacing mt-5"
@@ -14,18 +13,23 @@
     name: 'title', required: '*required'}}) %>
 
     <!-- SELECT ARTIST -->
-    <%- include('../partials/form/select', {formData: {label: 'Artist', name:
-    'artistId', required: '*required', dataAttributes: {filter_href:
-    '/add-music/create/getArtistPackages',
-    filter_target:'#artist-packages-select'}, options: pageData.map(({id,
-    stageName}) => [Fns.idLookUp(id), stageName])}}) %>
+    <% if(loggedInAccountType === 'label') { %> <%-
+    include('../partials/form/select', {formData: {label: 'Artist', name:
+    'artistId', required: '*required', dataAttributes: {filter_name:
+    'artistPackages', filter_target:'#artist-packages-select'}, options:
+    pageData.map(({id, stageName}) => [id, stageName])}}) %> <% } %>
 
     <!-- SELECT PACKAGE -->
-    <%- include('../partials/form/select', {formData: {label: 'Package', name:
-    'userPackageId', id: 'artist-packages-select', required: '*required',
-    disabled: true, dataAttributes: {filter_href:
-    '/add-music/create/getPackageReleaseTypes',
-    filter_target:'#artist-release-select'}}}) %>
+    <% if(loggedInAccountType === 'label') { %> <%-
+    include('../partials/form/select', {formData: {label: 'Package', name:
+    'packageId', id: 'artist-packages-select', required: '*required', disabled:
+    true, dataAttributes: {filter_name: 'packageReleaseTypes',
+    filter_target:'#artist-release-select'}}}) %> <% } else { %> <%-
+    include('../partials/form/select', {formData: {label: 'Package', name:
+    'packageId', id: 'artist-packages-select', required: '*required', options:
+    pageData.map(({id, stageName}) => [id, stageName]),dataAttributes:
+    {filter_name: 'packageReleaseTypes',
+    filter_target:'#artist-release-select'}}}) %> <% } %>
 
     <!-- SELECT RELEASE TYPE -->
     <%- include('../partials/form/select', {formData: {label: 'Release Type',
@@ -36,31 +40,4 @@
       <button class="btn-primary" type="submit">Create Release &rarr;</button>
     </div>
   </form>
-  <% } else { %>
-  <form
-    id="initiate-release"
-    class="form -u-form-input-spacing mt-5"
-    data-submiturl="/add-music/create"
-    data-groups="<%= JSON.stringify([{names: ['type', 'title'], href: '/add-music/create-sub-release'}]) %>"
-  >
-    <!-- RELEASE TITLE -->
-    <%- include('../partials/form/input', {formData: {label: 'Release Title',
-    name: 'title', required: '*required'}}) %>
-
-    <!-- SELECT PACKAGE -->
-    <%- include('../partials/form/select', {formData: {label: 'Package', name:
-    'userPackageId', id: 'artist-packages-select', required: '*required',
-    dataAttributes: {filter_href: '/add-music/create/getPackageReleaseTypes',
-    filter_target:'#artist-release-select'}, options: pageData}}) %>
-
-    <!-- SELECT RELEASE TYPE -->
-    <%- include('../partials/form/select', {formData: {label: 'Release Type',
-    name: 'type', id: 'artist-release-select', required: '*required', disabled:
-    true}}) %>
-
-    <div class="text-center text-md-right">
-      <button class="btn-primary" type="submit">Create Release &rarr;</button>
-    </div>
-  </form>
-  <% } %>
 </div>

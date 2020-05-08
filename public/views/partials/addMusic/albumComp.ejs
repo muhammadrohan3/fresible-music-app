@@ -3,7 +3,7 @@
     <div class="album__container__btn -u-flexerize">
       <div class="text-left">*20 tracks max.</div>
       <div class="text-right">
-        <button class="btn-outline" id="new" data-type="new">
+        <button class="btn-outline" id="add-new" data-type="new">
           <span>+</span> <span>New Track</span>
         </button>
       </div>
@@ -11,63 +11,10 @@
     <div
       id="addMusic-album-track-list"
       data-stagename="<%= loggedInAccountType === 'label' ? labelArtist.stageName : user.profile.stageName %>"
-      data-album_id="<%= album.id %>"
+      data-release_id="<%= releaseId %>"
       data-url="<%= Fns.cloudinaryUrl('video') %>"
       data-upload_preset="<%= Fns.cloudinaryUploadPreset %>"
-      data-existing="<%=JSON.stringify(album.tracks) %>"
+      data-existing="<%=JSON.stringify(tracks) %>"
     ></div>
   </div>
 </div>
-
-<!--  -->
-
-<div class="container -u-mw-450">
-<% const inputs = [{name: 'spotify', label: 'Spotify'},{name: 'apple', label: 'Apple Music'}, {name: 'itunes', label: 'iTunes'}, {name: 'amazon', label: 'Amazon'}, {name: 'deezer', label: 'Deezer'}, {name: 'boomplay', label: 'Boomplay'}, {name: 'audiomack', label: 'Audiomack'}, {name: 'youtube', label: 'Youtube'}, {name: 'youtubeMusic', label: 'Youtube Music'}, {name: 'tidal', label: 'Tidal'}, {name: 'napster', label: 'Napster'}, {name: 'slug', label: 'Slug', type: 'hidden'}] %>
-<% let L; %>
-<form
-    action=""
-    class="form -u-form-input-spacing"
-    id="links-form"
-    <%= formDataAttributes['details'] && "data-details=" + formDataAttributes['details'] + " %>
-    data-type="<%= formDataAttributes['type'] || 'add' %>"
-    data-submiturl="<%= formDataAttributes['details'] || '/fmadmincp/submission/store-links/create' %>"
-    <%= formDataAttributes['data-query_include'] === undefined && 'data-query_include=true' %>   
-  >
-    <div class="alert alert-info store-link">
-      <%= (L = formData['slug']) && "https://fresible.link/ " + L %>  
-    </div>
-    <% inputs.forEach(({name, label, type = 'text'}) => { %> 
-      <div class="form__input">
-      <label for="" class="form__input--label"><%= label %></label>
-      <input type="<%= type %>" class="form__input--element" name="<%= name %>" value="<%= formData[name] || '' %>" />
-    </div>
-    <% }) %>
-    </form>
-</div>
-
-<!--  -->
-
-<div class="container -u-mw-450">
-  <% const inputs = [{name: 'spotify', label: 'Spotify'},{name: 'apple', label: 'Apple Music'}, {name: 'itunes', label: 'iTunes'}, {name: 'amazon', label: 'Amazon'}, {name: 'deezer', label: 'Deezer'}, {name: 'boomplay', label: 'Boomplay'}, {name: 'audiomack', label: 'Audiomack'}, {name: 'youtube', label: 'Youtube'}, {name: 'youtubeMusic', label: 'Youtube Music'}, {name: 'tidal', label: 'Tidal'}, {name: 'napster', label: 'Napster'}, {name: 'slug', label: 'Slug', type: 'hidden'}] %>
-  <% let L; %>
-  <% const {formData = {}, formDataAttributes = {}} = TemplateData %>
-  <form
-      action=""
-      class="form -u-form-input-spacing"
-      id="links-form"
-      <%= formDataAttributes['details'] && "data-details=" + formDataAttributes['details'] %>
-      data-type="<%= formDataAttributes['type'] || 'add' %>"
-      data-submiturl="<%= formDataAttributes['details'] || '/fmadmincp/submission/store-links/create' %>"
-      <%= formDataAttributes['data-query_include'] === undefined && 'data-query_include=true' %>   
-    >
-      <div class="alert alert-info store-link">
-        <%= (L = formData['slug']) && "https://fresible.link/ " + L %>  
-      </div>
-      <% inputs.forEach(({name, label, type = 'text'}) => { %> 
-        <div class="form__input">
-        <label for="" class="form__input--label"><%= label %></label>
-        <input type="<%= type %>" class="form__input--element" name="<%= name %>" value="<%= formData[name] || '' %>" />
-      </div>
-      <% }) %>
-      </form>
-  </div>

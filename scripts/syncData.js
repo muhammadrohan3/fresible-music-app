@@ -9,7 +9,6 @@ const {
   Payment,
   Track,
   Release,
-  Upload,
   Log,
   Link,
   Labelartist,
@@ -31,18 +30,12 @@ const route = [
 ];
 
 const preRun = [
-  ["labelartists", [["avatar", "avatarId", "image"]]],
-  ["userprofiles", [["avatar", "avatarId", "image"]]],
+  ["labelartists"],
+  ["userprofiles"],
   ["releases"],
-  [
-    "tracks",
-    [
-      ["track", "trackUploadId", "audio"],
-      ["artwork", "artworkUploadId", "image"],
-    ],
-  ],
-  ["albums", [["artwork", "artworkUploadId", "image"]]],
-  ["albumtracks", [["track", "trackUploadId", "audio"]]],
+  ["tracks"],
+  ["albums"],
+  ["albumtracks"],
 ];
 
 const jsonData = JSON.parse(
@@ -58,6 +51,83 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
   if (type !== "table") return acc;
   return { ...acc, [name.toLowerCase()]: data };
 }, {});
+
+const users = dataHash["users"];
+
+const filterOut = (schemas = [], userId) => {
+  if (!schemas.length || !userId) return;
+  schemas.forEach((schema) => {
+    if (dataHash[schema]) {
+      dataHash[schema] = dataHash[schema].filter((data) => {
+        if (data.userId === userId) {
+          if (schema === "releases") {
+            dataHash["tracks"] = dataHash["tracks"].filter(
+              (track) => track.releaseId !== data.id
+            );
+          }
+          return false;
+        }
+        return true;
+      });
+    }
+  });
+};
+
+const getData = (schema, userId) => {
+  if (!schema || !userId) return;
+  return dataHash[schema].filter((data) => data.userId === userId);
+};
+
+for (let user of users) {
+  user.profileSetup = "select-account";
+
+  if (Number(user.profileActive) === 1000) {
+    user.profileSetup = "completed";
+    continue;
+  }
+
+  if (!getData("userprofiles", user.id).length) {
+    user.profileSetup = "select-account";
+    filterOut(
+      ["labelartists", "userpackages", "releases", "payments"],
+      user.id
+    );
+    continue;
+  }
+
+  if (user.type === "label" && !getData("labelartists", user.id).length) {
+    user.profileSetup = "add-artist";
+    filterOut(["userpackages", "releases", "payments"], user.id);
+    continue;
+  }
+
+  if (!getData("userpackages", user.id).length) {
+    user.profileSetup = "select-package";
+    filterOut(["releases", "payments"], user.id);
+    continue;
+  }
+
+  const releases = getData("releases", user.id);
+  const submittedReleases = releases.filter(
+    ({ status }) => status.trim() === "processing"
+  );
+  if (!submittedReleases.length) {
+    user.profileSetup = "add-release";
+    filterOut(["payments"], user.id);
+    continue;
+  }
+
+  const payments = getData("payments", user.id);
+  const completedPayments = payments.filter(({ status }) =>
+    status ? status.trim() === "active" : false
+  );
+  if (!completedPayments.length) {
+    user.profileSetup = "payment";
+    continue;
+  }
+
+  user.profileSetup = "completed";
+}
 
 (async () => {
   try {
@@ -82,18 +152,18 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
     };
 
     for (let item of preRun) {
-      const [name, options] = item;
+      const [name] = item;
 
       for (let toBeProcessed of dataHash[name]) {
-        if (options) {
-          options.forEach((option) => {
-            const [key, newKey, resourceType] = option;
-            if (!toBeProcessed[key]) return;
-            const id = _uploader(toBeProcessed[key], resourceType);
-            toBeProcessed[newKey] = id;
-            delete toBeProcessed[key];
-          });
-        }
+        // if (options) {
+        //   options.forEach((option) => {
+        //     const [key, newKey, resourceType] = option;
+        //     if (!toBeProcessed[key]) return;
+        //     const id = _uploader(toBeProcessed[key], resourceType);
+        //     toBeProcessed[newKey] = id;
+        //     delete toBeProcessed[key];
+        //   });
+        // }
 
         if (name === "releases") {
           const { type, trackId, albumId, id } = toBeProcessed;
@@ -104,28 +174,52 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
           delete toBeProcessed["videoId"];
         }
         if (name === "tracks") {
-          const { id, title, artworkUploadId } = toBeProcessed;
+          const {
+            id,
+            title,
+            artwork,
+            genre: primaryGenre,
+            copyrightHolder,
+            copyrightYear,
+          } = toBeProcessed;
           const releaseId = tracksHash[id];
-          if (releaseId) _updateRelease(releaseId, { title, artworkUploadId });
+
+          if (releaseId) {
+            _updateRelease(releaseId, {
+              title,
+              artwork,
+              primaryGenre,
+              copyrightHolder,
+              copyrightYear,
+            });
+          }
           toBeProcessed["releaseId"] = releaseId;
         }
         if (name === "albums") {
-          const { id, title, artworkUploadId } = toBeProcessed;
+          const { id, title, artwork } = toBeProcessed;
           const releaseId = albumTracksHash[id];
-          if (releaseId) _updateRelease(releaseId, { title, artworkUploadId });
+          if (releaseId) _updateRelease(releaseId, { title, artwork });
         }
         if (name === "albumtracks") {
-          const { albumId } = toBeProcessed;
+          const {
+            albumId,
+            genre: primaryGenre,
+            copyrightHolder,
+            copyrightYear,
+          } = toBeProcessed;
           const releaseId = albumTracksHash[albumId];
+          if (releaseId)
+            _updateRelease(releaseId, {
+              primaryGenre,
+              copyrightHolder,
+              copyrightYear,
+            });
           toBeProcessed["releaseId"] = releaseId;
           delete toBeProcessed["id"];
+          delete toBeProcessed["albumId"];
         }
       }
     }
-    await Upload.bulkCreate(Uploads, {
-      updateOnDuplicate: ["id", "secureUrl", "resourceType"],
-    });
-    console.log("processed uploads: ", Uploads.length);
   } catch (err) {
     console.log(err);
   }
@@ -138,9 +232,14 @@ const dataHash = jsonData.reduce((acc, { type, name, data }) => {
     for (let r of route) {
       const [name, Handler] = r;
       if (!Handler) continue;
-      console.log("processing: ", name);
       const data = dataHash[name];
-      await Handler.bulkCreate(data, { updateOnDuplicate: ["id"] });
+      console.log("processing: ", name);
+      // if (name === "users") {
+      //   dataHash[name].forEach((user) =>
+      //     console.log(user.id, user.profileSetup)
+      //   );
+      // }
+      await Handler.bulkCreate(data);
     }
     console.log("DONE");
   } catch (e) {

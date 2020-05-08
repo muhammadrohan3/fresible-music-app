@@ -1,7 +1,7 @@
 <section class="pb-5">
-  <% const {id, type, status, releaseDate, comment, subscription, user, tracks,
-  labelArtist, copyrightHolder, copyrightYear, artworkUpload, primaryGenre,
-  secondaryGenre, stores, allStores} = pageData %>
+  <% const {id, type, status, title, releaseDate, comment, subscription, user,
+  tracks, labelArtist, copyrightHolder, copyrightYear, artwork, primaryGenre,
+  secondaryGenre, price, storeType, stores, allStores} = pageData %>
   <div
     class="-u-page"
     data-release_type="<%= type %>"
@@ -71,7 +71,7 @@
         aria-labelledby="release-tab"
       >
         <%- include("../partials/addMusic/releaseInfo", {type, copyrightHolder,
-        copyrightYear, primaryGenre, secondaryGenre, artworkUpload,
+        copyrightYear, title, primaryGenre, secondaryGenre, artwork,
         labelArtist}) %>
       </div>
       <div
@@ -81,9 +81,10 @@
         aria-labelledby="track-tab"
       >
         <% if(type === 'track') { %> <%-
-        include("../partials/addMusic/trackComp", { track: tracks[0],
-        labelArtist, user }) %> <% } else { %> <%-
-        include("../partials/addMusic/albumComp" , {tracks}) %> <% } %>
+        include("../partials/addMusic/trackComp", { trackData: tracks[0],
+        labelArtist, user, releaseId: id, title }) %> <% } else { %> <%-
+        include("../partials/addMusic/albumComp" , { tracks, labelArtist, user,
+        releaseId: id }) %> <% } %>
       </div>
       <div
         class="tab-pane"
@@ -104,7 +105,7 @@
             inputId: 'date-input', inputText: subscription.status === 'active' ?
             '' : `Activate the subscription for this release today to get it
             live on stores on or before the selected date`, name: 'releaseDate',
-            type: 'date', value: Fns.dateFormat(releaseDate)}}) %>
+            type: 'date', value: Fns.dateFormat(releaseDate, true)}}) %>
           </form>
         </section>
       </div>
@@ -114,7 +115,8 @@
         role="tabpanel"
         aria-labelledby="distribution-tab"
       >
-        <%- include("../partials/addMusic/distribution", {allStores, stores}) %>
+        <%- include("../partials/addMusic/distribution", {allStores, stores,
+        price, storeType}) %>
       </section>
     </div>
   </div>

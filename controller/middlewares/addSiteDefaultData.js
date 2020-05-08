@@ -1,21 +1,21 @@
-const schemaConstructor = require("../util/schemaConstructor");
+const organizeData = require("../util/organizeData");
 
 const addSiteDefaultData = ({ req, setStore }) => () => {
   const { user } = req;
   if (!user) return;
-  return schemaConstructor(
-    { setStore },
+  const data = organizeData(
     user,
     ["firstName", "avatar", "role", "id", "type"],
-    "siteData",
     [
       "loggedInUserFirstName",
       "loggedInUserAvatar",
       "loggedInUserRole",
       "loggedInUserId",
       "loggedInAccountType",
-    ]
+    ],
+    true
   );
+  setStore("siteData", data);
 };
 
 module.exports = { addSiteDefaultData };

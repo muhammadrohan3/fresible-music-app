@@ -4,11 +4,10 @@ import pubSub from "../lib/pubSub";
 
 export default class modelIndex {
   constructor() {
-    this.requestInfo = null;
+    this.requestInfo = {};
   }
 
   async get() {
-    if (!this.requestInfo) throw new Error("REQUEST INFO MISSING");
     const response = await this.serverRequest({
       ...this.requestInfo,
       method: "GET",
@@ -17,7 +16,6 @@ export default class modelIndex {
   }
 
   async post(data) {
-    if (!this.requestInfo) throw new Error("REQUEST INFO MISSING");
     const response = await this.serverRequest({
       ...this.requestInfo,
       method: "POST",
@@ -26,8 +24,7 @@ export default class modelIndex {
     return response;
   }
 
-  async put(data) {
-    if (!this.requestInfo) throw new Error("REQUEST INFO MISSING");
+  async update(data) {
     const response = await this.serverRequest({
       ...this.requestInfo,
       method: "PUT",
@@ -37,7 +34,6 @@ export default class modelIndex {
   }
 
   async delete() {
-    if (!this.requestInfo) throw new Error("REQUEST INFO MISSING");
     const response = await this.serverRequest({
       ...this.requestInfo,
       method: "DELETE",
@@ -45,7 +41,7 @@ export default class modelIndex {
     return response;
   }
 
-  onUploadProgress(progressEvent) {
+  _onUploadProgress(progressEvent) {
     let value = 0;
     const { loaded, total } = progressEvent;
     value = Math.floor((loaded * 100) / total) + "%";
@@ -57,7 +53,11 @@ export default class modelIndex {
   async serverRequest({ url, method, data, params }) {
     const _errorHandler = (status, message) => ({ status, message });
 
-    if (url && !url.includes("localhost") && !window.navigator.onLine) {
+    if (
+      url &&
+      !location.origin.includes("localhost") &&
+      !window.navigator.onLine
+    ) {
       return {
         status: "error",
         data: "Your internet connection is not active, do turn it on if off",
@@ -66,7 +66,7 @@ export default class modelIndex {
     const trim = (text) => (text.startsWith("/") ? text.substr(1) : text);
     if (location.host.includes("localhost")) {
       console.log(
-        `MAKING A ${method} REQUEST TO ${href || url}, params - data `,
+        `MAKING A ${method} REQUEST TO ${url}, params - data `,
         params,
         data
       );
@@ -76,12 +76,12 @@ export default class modelIndex {
         url,
         method,
         data,
-        onUploadProgress,
+        onUploadProgress: this._onUploadProgress,
         params,
       });
       return response.data;
     } catch (err) {
-      console.log(error);
+      console.log(err);
       if (err.status === 404)
         return _errorHandler("error", "url or resource not found");
       if (String(err.status).startsWith("5"))
@@ -89,7 +89,7 @@ export default class modelIndex {
           "error",
           "Something went wrong, try again, if error persist's, contact admin"
         );
-      return err;
+      throw new Error(err);
     }
   }
 }

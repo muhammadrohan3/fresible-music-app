@@ -48,6 +48,7 @@ module.exports = () => ({
     return (
       text &&
       text
+        .toLowerCase()
         .trim()
         .split(" ")
         .map((t) => t[0].toUpperCase() + t.substr(1))
@@ -55,7 +56,11 @@ module.exports = () => ({
     );
   },
   cloudinaryUploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET,
-  dateFormat: (date) => date && moment(date).format("Do MMM, YYYY"),
+  dateFormat: (date, raw = false) => {
+    if (!date) return;
+    if (raw) return moment(date).format("YYYY-MM-DD");
+    return moment(date).format("Do MMM, YYYY");
+  },
   nextYear: (date) => date && moment(date).add(1, "year").format("YYYY-MM-DD"),
   dateTimeFormat: (date) => date && moment(date).format("YYYY-MM-DD h:mma"),
   dirs: { viewsDir },

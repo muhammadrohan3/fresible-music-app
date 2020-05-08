@@ -6,56 +6,65 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       uid: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       token: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       tokenType: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
-      profileActive: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0
+      profileSetup: {
+        type: Sequelize.ENUM,
+        values: [
+          "select-account",
+          "complete-profile",
+          "add-artist",
+          "select-package",
+          "add-release",
+          "payment",
+          "completed",
+        ],
+        defaultValue: "select-account",
       },
       isVerified: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
       },
       role: {
         type: Sequelize.ENUM,
         defaultValue: "subscriber",
-        values: ["subscriber", "admin", "superAdmin"]
+        values: ["subscriber", "admin", "superAdmin"],
       },
       type: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable("users");
-  }
+  },
 };

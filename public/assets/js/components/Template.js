@@ -5,10 +5,8 @@ export default (templateName, TemplateData) => {
   const templateRoute = Array.isArray(templateName)
     ? templateName
     : [templateName];
-  let template;
-  templateRoute.forEach(
-    (route) => (template = template ? template[route] : templates[route])
-  );
+  let template = templates;
+  templateRoute.forEach((route) => (template = template[route]));
   if (!template) throw new Error("TEMPLATE NOT FOUND");
   return ejs.render(template, { TemplateData });
 };

@@ -5,7 +5,6 @@ const idLookUp = require("../util/idLookUp");
 const valExtractor = require("../util/valExtractor");
 const {
   User,
-  Upload,
   Userprofile,
   Userpackage,
   Package,
@@ -47,7 +46,6 @@ const schemaType = (schema) => {
   if (schema.search(/^logs?$/) >= 0) return Log;
   if (schema.search(/^links?$/) >= 0) return Link;
   if (schema.search(/^labelartists?$/) >= 0) return Labelartist;
-  if (schema.search(/^uploads?$/) >= 0) return Upload;
   if (schema.search(/^stores?$/) >= 0) return Store;
   if (schema.search(/^analytics?$/) >= 0) return Analytic;
   if (schema.search(/^analyticsdates?$/) >= 0) return Analyticsdate;

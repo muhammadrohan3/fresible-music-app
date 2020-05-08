@@ -14,7 +14,7 @@ const addMusic_structureSubs = ({ getStore, setStore }) => () => {
       if (trackCount >= maxTracks && albumCount >= maxAlbums) return null;
       return USER_SUBSCRIPTIONS.push([
         idLookUp(id),
-        `${package} - (${status})`
+        `${package} - (${status})`,
       ]);
     }
   );
@@ -23,22 +23,23 @@ const addMusic_structureSubs = ({ getStore, setStore }) => () => {
 
 const addMusic_structureReleaseType = ({ getStore, setStore }) => () => {
   const data = getStore("schemaResult");
-  if (!data) return setStore("USER_RELEASE_TYPES", null);
+  if (!data) return setStore("PACKAGE_RELEASE_TYPES", null);
   const {
     package: { maxAlbums, maxTracks },
-    releases
+    releases,
   } = data;
   let trackCount = 0;
   let albumCount = 0;
   let album = [];
   let track = [];
-  releases.forEach(({ type }) =>
-    type === "album" ? albumCount++ : trackCount++
-  );
+  releases.forEach(({ type }) => {
+    type === "album" && albumCount++;
+    type === "track" && trackCount++;
+  });
   if (maxAlbums > 0 && albumCount < maxAlbums) album = ["album", "Album"];
   if (maxTracks > 0 && trackCount < maxTracks) track = ["track", "Track"];
-  const USER_RELEASE_TYPES = [track, album];
-  return setStore("USER_RELEASE_TYPES", USER_RELEASE_TYPES);
+  const PACKAGE_RELEASE_TYPES = [track, album];
+  return setStore("PACKAGE_RELEASE_TYPES", PACKAGE_RELEASE_TYPES);
 };
 
 const addMusic_checkIncompleteCreation = ({ getStore, setStore }) => () => {
@@ -52,5 +53,5 @@ const addMusic_checkIncompleteCreation = ({ getStore, setStore }) => () => {
 module.exports = {
   addMusic_structureReleaseType,
   addMusic_structureSubs,
-  addMusic_checkIncompleteCreation
+  addMusic_checkIncompleteCreation,
 };

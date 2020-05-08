@@ -129,7 +129,7 @@
     <div class="subscription__table--head">
       Subscription (<%= Fns.idLookUp(id) %>) - submissions
     </div>
-    <%- include('partials/submissions', {pageData: {count: releases.length,
+    <%- include('partials/submissionsTable', {pageData: {count: releases.length,
     rows: releases}}) %>
   </div>
 </section>

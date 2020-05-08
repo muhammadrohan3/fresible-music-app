@@ -22,10 +22,10 @@ const {
   NEWRELEASE,
   PAGEDATA,
   LABELARTIST,
-  TEMPKEY
+  TEMPKEY,
 } = require("../constants");
 
-module.exports = Controller => {
+module.exports = (Controller) => {
   const {
     isLabel,
     seeStore,
@@ -40,8 +40,8 @@ module.exports = Controller => {
     createSchemaData,
     fromReq,
     pageRender,
+    handleProfileSetupUpdate,
     fromStore,
-    addMusicCompSwitcher,
     resetKey,
     copyKeyTo,
     idMiddleWare,
@@ -55,9 +55,6 @@ module.exports = Controller => {
     sendMail,
     isValueIn,
     setStoreIf,
-    addMusic_structureReleaseType,
-    addMusic_structureSubs,
-    addMusic_checkIncompleteCreation
   } = Controller;
 
   router.use(isLabel());
@@ -85,23 +82,8 @@ module.exports = Controller => {
     fromReq("user", ["id"], SCHEMADATA, ["userId"]),
     createSchemaData(LABELARTIST),
     respondIf(SCHEMARESULT, false, "Error: could not create new artist"),
-    fromStore(SCHEMARESULT, ["id"], TEMPKEY),
-    sameAs("profileActive", 3, USER),
-    redirectIf(SAMEAS, true, "/artists/add-artist/proceed", [TEMPKEY]),
+    handleProfileSetupUpdate("add-artist"),
     respond(1)
-  );
-
-  //This route is called if the user is still activating his/her profile
-  router.get(
-    "/add-artist/proceed",
-    fromReq("query", ["id"], TEMPKEY),
-    respondIf(TEMPKEY, false, "Error: internal error, try again"),
-    sameAs("profileActive", 3, USER),
-    respondIf(SAMEAS, false, [TEMPKEY]),
-    schemaQueryConstructor(USER, ["id"]),
-    addToSchema(SCHEMADATA, { profileActive: 4 }),
-    updateSchemaData(USER),
-    respond([TEMPKEY])
   );
 
   router.get(
@@ -124,7 +106,7 @@ module.exports = Controller => {
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "artists/edit-profile",
-      title: "Edit Artist Profile"
+      title: "Edit Artist Profile",
     }),
     seeStore([SITEDATA]),
     pageRender()

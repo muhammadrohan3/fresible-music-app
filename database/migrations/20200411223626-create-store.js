@@ -22,15 +22,8 @@ module.exports = {
       goLiveTime: {
         type: Sequelize.STRING,
       },
-      storeLogoId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "uploads",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      storeLogo: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

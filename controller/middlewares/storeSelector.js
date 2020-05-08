@@ -2,64 +2,20 @@ const { SCHEMAQUERY, SCHEMADATA } = require("../../constants");
 const schemaConstructor = require("../util/schemaConstructor");
 const valExtractor = require("../util/valExtractor");
 
-const fromReq = ({ req, setStore }) => (
-  key,
-  items,
-  destination,
-  aliases,
-  dontSet
-) =>
-  schemaConstructor(
-    { setStore },
-    req[key],
-    items,
-    destination,
-    aliases,
-    dontSet
-  );
-const fromStore = ({ getStore, setStore }) => (
-  key,
-  items,
-  destination,
-  aliases,
-  dontSet
-) =>
-  schemaConstructor(
-    { setStore },
-    getStore(key),
-    items,
-    destination,
-    aliases,
-    dontSet
-  );
-const schemaQueryConstructor = ({ req, setStore }) => (
-  key,
-  items,
-  aliases,
-  dontSet
-) =>
-  schemaConstructor(
-    { setStore },
-    req[key],
-    items,
-    SCHEMAQUERY,
-    aliases,
-    dontSet
-  );
-const schemaDataConstructor = ({ req, setStore }) => (
-  key,
-  items,
-  aliases,
-  dontSet
-) =>
-  schemaConstructor(
-    { setStore },
-    req[key],
-    items,
-    SCHEMADATA,
-    aliases,
-    dontSet
-  );
+//GETS THE DESIRED KEY DATA FROM REQ TO STORE
+const fromReq = ({ req, setStore }) => schemaConstructor(req, setStore);
+
+//GETS THE DESIRED KEY DATA FROM A STORE KEY TO ANOTHER KEY IN STORE
+const fromStore = ({ getStore, setStore }) =>
+  schemaConstructor(getStore(), setStore);
+
+//GETS THE DESIRED DATA FROM QUERY KEY IN REQ TO THE SCHEMAQUERY KEY IN STORE
+const schemaQueryConstructor = ({ req, setStore }) => (key, items, aliases) =>
+  schemaConstructor(req, setStore).call(null, key, items, SCHEMAQUERY, aliases);
+
+//GETS THE DESIRED DATA FROM QUERY KEY IN REQ TO THE SCHEMAQUERY KEY IN STORE
+const schemaDataConstructor = ({ req, setStore }) => (key, items, aliases) =>
+  schemaConstructor(req, setStore).call(null, key, items, SCHEMADATA, aliases);
 
 const selectFromList = ({ getStore, setStore }) => (
   storeLocation,

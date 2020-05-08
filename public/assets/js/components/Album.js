@@ -1,26 +1,34 @@
 import Swal from "sweetalert2";
-import ejs from "../ejs.min.js";
-import albumTemplate from "../templates/albumTemplates";
-import { getStore, setStore } from "../Store";
-import serverRequest, { responseHandler } from "../utilities/serverRequest";
-import uploadFile from "../utilities/uploadFile";
 import View from "../View";
 import Validator from "../utilities/validator";
+import Template from "../components/Template";
+import CloudinaryFileUploader from "../lib/cloudinaryFileUploader";
 
-export default (TRACKLISTCONTAINER) => {
+export default (TRACKLISTCONTAINER, ADDNEWTRACKBTN) => {
   const { getElement } = View;
 
   let lastTrackIndex = 0;
 
-  //This array variable holds currently uploaded files;
-  const UPLOADING_FILES = [];
+  const Files = new Map();
   //This array holds uploaded files
   const UPLOADED_FILES = [];
+  const {
+    url,
+    upload_preset,
+    release_id: RELEASE_ID,
+  } = TRACKLISTCONTAINER.dataset;
+  //INITIATE CLOUDINARY FILE UPLOADER;
+  const FileUploader = new CloudinaryFileUploader({
+    upload_preset,
+    url,
+    public_id: "music/musics/music",
+  });
 
   const initiate = () => {
     if (!TRACKLISTCONTAINER) return;
-    if (TRACKLISTCONTAINER.dataset.existing) checkForTracksAndRender();
-    else handleNew();
+    if (JSON.parse(TRACKLISTCONTAINER.dataset.existing).length) {
+      checkForTracksAndRender();
+    } else handleNew();
     //Click events handler
     TRACKLISTCONTAINER.addEventListener("click", (e) => {
       const clickedElem = e.target;
@@ -33,8 +41,12 @@ export default (TRACKLISTCONTAINER) => {
     TRACKLISTCONTAINER.addEventListener("change", (e) => {
       let elem = e.target;
       const { target } = elem.dataset;
-      if (elem.tagName === "INPUT" && elem.name === "title")
-        return handleTitleChange(elem, target);
+      if (elem.tagName === "INPUT") {
+        if (elem.name === "title") return handleTitleChange(elem, target);
+        if (elem.type === "file") {
+          Files.set(elem.name, elem.files[0]);
+        }
+      }
     });
 
     //Submit event handlers
@@ -59,6 +71,11 @@ export default (TRACKLISTCONTAINER) => {
       }
     });
   };
+
+  ADDNEWTRACKBTN.addEventListener("click", (e) => {
+    e.stopPropagation();
+    handleNew();
+  });
 
   //syncs title changes between the track and its hidden state component (ON-CHANGE EVENT)
   const handleTitleChange = (elem, target) => {
@@ -91,19 +108,14 @@ export default (TRACKLISTCONTAINER) => {
   };
 
   const insertComponent = (data = {}, tab) => {
-    const { url, upload_preset, stagename } = TRACKLISTCONTAINER.dataset;
     lastTrackIndex++;
     const templateData = {
       i: lastTrackIndex,
-      token: generateToken(10),
-      url,
-      upload_preset,
-      stagename,
       data,
     };
     TRACKLISTCONTAINER.insertAdjacentHTML(
       "beforeend",
-      Template(albumTemplate, templateData)
+      Template("albumTemplate", templateData)
     );
     tab && toggleTrack(lastTrackIndex, true);
     return lastTrackIndex;
@@ -115,8 +127,9 @@ export default (TRACKLISTCONTAINER) => {
       return View.showAlert(
         "You can add a new track form when you are done with opened one(s)"
       );
+    const {} = TRACKLISTCONTAINER;
     //Inserts a track from component
-    const trackNo = insertComponent();
+    const trackNo = insertComponent({ releaseId: RELEASE_ID });
     return (window.location.hash = `track${trackNo}`);
   };
 
@@ -161,24 +174,24 @@ export default (TRACKLISTCONTAINER) => {
     return status;
   };
 
-  const handleDone = async (num, check = false) => {
+  const handleDone = async (num) => {
     const trackContainer = getElement(`#track${num}`, TRACKLISTCONTAINER);
     const trackForm = getElement("form", trackContainer);
     const musicInputElem = getElement(`input[type='file']`, trackForm);
     //Checks to see if the user changed the audio file, by checking for the data-ignore attribute
     if (musicInputElem.dataset.ignore) return true;
     const fileName = musicInputElem.name;
-    const fileInStore = Files[fileName];
-    if (!fileInStore && !check) return true;
+    if (!Files.get(fileName)) return true;
     //Checks to see if the file is uploaded or being uploaded
     if (UPLOADED_FILES.includes(fileName)) return true;
 
     //Uploads the file to the server
-    const response = await uploadFile(fileName);
+    const response = await FileUploader.upload(Files.get(fileName));
     //Adds the file to the uploaded files list to avoid duplicate uploads
-    UPLOADED_FILES.push(fileName);
+    response.status === "success" && UPLOADED_FILES.push(fileName);
+    debugger;
     //Stores the response of the server to the hidden input element
-    const hiddenInput = getElement(`input[type='hidden']`, trackForm);
+    const hiddenInput = getElement(`input[name='track']`, trackForm);
     hiddenInput.value = response.data.secure_url;
     return true;
   };

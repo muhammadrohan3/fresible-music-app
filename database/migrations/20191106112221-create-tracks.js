@@ -21,13 +21,7 @@ module.exports = {
       title: {
         type: Sequelize.STRING,
       },
-      artiste: {
-        type: Sequelize.STRING,
-      },
       featured: {
-        type: Sequelize.STRING,
-      },
-      genre: {
         type: Sequelize.STRING,
       },
       track: {
@@ -46,14 +40,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       trackUploadId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "uploads",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

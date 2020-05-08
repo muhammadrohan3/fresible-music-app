@@ -5,30 +5,18 @@
       <div>How much would you like to charge for each track?</div>
       <div class="-u-flex-responsive flex-row" id="track-pricing">
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="price"
-            value="69"
-          />
+          <input type="radio" class="form__input__radio--element" name="price"
+          value="69" <%= price === '69' && "checked" %> />
           <label for="" class="form__input--label">69c</label>
         </div>
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="price"
-            value="99"
-          />
+          <input type="radio" class="form__input__radio--element" name="price"
+          value="99" <%= price === '99' && "checked" %> />
           <label for="" class="form__input--label">99c</label>
         </div>
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="price"
-            value="129"
-          />
+          <input type="radio" class="form__input__radio--element" name="price"
+          value="129" <%= price === '129' && "checked" %> />
           <label for="" class="form__input--label">$1.29</label>
         </div>
       </div>
@@ -37,7 +25,7 @@
       </div>
     </div>
   </section>
-  <section class="add-music__release-info__item">
+  <section class="add-music__release-info__item" id="stores-parent">
     <div class="add-music__release-info__item--title">*Digital Stores</div>
     <div class="add-music__release-info__item__body"></div>
     <div class="alert alert-info mb-4">
@@ -47,13 +35,9 @@
     <div class="-u-flex-responsive mt-3" id="store-options">
       <div class="add-music__distribution__store-options">
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="storesType"
-            data-type="all"
-            value="all"
-          />
+          <input type="radio" class="form__input__radio--element"
+          name="storeType" data-type="all" value="all" <%= storeType === 'all'
+          && "checked" %> />
           <label for="" class="form__input--label">All stores</label>
         </div>
         <div>
@@ -62,13 +46,9 @@
       </div>
       <div class="add-music__distribution__store-options">
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="storesType"
-            data-type="download"
-            value="download"
-          />
+          <input type="radio" class="form__input__radio--element"
+          name="storeType" data-type="download" value="download" <%= storeType
+          === 'download' && "checked" %> />
           <label for="" class="form__input--label">Download only stores</label>
         </div>
         <div>
@@ -77,13 +57,9 @@
       </div>
       <div class="add-music__distribution__store-options">
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="storesType"
-            data-type="stream"
-            value="stream"
-          />
+          <input type="radio" class="form__input__radio--element"
+          name="storeType" data-type="stream" value="stream" <%= storeType ===
+          'stream' && "checked" %> />
           <label for="" class="form__input--label">Streaming only stores</label>
         </div>
         <div>
@@ -93,13 +69,9 @@
       </div>
       <div class="add-music__distribution__store-options">
         <div class="form__input__radio">
-          <input
-            type="radio"
-            class="form__input__radio--element"
-            name="storesType"
-            data-type="custom"
-            value="custom"
-          />
+          <input type="radio" class="form__input__radio--element"
+          name="storeType" data-type="custom" value="custom" <%= storeType ===
+          'custom' && "checked" %> />
           <label for="" class="form__input--label">Custom select</label>
         </div>
         <div>
@@ -112,6 +84,7 @@
     <div
       class="mt-4"
       id="stores-container"
+      data-changed="false"
       data-selected="<%= JSON.stringify(stores) %>"
       data-stores="<%= JSON.stringify(allStores) %>"
     ></div>

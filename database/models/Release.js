@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       title: DataTypes.STRING,
       price: DataTypes.STRING,
+      storeType: {
+        type: DataTypes.ENUM,
+        values: ["all", "stream", "download", "custom"],
+      },
       status: {
         type: DataTypes.ENUM,
         values: [
@@ -24,13 +28,17 @@ module.exports = (sequelize, DataTypes) => {
           "expired",
         ],
       },
+      primaryGenre: DataTypes.STRING,
+      secondaryGenre: DataTypes.STRING,
+      copyrightHolder: DataTypes.STRING,
+      copyrightYear: DataTypes.STRING,
       originalReleaseDate: DataTypes.DATE,
       releaseDate: DataTypes.DATE,
       approvedDate: DataTypes.DATE,
       manualBarcode: DataTypes.STRING,
       comment: DataTypes.TEXT,
       linkId: DataTypes.INTEGER,
-      artworkUploadId: DataTypes.INTEGER,
+      artwork: DataTypes.STRING,
       artistId: DataTypes.INTEGER,
     },
     {}
@@ -41,7 +49,6 @@ module.exports = (sequelize, DataTypes) => {
     User,
     Link,
     Labelartist,
-    Upload,
     Track,
     Analytic,
     Store,
@@ -53,10 +60,6 @@ module.exports = (sequelize, DataTypes) => {
     });
     this.belongsTo(User, { foreignKey: "userId", as: "user" });
     this.belongsTo(Link, { foreignKey: "linkId", as: "link" });
-    this.belongsTo(Upload, {
-      foreignKey: "artworkUploadId",
-      as: "artworkUpload",
-    });
     this.belongsTo(Labelartist, { foreignKey: "artistId", as: "labelArtist" });
     this.hasMany(Track, { foreignKey: "releaseId", as: "tracks" });
     this.hasMany(Analytic, { foreignKey: "releaseId", as: "analytics" });

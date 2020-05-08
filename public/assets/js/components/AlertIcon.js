@@ -17,6 +17,6 @@ export default (element) => {
     else if (alert.classList.contains("alert-success")) icon = successIcon;
     else icon = "";
     icon &&
-      (alert.innerHTML = `<div class='d-flex align-items-center'>${icon} ${alertHTML}</div>`);
+      (alert.innerHTML = `<div class='alert-custom'><div class="alert-custom--icon">${icon}</div> <div class="alert-custom--content">${alertHTML}</div></div>`);
   }
 };

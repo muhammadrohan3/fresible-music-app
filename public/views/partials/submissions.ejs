@@ -1,50 +1,39 @@
 <div class="submissions">
-  <table
-    data-toggle="table"
-    data-classes="table table-hovered table-striped"
-    data-mobile-responsive="true"
-    data-mobile="true"
-  >
+  <% const { count, rows } = pageData %>
+  <table class="table table-hover text-center submissions__table">
     <thead class="submissions__table--head">
       <tr>
         <th>Id</th>
-        <th data-align="center">Status</th>
-        <th data-align="center">Type</th>
-        <th data-align="center">Release Date</th>
-        <th data-align="right">Details</th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Type</th>
+        <th>Date Added</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
-      <% pageData.forEach(({id, type, status, package, releaseDate}) => { %>
+      <% rows && rows.forEach((row) => { %>
+      <!--  -->
+      <% const {id, title, type, status, createdAt} = row %>
       <tr>
         <td>
-          <a
-            href="<%= status === 'incomplete' ? '/add-music?id='+Fns.idLookUp(id) : '/submission?id='+Fns.idLookUp(id) %>"
+          <a href="/submission/<%= Fns.idLookUp(id) %>"
             ><%= Fns.idLookUp(id) %></a
           >
         </td>
+        <td><%= title %></td>
         <td>
           <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
             ><%= status %></span
           >
         </td>
         <td><%=type %></td>
-        <td><%= Fns.dateFormat(releaseDate) %></td>
+        <td><%= Fns.dateFormat(createdAt) %></td>
         <td>
-          <a
-            href="<%= status === 'incomplete' ? '/add-music?id='+Fns.idLookUp(id) : '/submission?id='+Fns.idLookUp(id) %>"
-            ><%= status === 'incomplete' ? 'Continue' : 'View' %></a
-          >
+          <a href="/submission/<%= Fns.idLookUp(id) %>">edit</a>
         </td>
       </tr>
       <% }) %>
     </tbody>
   </table>
-
-  <% if(!pageData.length) { %>
-  <div class="submissions__nodata">
-    <div>You have made no submission(s) yet &rarr;</div>
-    <a href="/add-music" class="btn-outline">Add Music</a>
-  </div>
-  <% } %>
 </div>

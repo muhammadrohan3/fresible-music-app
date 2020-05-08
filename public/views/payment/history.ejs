@@ -15,7 +15,7 @@
         subscription: {package}} = d; %>
         <tr>
           <td>
-            <a href="/payment/history/single?id=<%=Fns.idLookUp(id) %>"
+            <a href="/payment/history/single/<%=Fns.idLookUp(id) %>"
               ><%=Fns.idLookUp(id) %></a
             >
           </td>
@@ -27,7 +27,7 @@
           </td>
           <td><%=Fns.dateFormat(date) %></td>
           <td>
-            <a href="/payment/history/single?id=<%=Fns.idLookUp(id) %>">View</a>
+            <a href="/payment/history/single/<%=Fns.idLookUp(id) %>">View</a>
           </td>
         </tr>
         <% }) %>

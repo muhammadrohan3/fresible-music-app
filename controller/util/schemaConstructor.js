@@ -1,23 +1,16 @@
-const organizeData = require("./organizeData");
-const handleResponse = require("./handleResponse");
+const valExtractor = require("./valExtractor");
 
-module.exports = (
-  { setStore },
-  source,
-  items,
-  destination,
-  aliases,
-  dontSet
-) => {
-  try {
-    if (!source)
-      return handleResponse(
-        "error",
-        "schemaConstructor: Data source not found"
-      );
-    if (!items) return setStore(destination, source);
-    return setStore(destination, organizeData(source, items, aliases, true));
-  } catch (e) {
-    return handleResponse("error", e);
-  }
+module.exports = (source, setStore) => (key, items, destination, aliases) => {
+  items = items || [];
+  aliases = aliases || [];
+  const routeToDataInSource = typeof key === "string" ? [key] : key;
+  const keyValue = valExtractor(source, routeToDataInSource);
+  const destinationValue = items.length
+    ? items.reduce((previous, currentKey, index) => {
+        if (!keyValue[currentKey]) return previous;
+        const prop = aliases[index] || currentKey;
+        return { ...previous, [prop]: keyValue[currentKey] };
+      }, {})
+    : keyValue;
+  return setStore(destination, destinationValue);
 };

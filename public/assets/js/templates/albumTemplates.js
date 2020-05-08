@@ -1,7 +1,7 @@
 export default `
+<% const {i, token, url, upload_preset, stagename, data} = TemplateData %>
 <div class="album__container__input-box" data-num='<%= i %>' id="track<%= i %>">
-<% const hashMap = {title: '', artiste: '', featured: '', copyrightYear: '',
-copyrightHolder: '', explicit: '', genre: '', track: ''} %>
+<% const hashMap = {title ='', artiste = '', featured = '', copyrightYear = '', copyrightHolder = '', explicit = '', genre = '', track = '', trackUploadId = '', releaseId = ''} = data %>
 
 <!--  -->
 
@@ -20,8 +20,6 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
 
 <!--  -->
 
-<% const {title, artiste, featured, copyrightYear, copyrightHolder, explicit, genre, track} = Object.entries(hashMap).reduce((acc,
-[key, value]) => ({...acc, [key]: data[key] || value}) , {}) %>
 <form class="music-form" data-num="<%= i %>" data-type="done" id='album-form-<%= i %>'>
 <div class="music-form__head">
   <div class="music-form__head--box">
@@ -38,10 +36,7 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
       class="form__input--element form__file--input"
       accept="audio/wav, audio/mp3"
       data-filelimit="50"
-      data-filetype="audio"
-      data-url="<%= url %>"
-      data-public_id="music/musics/music-<%= token %>"
-      data-upload_preset="<%= upload_preset %>"    
+      data-filetype="audio"   
       <%= track && 'data-ignore="true"' %>
       <%= !track && 'required' %>
     />
@@ -77,8 +72,9 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
       <% }else{ %>
       <div>Max size: 50mb</div>
       <% } %>
-    </div>
+    </div>   
   </div>
+  <input type='hidden' name='trackUploadId' value="<%= trackUploadId || '' %>">
 </div>
 <div class="music-form__body">
   <div class="music-form__body__1">
@@ -109,21 +105,6 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
         <div class="form__input--text"></div>
       </div>
     </div>
-    <div class="form__input music-form__body__1--2">
-      <label class="form__input--label">
-        <span>Artiste</span>
-        <span>*</span>
-      </label>
-      <input
-        type="text"
-        class="form-control form__input--element"
-        name="artiste"
-        value="<%= artiste || stagename %>"
-        <%= artiste && 'data-ignore=true' %>
-        disabled
-      />
-      <div class="form__input--text"></div>
-    </div>
   </div>
   <div class="music-form__body__2">
     <div class="form__input music-form__body__2--1">
@@ -136,7 +117,7 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
           <%= explicit || '-- select --' %>
         </option>
         <% [ 'Yes', 'No'].forEach(item => { %>
-          <% if(explicit.toLowerCase().trim() !== item.toLowerCase()) { %>
+          <% if(!explicit || explicit && (explicit.toLowerCase().trim() !== item.toLowerCase())) { %>
             <option value="<%= item.toLowerCase() %>"><%= item %></option>
           <% } %>
          <% }) %>
@@ -159,19 +140,25 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
   </div>
   <div class="music-form__body__3">
     <div class="music-form__body__3--1">
+      <% const years = new Array(2020-2009).fill(0).map((n, index) => 2020 -
+          index) %>
       <div class="form__input">
         <label class="form__input--label">
           <span>Copyright Year</span>
           <span>*</span>
         </label>
-        <input
+        <select
           type="number"
           class="form__input--element"
           name="copyrightYear"
           <%= copyrightYear && 'data-ignore=true' %>
-          value="<%= copyrightYear || '' %>"
           required
-        />
+        >
+        <option value="<%= copyrightYear || '' %>"><%= copyrightYear || '-- select --' %></option>
+          <% years.filter(year => year !== copyrightYear).forEach(year => { %>
+            <option value="<%= year %>"><%= year %></option>
+          <% }) %>
+        </select>
         <div class="form__input--text"></div>
       </div>
       <div class="form__input">
@@ -190,25 +177,9 @@ copyrightHolder: '', explicit: '', genre: '', track: ''} %>
         <div class="form__input--text"></div>
       </div>
     </div>
-    <div class="form__input music-form__body__3--2">
-      <div class="form__input">
-        <label class="form__input--label">
-          <span>Select Genre</span>
-          <span>*</span>
-        </label>
-        <select name="genre" required class="form__input--element"  <%= genre && 'data-ignore=true' %>>
-        <option value="<%= genre ? genre : ""%>"> <%= genre ? genre : '-- select --' %>
-          <% genreList.forEach(item =>{ %>
-          <% if(genre.toLowerCase().trim() !== item.toLowerCase()) { %>
-            <option value="<%= item.toLowerCase() %>"><%= item %></option>
-          <% } %>
-         <% }) %>
-        </select>
-        <div class="form__input--text"></div>
-      </div>
-    </div>
     <input class="form__input--element" type="hidden" name="track" <%= track
     && 'data-ignore=true' %> value='<%= track %>' />
+    <input type="hidden" name="releaseId" value="<%= releaseId %>">
   </div>
 </div>
 <div class="music-form__done -u-flexerize">

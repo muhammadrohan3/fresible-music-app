@@ -38,6 +38,12 @@ module.exports = {
       },
       price: {
         type: Sequelize.STRING,
+        defaultValue: "99",
+      },
+      storeType: {
+        type: Sequelize.ENUM,
+        values: ["all", "stream", "download", "custom"],
+        defaultValue: "all",
       },
       status: {
         type: Sequelize.ENUM,
@@ -81,15 +87,8 @@ module.exports = {
       secondaryGenre: {
         type: Sequelize.STRING,
       },
-      artworkUploadId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "uploads",
-          key: "id",
-        },
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+      artwork: {
+        type: Sequelize.STRING,
       },
       artistId: {
         type: Sequelize.INTEGER,

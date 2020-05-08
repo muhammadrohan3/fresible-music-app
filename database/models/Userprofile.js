@@ -12,12 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       bankAccount: DataTypes.STRING,
       bankAccountNo: DataTypes.STRING,
       userId: DataTypes.INTEGER,
-      avatarId: DataTypes.INTEGER,
+      avatar: DataTypes.STRING,
     },
     {}
   );
-  Userprofile.associate = function ({ Upload }) {
-    this.belongsTo(Upload, { foreignKey: "avatarId", as: "userAvatar" });
-  };
+  Userprofile.associate = function ({}) {};
   return Userprofile;
 };

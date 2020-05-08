@@ -9,13 +9,12 @@ module.exports = (sequelize, DataTypes) => {
       twitter: DataTypes.STRING,
       instagram: DataTypes.STRING,
       userId: DataTypes.INTEGER,
-      avatarId: DataTypes.INTEGER,
+      avatar: DataTypes.STRING,
     },
     {}
   );
-  Labelartist.associate = function ({ User, Upload }) {
+  Labelartist.associate = function ({ User }) {
     this.belongsTo(User, { foreignKey: "userId", as: "labelArtist" });
-    this.belongsTo(Upload, { foreignKey: "avatarId", as: "artistAvatar" });
   };
   return Labelartist;
 };

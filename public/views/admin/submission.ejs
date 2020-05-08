@@ -1,7 +1,10 @@
-<div class="-u-page submission">
+<% const {id, type, status, title, comment, subscription, releaseDate,
+  approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artwork, copyrightYear, copyrightHolder, primaryGenre, secondaryGenre} = pageData;
+  %>
+  <% const stageName = labelArtist ? labelArtist.stageName :
+  user.profile.stageName %>
+<div class="-u-page submission" id="submission" data-data="<%= JSON.stringify({id, linkId, stageName, title, link}) %>">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
-  <% const {id, type, status, title, comment, subscription, releaseDate,
-    approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artworkUpload} = pageData;%>
   <div class="single-head">
     <a class="single-head__back" href="/fmadmincp/submissions">
       <span
@@ -52,7 +55,7 @@
             <div class="submission__details__overview__image__box__container">
               <img
               class="submission__details__overview__image__box__container--img"
-              src="<%= (artworkUpload || {}).secureUrl || '/dist/no-image.jpg' %>"
+              src="<%= artwork || '/dist/no-image.jpg' %>"
               alt="<%= title %> artwork"
             />
             </div>
@@ -69,8 +72,7 @@
                   <%=type === 'track' ? 'single' : 'album' %> by
                 </div>
                 <div class="submission__list__item--details">
-                  <%= Fns.capitalize(labelArtist ? labelArtist.stageName :
-                  user.profile.stageName) %>
+                  <%= Fns.capitalize(stageName) %>
                 </div>
               </li>
               <li class="submission__list__item">
@@ -88,6 +90,26 @@
                 <div class="submission__list__item--details">-</div>
               </li>
               <li class="submission__list__item">
+                <div class="submission__list__item--title">Copyright Holder</div>
+                <div class="submission__list__item--details"><%=Fns.capitalize(copyrightHolder) %></div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Copyright Year</div>
+                <div class="submission__list__item--details">
+                  <%=Fns.capitalize(copyrightYear) %>
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Primary Genre</div>
+                <div class="submission__list__item--details"><%=Fns.capitalize(primaryGenre) %></div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Secondary Genre</div>
+                <div class="submission__list__item--details">
+                  <%=Fns.capitalize(secondaryGenre) %>
+                </div>
+              </li>
+              <li class="submission__list__item">
                 <div class="submission__list__item--title">Sub. package</div>
                 <div class="submission__list__item--details">
                   <%= Fns.capitalize(subscription.package.package) %>
@@ -100,17 +122,17 @@
                     class="badge badge-pill badge-<%=Fns.colorText(subscription.status) %>"
                     ><%= subscription.status %></span
                   >
-                  <span><a class="ml-3" href="/fmadmincp/subscription?id=<%= subscription.id %>">view</a></span>
+                  <span><a class="ml-3" href="/fmadmincp/subscription/<%= subscription.id %>">view</a></span>
                 </div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">SUBSCRIBER</div>
-                <div class="submission__list__item--details"><%= user.profile.stageName %></div>
+                <div class="submission__list__item--details"><%= user.firstName + ' ' + user.lastName %></div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">profile</div>
                 <div class="submission__list__item--details">
-                  <a href="/fmadmincp/subscriber?id=<%= user.id %>">view</a>
+                  <a href="/fmadmincp/subscriber/<%= user.id %>">view</a>
                 </div>
               </li>
             </ul>
@@ -173,28 +195,23 @@
           <thead>
             <tr>
               <th>Title</th>
-              <th>Artiste</th>
-              <th>Featured</th>
-              <th>Genre</th>
-              <th>Explicit</th>
-              <th>Copyright</th>
-              <th>Year</th>
-              <th>Upload</td>
+              <th  data-align='center'>Featured</th>
+              <th data-align='center'>Explicit</th>
+              <th data-align='center'>Copyright</th>
+              <th data-align='center'>Year</th>
+              <th data-align='right'>Upload</td>
             </tr>
           </thead>
           <tbody>
-            <% tracks.forEach(({title, artiste, featured, genre, explicit,
-            copyrightYear, copyrightHolder, trackUpload}) => { %>
-              <% const {secureUrl = null} = trackUpload || {} %>
+            <% tracks.forEach(({title, featured, explicit,
+            copyrightYear, copyrightHolder, track}) => { %>
             <tr>
               <td><%= title %></td>
-              <td><%= artiste %></td>
               <td><%= featured %></td>
-              <td><%= genre %></td>
               <td><%= explicit %></td>
               <td><%= copyrightHolder %></td>
               <td><%= copyrightYear %></td>
-              <td><%- secureUrl && `<a href='${secureUrl}'>view</a>` %></td>
+              <td><%- track && `<a href='${track}'>view</a>` %></td>
             </tr>
             <% }) %>
           </tbody>
@@ -218,8 +235,8 @@
       <% if(['incomplete', 'processing', 'declined'].includes(status)) { %>
       <div class="col-xs-12 col-md">
         <button
+        id="approve"
           class="btn btn-success"
-          data-url="/fmadmincp/submission/action/approve?id=<%=id %>"
         >
           Approve
         </button>
@@ -230,7 +247,6 @@
         <button
           id="decline"
           class="btn btn-danger"
-          data-url="/fmadmincp/submission/action/decline?id=<%=id %>"
         >
           Decline
         </button>
@@ -240,20 +256,15 @@
       <div class="col-xs-12 col-md">
         <% if(status === 'in stores') { %>
         <button
-          id="store-link"
+          id="edit-links"
           class="btn-outline"
-          data-type="edit"
-          data-link_id="<%=Fns.idLookUp(linkId) %>"
         >
           Edit Links
         </button>
         <% } else { %>
         <button
-          id="store-link"
+          id="add-links"
           class="btn btn-primary"
-          data-type="add"
-          data-submission_id="<%=id %>"
-          data-details="<%=JSON.stringify({stageName: user.type === 'label' ? labelArtist.stageName : user.profile.stageName, title}) %>"
         >
           Add Links
         </button>
@@ -266,8 +277,8 @@
   <div class="mt-3 text-center">
     <% if(['incomplete', 'processing', 'declined'].includes(status)) { %>
     <button
+      id="delete"
       class="btn btn-danger"
-      data-url="/fmadmincp/submission/action/delete?id=<%=id %>"
     >
       Delete
     </button>
