@@ -8,6 +8,8 @@ const {
   SAMEAS,
   TEMPKEY,
   ACCOUNTVERIFY,
+  SITEDATA,
+  PAGEDATA
 } = require("../constants");
 
 module.exports = (Controller) => {
@@ -33,8 +35,8 @@ module.exports = (Controller) => {
   router.get(
     "/",
     sameAs("isVerified", true, USER),
-    redirectIf(SAMEAS, true, "/confirm-account/proceed"),
-    fromReq(USER, ["email"], "siteData"),
+    redirectIf(SAMEAS, true, "/"),
+    fromReq(USER, ["email"], [SITEDATA, PAGEDATA]),
     pageRender()
   );
 
@@ -42,7 +44,7 @@ module.exports = (Controller) => {
   router.post(
     "/",
     fromReq(USER, null, TEMPKEY),
-    sameAs("isVerified", true, TEMPKEY),
+    sameAs("isVerified", 0, TEMPKEY),
     respondIf(SAMEAS, true, "User already verified"),
     generateToken(10, SCHEMADATA),
     schemaQueryConstructor(USER, ["email"]),
@@ -59,18 +61,6 @@ module.exports = (Controller) => {
     schemaQueryConstructor("query", ["token"]),
     redirectIf(SCHEMAQUERY, false, "/"),
     addToSchema(SCHEMADATA, { isVerified: 1 }),
-    updateSchemaData(USER),
-    redirectIf(SCHEMAMUTATED, false, "/"),
-    redirect("/")
-  );
-
-  // This GET route is internally called to do some checks and update the DB if necessary
-  router.get(
-    "/proceed",
-    sameAs("profileActive", 2, USER),
-    redirectIf(SAMEAS, false, "/"),
-    addToSchema(SCHEMADATA, { profileActive: 3 }),
-    schemaQueryConstructor(USER, ["id"]),
     updateSchemaData(USER),
     redirect("/")
   );

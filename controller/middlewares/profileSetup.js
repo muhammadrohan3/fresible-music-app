@@ -4,15 +4,18 @@ const { User } = require("../../database/models/index");
 
 const handleProfileSetupUpdate = ({ getStore, req }) => async (
   handlerId,
-  userIdLocation = []
+  userLocation = []
 ) => {
-  const { profileSetup, type, id } = req.user;
+  let user = req.user;
+  if (userLocation.length) {
+    user = userLocation.length ? valExtractor(getStore(), userLocation) : id;
+  }
+
+  const { profileSetup, type, id } = user;
+  if (!profileSetup || !type || !id)
+    throw new Error("HANDLE PROFILE SETUP PARAMETER(S) MISSING");
   if (profileSetup === "completed" || handlerId !== profileSetup) return;
 
-  //Get the userId
-  const userId = userIdLocation.length
-    ? valExtractor(getStore(), userIdLocation)
-    : id;
   const labelSetupRoute = [
     "select-account",
     "complete-profile",
@@ -42,7 +45,7 @@ const handleProfileSetupUpdate = ({ getStore, req }) => async (
   const nextStep = routeList[currentStepIndex + 1];
   if (!nextStep) return;
 
-  await User.update({ profileSetup: nextStep }, { where: { id: userId } });
+  await User.update({ profileSetup: nextStep }, { where: { id } });
   return;
 };
 

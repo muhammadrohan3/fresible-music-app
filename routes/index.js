@@ -272,8 +272,8 @@ router.get(
 
 // This GET route renders a user's single subscription
 router.get(
-  "/subscription",
-  schemaQueryConstructor("query", ["id"], null, true),
+  "/subscription/:id",
+  schemaQueryConstructor("params", ["id"], null, true),
   redirectIf(SCHEMAQUERY, false, "/subscriptions"),
   schemaQueryConstructor("user", ["id"], ["userId"]),
   addToSchema(SCHEMAINCLUDE, [
@@ -288,6 +288,7 @@ router.get(
   getOneFromSchema(USERPACKAGE),
   redirectIf(SCHEMARESULT, false, "/subscriptions"),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
+  addToSchema(SITEDATA, {page: "subscription"}),
   pageRender()
 );
 

@@ -27,8 +27,7 @@
     filter_target:'#artist-release-select'}}}) %> <% } else { %> <%-
     include('../partials/form/select', {formData: {label: 'Package', name:
     'packageId', id: 'artist-packages-select', required: '*required', options:
-    pageData.map(({id, stageName}) => [id, stageName]),dataAttributes:
-    {filter_name: 'packageReleaseTypes',
+    pageData,dataAttributes: {filter_name: 'packageReleaseTypes',
     filter_target:'#artist-release-select'}}}) %> <% } %>
 
     <!-- SELECT RELEASE TYPE -->

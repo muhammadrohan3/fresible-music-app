@@ -112,6 +112,7 @@ module.exports = (Controller) => {
     redirectIf("USER_SUBSCRIPTIONS", false, "/create"),
     copyKeyTo("USER_SUBSCRIPTIONS", SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "addMusic/create", title: "Create Release" }),
+    seeStore([SITEDATA, PAGEDATA]),
     pageRender()
   );
 

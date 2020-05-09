@@ -163,11 +163,13 @@ module.exports = (Controller) => {
     addToSchema(SCHEMADATA, { status: "active", paymentDate: new Date() }),
     updateSchemaData(USERPACKAGE),
     respondIf(SCHEMAMUTATED, false, "Error occured activating subscription"),
-    addToSchema(SCHEMAINCLUDE, [{ m: USER, at: ["firstName", "email", "id"] }]),
+    addToSchema(SCHEMAINCLUDE, [
+      { m: USER, at: ["firstName", "email", "id", "type", "profileSetup"] },
+    ]),
     getOneFromSchema(USERPACKAGE, ["id"]),
     urlFormer("/subscription", SCHEMAQUERY),
     sendMail("subscriptionActivated"),
-    handleProfileSetupUpdate("payment", [SCHEMARESULT, "user", "id"]),
+    handleProfileSetupUpdate("payment", [SCHEMARESULT, "user"]),
     respond(1)
   );
 

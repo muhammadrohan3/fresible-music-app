@@ -51,6 +51,20 @@ module.exports = (Controller) => {
     handleProfileSetupUpdate,
   } = Controller;
 
+
+    // This GET Route is internally called to get subscription Id (for new subscribers)
+  router.get(
+    "/",
+    fromReq("user", ["profileSetup"], TEMPKEY),
+    sameAs("profileSetup", "payment", TEMPKEY),
+    redirectIf(SAMEAS, false, "/"),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    getOneFromSchema(USERPACKAGE),
+    resetKey(TEMPKEY),
+    fromStore(SCHEMARESULT, ["id"], TEMPKEY),
+    redirect("/payment/{id}", TEMPKEY)
+  );
+
   // This POST route is called from the frontend to generate a payment URL for the user
   router.post(
     "/",
@@ -85,7 +99,7 @@ module.exports = (Controller) => {
     fromReq("query", ["reference"], PAYSTACK_PARAMS),
     redirectIf(PAYSTACK_PARAMS, false, "/payment/history"),
     paystack(PAYSTACK_VERIFY),
-    deepKeyExtractor(STORE, [PAYSTACK_RESPONSE, "metadata"], TEMPKEY),
+    fromStore([PAYSTACK_RESPONSE, "metadata"], null, TEMPKEY),
     fromStore(TEMPKEY, ["paymentId"], SCHEMAQUERY, ["id"]),
     sameAs("status", "success", PAYSTACK_RESPONSE),
     redirectIf(SAMEAS, false, "/payment/verify/failed", SCHEMAQUERY),
@@ -102,7 +116,7 @@ module.exports = (Controller) => {
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
     handleProfileSetupUpdate("payment"),
-    redirect("/payment", TEMPKEY)
+    redirect("/payment/{id}", TEMPKEY)
   );
 
   /// This POST route does almost the same thing as the route above
@@ -146,19 +160,7 @@ module.exports = (Controller) => {
     respond(1)
   );
 
-  // This GET Route is internally called to get subscription Id (for new subscribers)
-  router.get(
-    "/get-sub-id",
-    fromReq("user", ["profileActive"], TEMPKEY),
-    sameAs("profileActive", 6, TEMPKEY),
-    redirectIf(SAMEAS, false, "/"),
-    schemaQueryConstructor("user", ["id"], ["userId"]),
-    getOneFromSchema(USERPACKAGE),
-    resetKey(TEMPKEY),
-    resetKey(SCHEMAQUERY),
-    fromStore(SCHEMARESULT, ["id"], TEMPKEY),
-    redirect("/payment", TEMPKEY)
-  );
+
 
   // This GET route renders the page containing user's payment history
   router.get(
@@ -183,7 +185,7 @@ module.exports = (Controller) => {
 
   // This GET route renders the page containing a single payment history
   router.get(
-    "/history/:id",
+    "/history/single/:id",
     schemaQueryConstructor("params", ["id"]),
     redirectIf(SCHEMAQUERY, false, "/payment/history"),
     schemaQueryConstructor("user", ["id"], ["userid"]),
