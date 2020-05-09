@@ -321,7 +321,7 @@ module.exports = (Controller) => {
     resetKey([SCHEMAQUERY, SCHEMARESULT, SCHEMAINCLUDE, SCHEMAOPTIONS]),
     getAllFromSchema(STORE, null, { limit: null, order: [["id", "ASC"]] }),
     copyKeyTo(SCHEMARESULT, [SITEDATA, PAGEDATA], "allStores"),
-    seeStore([SITEDATA, PAGEDATA, "releaseDate"]),
+    seeStore([SITEDATA, PAGEDATA]),
     addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
     pageRender()
   );
