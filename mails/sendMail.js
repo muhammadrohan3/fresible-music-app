@@ -1,9 +1,9 @@
 const ejs = require("ejs");
-// const sgMail = require("@sendgrid/mail");
-const transporter = require("./config");
+const sgMail = require("@sendgrid/mail");
+// const transporter = require("./config");
 const getMailTemplate = require("../public/path/getMailTemplate");
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = ({ subject, email, template, variables }) => {
   return new Promise((resolve, reject) =>
@@ -16,15 +16,15 @@ module.exports = ({ subject, email, template, variables }) => {
         html: data, // html body
       };
       console.log("SENDING MAIL TO: ", email);
-      transporter
-        .sendMail(mailOptions)
-        .then((status) => (status ? resolve(true) : resolve(false)))
-        .catch((e) => reject(e));
+      // transporter
+      //   .sendMail(mailOptions)
+      //   .then((status) => (status ? resolve(true) : resolve(false)))
+      //   .catch((e) => reject(e));
 
-      // sgMail
-      //   .send(mailOptions)
-      //   .then((res) => resolve(res))
-      //   .catch((e) => reject(e.response ? e.response.body : e));
+      sgMail
+        .send(mailOptions)
+        .then((res) => resolve(res))
+        .catch((e) => reject(e.response ? e.response.body : e));
     })
   );
 };
