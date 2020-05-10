@@ -100,7 +100,7 @@ module.exports = (Controller) => {
     addToSchema(TEMPKEY, { status: "published" }),
     addToSchema(SCHEMAINCLUDE, [{ m: ANALYTICSDATE, w: [TEMPKEY] }]),
     seeStore([SCHEMAOPTIONS]),
-    getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]]),
+    getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]], { limit: 130 }),
     respond([SCHEMARESULT])
   );
 
@@ -117,7 +117,6 @@ module.exports = (Controller) => {
   router.get(
     "/get/topStores",
     schemaQueryConstructor("query", ["releaseId"]),
-    addToSchema(SCHEMAOPTIONS, { limit: 3 }),
     addToSchema(TEMPKEY, { status: "published" }),
     addToSchema(SCHEMAINCLUDE, [
       { m: STORE, at: ["store"] },
@@ -125,6 +124,7 @@ module.exports = (Controller) => {
     ]),
     getAllFromSchema(ANALYTICS, [["SUM", "count", "total"]], {
       group: ["storeId"],
+      limit: 3,
       order: [[["SUM", "count", "DESC"]]],
     }),
     respond([SCHEMARESULT])
@@ -259,7 +259,7 @@ module.exports = (Controller) => {
     sameAs("status", "initiating", SCHEMARESULT),
     redirectIf(SAMEAS, false, "/fmadmincp/analytics/{id}/edit", [SCHEMAQUERY]),
     resetKey([SCHEMARESULT, SCHEMAQUERY]),
-    getAllFromSchema(STORE, ["id", "store"]),
+    getAllFromSchema(STORE, ["id", "store"], { limit: null }),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, {
       page: "analyticsInitiate",

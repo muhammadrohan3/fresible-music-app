@@ -1,9 +1,10 @@
 import Chart from "chart.js";
 import View from "../View";
+import sortGraph from "../utilities/sortGraph";
 
 export default (data, target, options = {}) => {
   const { legend = false } = options;
-
+  data.datasets = sortGraph(data.datasets);
   new Chart(View.getElement(target), {
     type: "line",
     data: data,
@@ -30,6 +31,7 @@ export default (data, target, options = {}) => {
             drawTicks: false,
             ticks: {
               display: false,
+              beginAtZero: true,
             },
             gridLines: {
               display: false,

@@ -97,6 +97,8 @@ module.exports = (Controller) => {
   //This GET route renders the add-music create page
   router.get(
     "/create",
+    isValueIn("profileSetup", ["select-package"], USER),
+    redirectIf(SAMEAS, true, "/select-package"),
     sameAs("type", "label", USER),
     redirectIf(SAMEAS, true, "/add-music/create/label"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
@@ -109,16 +111,17 @@ module.exports = (Controller) => {
     ]),
     getAllFromSchema(USERPACKAGE, ["id", "status"]),
     addMusic_structureSubs(),
-    redirectIf("USER_SUBSCRIPTIONS", false, "/create"),
+    redirectIf("USER_SUBSCRIPTIONS", false, "/select-package"),
     copyKeyTo("USER_SUBSCRIPTIONS", SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "addMusic/create", title: "Create Release" }),
-    seeStore([SITEDATA, PAGEDATA]),
     pageRender()
   );
 
   //This GET route renders the add-music create variant for label subscribers
   router.get(
     "/create/label",
+    isValueIn("profileSetup", ["select-package"], USER),
+    redirectIf(SAMEAS, true, "/select-package"),
     sameAs("type", "label", USER),
     redirectIf(SAMEAS, false, "/add-music/create"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
@@ -321,7 +324,6 @@ module.exports = (Controller) => {
     resetKey([SCHEMAQUERY, SCHEMARESULT, SCHEMAINCLUDE, SCHEMAOPTIONS]),
     getAllFromSchema(STORE, null, { limit: null, order: [["id", "ASC"]] }),
     copyKeyTo(SCHEMARESULT, [SITEDATA, PAGEDATA], "allStores"),
-    seeStore([SITEDATA, PAGEDATA]),
     addToSchema(SITEDATA, { page: "addMusic/index", title: "Release Setup" }),
     pageRender()
   );

@@ -1,0 +1,61 @@
+<div class="complete-profile">
+  <form
+    class="form -u-form-input-spacing"
+    id="complete-profile"
+    data-validation="completeProfile"
+    data-submitUrl="/complete-profile"
+  >
+    <div class="form__head">
+      <h2></h2>
+    </div>
+    <div class="alert alert-info mb-4">
+      We need more information from you to get started, please complete your
+      profile by filling the fields below
+    </div>
+
+    <% if(loggedInAccountType !== 'label') { %>
+    <!-- STAGE NAME -->
+    <%- include('./partials/form/input', {formData: {required: '*required',
+    label: `Stage Name`, name: 'stageName'}}) %> <% } %>
+
+    <!-- RECORD LABEL -->
+    <%- include('./partials/form/input', {formData: { label: `Record Label`,
+    name: 'label', inputText: `Fill this only if you have a record label`}}) %>
+
+    <!-- TWITTER HANDLE -->
+    <%- include('./partials/form/input', {formData: {label: `Twitter handle`,
+    name: 'twitter', inputText: `Should contain '@' - e.g @fresible`}}) %>
+
+    <!-- INSTAGRAM HANDLE -->
+    <%- include('./partials/form/input', {formData: {label: `Instagram handle`,
+    name: 'instagram', inputText: `Should contain '@' - e.g @fresible`}}) %>
+
+    <!-- AVATAR UPLOAD -->
+    <%- include("./partials/form/imageFile", {formData: {name: 'avatar', size:
+    '1', label: 'Account Avatar'}}) %>
+
+    <!-- PHONE -->
+    <%- include('./partials/form/input', {formData: {label: `Phone`, name:
+    'phone', type: 'number', inputText: `Phone number should be in this format -
+    08030xxxxxx (11 digits)`, required: '*required'}}) %>
+
+    <!-- BANK  -->
+    <%- include('./partials/form/input', {formData: {label: `Bank`, name:
+    'bank'}}) %>
+
+    <!-- ACCOUNT NAME  -->
+    <%- include('./partials/form/input', {formData: {label: `Account Name`,
+    name: 'bankAccount'}}) %>
+
+    <!-- ACCOUNT NUMBER  -->
+    <%- include('./partials/form/input', {formData: {label: `Account Number`,
+    name: 'bankAccountNo'}}) %>
+
+    <div class="form__submit">
+      <div></div>
+      <button type="submit" class="form__submit--btn btn-primary">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>

@@ -3,7 +3,6 @@ import serverRequest from "../utilities/serverRequest";
 import View from "../View";
 import LineGraph from "./LineGraph";
 import DoughnutChart from "./DoughnutChart";
-import sortGraph from "../utilities/sortGraph";
 import Log from "../templates/log";
 import { mainChart, subChart } from "../templates/dashboardCanvas";
 
@@ -57,7 +56,7 @@ export default class AdminDashboard {
       }
     }
 
-    const datasets = sortGraph([
+    const datasets = [
       {
         label: "Subscribers",
         backgroundColor: "#eab8f6",
@@ -76,7 +75,7 @@ export default class AdminDashboard {
         borderColor: "#6262af",
         data: dateObj.releases,
       },
-    ]);
+    ];
 
     const data = {
       labels: days,

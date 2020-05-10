@@ -446,29 +446,16 @@
       padding: 3rem;
       &__image {
         flex: 1;
-        &__box {
-          height: 100%;
-          max-height: 20rem;
-          padding: 0.6rem;
-          @include border($color-light-grey);
-          &__container {
-            height: 100%;
-            overflow: hidden;
-            &--img {
-              height: 100%;
-              width: 100%;
-              object-fit: cover;
-              object-position: center;
-            }
-          }
-        }
+        width: 100%;
+        overflow: hidden;
         &__container {
+          @include border($color-light-grey);
+          padding: 0.6rem;
           height: 100%;
           width: 100%;
-          overflow: hidden;
-          @include border;
+          max-height: 20rem;
+          // overflow: hidden;
           &--img {
-            display: none;
             object-fit: cover;
             object-position: center;
           }

@@ -95,15 +95,15 @@ class View {
     return typeof id === "string" ? document.querySelector(id) : id;
   }
 
-  showAlert(text, stay) {
+  showAlert(text, stay = true) {
     if (!text) return this.removeClass("#page-alert", "page__alert--show");
     this.showLoader(false);
     this.addContent("#page-alert-text", text, true);
     this.addClass("#page-alert", "page__alert--show");
-    if (stay && Number.isNaN(stay)) return;
+    if (stay && Number.isNaN(stay)) stay = 10;
     return setTimeout(
-      () => this.removeClass("#page-alert", "page__alert--show"),
-      (stay && stay * 1000) || 2500
+      () => removeClass("#page-alert", "page__alert--show"),
+      stay * 1000
     );
   }
 

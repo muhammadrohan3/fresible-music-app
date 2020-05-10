@@ -12,8 +12,9 @@ const handleProfileSetupUpdate = ({ getStore, req }) => async (
   }
 
   const { profileSetup, type, id } = user;
-  if (!profileSetup || !type || !id)
+  if (!profileSetup || type === undefined || !id) {
     throw new Error("HANDLE PROFILE SETUP PARAMETER(S) MISSING");
+  }
   if (profileSetup === "completed" || handlerId !== profileSetup) return;
 
   const labelSetupRoute = [
@@ -79,12 +80,12 @@ const isUserAccountOnSetup = ({ req, res }) => () => {
       return handle("/complete-profile");
     case "add-artist":
       return handle("/artists/add-artist");
-    case "select-package":
-      return handle("/select-package");
-    case "add-release":
-      return handle("/add-music");
-    case "payment":
-      return handle("/payment");
+    // case "select-package":
+    //   return handle("/select-package");
+    // case "add-release":
+    //   return handle("/add-music");
+    // case "payment":
+    //   return handle("/payment");
     default:
       return handle(false);
   }

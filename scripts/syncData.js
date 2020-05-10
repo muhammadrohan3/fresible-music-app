@@ -12,6 +12,8 @@ const {
   Log,
   Link,
   Labelartist,
+  Analyticsdate,
+  Analytic,
 } = require("../database/models/index");
 
 const route = [
@@ -27,6 +29,8 @@ const route = [
   ["albums"],
   ["albumtracks", Track],
   ["logs", Log],
+  ["analyticsdates", Analyticsdate],
+  ["analytics", Analytic],
 ];
 
 const preRun = [
@@ -47,10 +51,19 @@ const jsonData = JSON.parse(
   )
 );
 
+const analyticsData = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "/analytics.json"), {
+    encoding: "utf-8",
+  })
+);
+
 const dataHash = jsonData.reduce((acc, { type, name, data }) => {
   if (type !== "table") return acc;
   return { ...acc, [name.toLowerCase()]: data };
 }, {});
+
+dataHash["analytics"] = analyticsData["analytics"];
+dataHash["analyticsdates"] = analyticsData["analyticsdates"];
 
 const users = dataHash["users"];
 
@@ -239,7 +252,7 @@ for (let user of users) {
       //     console.log(user.id, user.profileSetup)
       //   );
       // }
-      await Handler.bulkCreate(data);
+      await Handler.bulkCreate(data, { updateOnDuplicate: ["id"] });
     }
     console.log("DONE");
   } catch (e) {

@@ -58,14 +58,14 @@ export default (() => {
       params,
     });
 
-    const dataValues = [];
+    const dataValues = [0, 0, 0];
     const labels = [];
 
-    response.data.forEach(({ total, store: { store } }) => {
-      dataValues.push(Number(total));
+    response.data.forEach(({ total, store: { store } }, index) => {
+      dataValues[index] = Number(total);
       labels.push(store);
     });
-
+    debugger;
     const data = {
       datasets: [
         {
@@ -114,8 +114,14 @@ export default (() => {
   };
 
   const _chartUI = (chartData, query) => {
-    const { dates, datasets } = chartData;
+    let { dates, datasets } = chartData;
     const { range } = query;
+
+    dates = [...dates].reverse();
+    datasets = datasets.map((item) => ({
+      ...item,
+      data: [...item.data].reverse(),
+    }));
     const formattedDates = dates.map((date) => {
       const m = moment(date);
       if (range === 7) return m.format("ddd");
@@ -126,9 +132,12 @@ export default (() => {
       ejs.render(analyticsGraphCanvas),
       true
     );
+
+    debugger;
+
     const data = {
       labels: formattedDates,
-      datasets,
+      datasets: datasets.reverse(),
     };
     LineGraph(data, "#analytics-graph");
   };

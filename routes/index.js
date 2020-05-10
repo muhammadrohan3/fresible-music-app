@@ -117,14 +117,14 @@ router.get(
 
 router.get(
   "/select-account",
-  sameAs("profileActive", 0, USER),
+  sameAs("profileSetup", "select-account", USER),
   redirectIf(SAMEAS, false, "/"),
   pageRender()
 );
 
 router.post(
   "/select-account",
-  sameAs("profileActive", "select-account", USER),
+  sameAs("profileSetup", "select-account", USER),
   respondIf(SAMEAS, false, "Error: access denied"),
   schemaDataConstructor("body", ["accountType"], ["type"]),
   respondIf(SCHEMADATA, false, "Error: request incomplete"),
@@ -178,8 +178,8 @@ router.post(
   respondIf(SCHEMARESULT, false, "Could not process the request, try again..."),
   fromStore(SCHEMARESULT, ["id"], "tempKey"),
   urlFormer("/subscription", "tempKey"),
-  sendMail(NEWSUBSCRIPTION),
   handleProfileSetupUpdate("select-package"),
+  sendMail(NEWSUBSCRIPTION),
   respond(1)
 );
 
@@ -280,15 +280,16 @@ router.get(
     {
       m: RELEASE,
       al: "releases",
-      w: [{ status: "deleted" }, "not"],
-      r: false,
+      // w: [{ status: "deleted" }, "not"],
+      // r: false,
     },
     { m: PACKAGE, at: ["package", "maxTracks", "maxAlbums"] },
   ]),
   getOneFromSchema(USERPACKAGE),
   redirectIf(SCHEMARESULT, false, "/subscriptions"),
   copyKeyTo(SCHEMARESULT, SITEDATA, "pageData"),
-  addToSchema(SITEDATA, {page: "subscription"}),
+  addToSchema(SITEDATA, { page: "subscription" }),
+  seeStore([SITEDATA, PAGEDATA]),
   pageRender()
 );
 

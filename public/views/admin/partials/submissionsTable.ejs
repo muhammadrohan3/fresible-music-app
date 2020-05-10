@@ -1,6 +1,10 @@
 <div class="submissions">
   <% const { count, rows } = pageData %>
-  <table class="table table-hover text-center submissions__table">
+  <table
+    data-toggle="table"
+    data-pagination="true"
+    class="table table-hover text-center submissions__table"
+  >
     <thead class="submissions__table--head">
       <tr>
         <th>Id</th>
@@ -30,7 +34,7 @@
           >
         </td>
         <td><%=type %></td>
-        <td><%= Fns.dateTimeFormat(createdAt) %></td>
+        <td><%= Fns.dateFormat(createdAt) %></td>
         <td>
           <a href="/fmadmincp/submission/<%= Fns.idLookUp(id) %>">edit</a>
         </td>

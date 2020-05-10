@@ -8,10 +8,10 @@ export default `
         data-inline="false"
       ></span>
       <div class='logger__body__item--text'>
-        <a href='/fmadmincp/subscriber?id=<%= userId %>'><%= user.firstName %></a> <%= action %>    
+        <a href='/fmadmincp/subscriber/<%= userId %>'><%= user.firstName %></a> <%= action %>    
         <% if(link) { %> 
             <a
-            href="/fmadmincp<%= link %>"
+            href="/fmadmincp<%= link.replace('?id=', '/') %>"
             ><%= type %></a> 
         <% } %>
       </div>

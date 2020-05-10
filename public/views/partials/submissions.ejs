@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody>
-      <% rows && rows.forEach((row) => { %>
+      <% (rows || pageData || []).forEach((row) => { %>
       <!--  -->
       <% const {id, title, type, status, createdAt} = row %>
       <tr>

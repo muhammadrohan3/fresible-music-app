@@ -127,12 +127,6 @@
   color: $color-white;
   cursor: pointer;
   transition: all 0.3s ease;
-  &:focus,
-  &:active,
-  &:hover {
-    outline: none;
-    background-color: $color-secondary;
-  }
 
   &-disabled {
     pointer-events: none !important;
@@ -144,6 +138,12 @@
     background-color: $color-primary;
     color: $color-white !important;
     padding: 10px 13px;
+    &:focus,
+    &:active,
+    &:hover {
+      outline: none;
+      background-color: $color-secondary;
+    }
   }
 
   &-outline {
@@ -154,6 +154,7 @@
     &:focus,
     &:active,
     &:hover {
+      background-color: $color-primary;
       color: $color-white;
     }
   }
@@ -1709,6 +1710,159 @@
     }
     &__table {
       overflow-x: auto;
+    }
+  }
+}
+
+////////////////////////////////PROGRESS STEPPER>>>>>>>>>>>>>>>>
+$stepper-desktop-padding: 20px;
+$stepper-mobile-padding: 10px;
+$stepper-font-size: 13px;
+$stepper-color-done: #178a00;
+$stepper-color-current: #006dff;
+$stepper-color-pending: #807370;
+$stepper-color-hover: #000;
+$stepper-divider-color: #e2dfda;
+
+$font-size-base: 15px !default;
+.stepper {
+  padding: $stepper-mobile-padding;
+  font-size: $stepper-font-size;
+
+  @media (min-width: $sm) {
+    padding: $stepper-desktop-padding;
+  }
+
+  // List
+
+  &__list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    @media (min-width: $sm) {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    // Items
+    &__item {
+      padding: 3px 5px;
+      text-align: center;
+      position: relative;
+
+      display: flex;
+      align-items: center;
+
+      @media (min-width: $sm) {
+        padding: 10px;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      // background: #f6f6f6;
+
+      &:after {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 2;
+
+        // Mobile only
+        // border-right: 2px dotted $stepper-divider-color;
+        // height: 20%;
+        // left: 16px;
+        // top: 31px;
+
+        // Tablet and desktop
+        @media (min-width: $sm) {
+          width: calc(100% - 100px);
+          top: 28%;
+          left: calc(50% + 50px);
+          border-top: 2px dotted $stepper-divider-color;
+          // border-right: none;
+        }
+      }
+
+      // Done
+      &--done {
+        color: $stepper-color-done;
+        transition: all 0.1s;
+
+        &:after {
+          // border-right-style: solid;
+          // border-right-width: 1px;
+
+          @media (min-width: $sm) {
+            border-top-style: solid;
+            border-top-width: 1px;
+            // border-right: none;
+          }
+        }
+
+        &:hover,
+        &:focus {
+          text-decoration: underline;
+          // color: $stepper-color-hover;
+          cursor: pointer;
+        }
+      }
+
+      // Current
+      &--current {
+        color: $stepper-color-current;
+
+        // FIX
+        &:last-of-type,
+        &:only-of-type {
+          &:after {
+            height: 30%;
+          }
+        }
+      }
+
+      &:last-of-type {
+        &:after {
+          display: none;
+        }
+      }
+
+      // Pending
+      &--pending {
+        color: $stepper-color-pending;
+
+        &:after {
+          height: 30%;
+        }
+      }
+    }
+
+    &__title {
+      margin: 1px 0 0;
+
+      @media (min-width: $sm) {
+        margin: 0;
+      }
+    }
+
+    // Icons
+    &__icon {
+      margin: 0 10px 0 0;
+      height: 2em;
+      width: 2em;
+
+      @media (min-width: $sm) {
+        margin: 0 0 15px;
+      }
+
+      path {
+        fill: currentColor;
+      }
+      ellipse,
+      circle {
+        stroke: currentColor;
+      }
     }
   }
 }

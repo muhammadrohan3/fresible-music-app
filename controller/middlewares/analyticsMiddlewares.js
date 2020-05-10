@@ -13,7 +13,8 @@ const analyticsHandler = ({ getStore, setStore }) => (
   //Gets the required data from the store
   const { schemaResult, ANALYTICS_RANGE = {} } = getStore();
   const { range } = ANALYTICS_RANGE;
-  if (!schemaResult.length) return;
+  const dbData = Array.isArray(schemaResult) ? schemaResult : schemaResult.rows;
+  if (!dbData.length) return;
   // const { range } = schemaQuery;
   const structure = analyticsStructureReps[dataRepKey];
   const _generateHash = generateStructureHash(structure);
@@ -33,8 +34,8 @@ const analyticsHandler = ({ getStore, setStore }) => (
   const _getRandomColorId = () => Math.floor(Math.random() * Colors.length);
 
   const Dates = [];
-  const currentData = schemaResult.slice(0, Number(range));
-  const previousData = schemaResult.slice(Number(range));
+  const currentData = dbData.slice(0, Number(range));
+  const previousData = dbData.slice(Number(range));
   for (let i = 0; i < currentData.length; i++) {
     let subjectKeyHash = {};
     Dates.push(currentData[i].date);
@@ -46,10 +47,11 @@ const analyticsHandler = ({ getStore, setStore }) => (
       //
 
       const [key, titleRoute = []] = lineChartSubjects; //destructures the key and name from the lineChartSubject sent in as param
-      if (!key || !titleRoute.length)
+      if (!key || !titleRoute.length) {
         throw new Error(
           "ANALYTICS-HANDLER-ERROR: lineChartSubjects parameter error"
         );
+      }
       const subjectKeyHashStructure = {
         key: key,
         props: [

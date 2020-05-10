@@ -39,6 +39,7 @@ export default (target, tableData, dataColumns, functions = {}) => {
       classes: "table table-bordered",
       mobile: true,
       mobileResponsive: true,
+      pagination: data.length > 10 ? true : false,
     });
   };
 

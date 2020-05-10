@@ -67,15 +67,14 @@ const View = ((document) => {
     return typeof id === "string" ? document.querySelector(id) : id;
   };
 
-  const showAlert = (text, stay) => {
+  const showAlert = (text, stay = true) => {
     if (!text) return removeClass("#page-alert", "page__alert--show");
     showLoader(false);
     addContent("#page-alert-text", text, true);
     addClass("#page-alert", "page__alert--show");
-    if (stay && Number.isNaN(stay)) return;
     return setTimeout(
       () => removeClass("#page-alert", "page__alert--show"),
-      (stay && stay * 1000) || 2500
+      10000
     );
   };
 
