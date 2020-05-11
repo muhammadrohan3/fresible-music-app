@@ -206,9 +206,8 @@ router.get(
     {
       m: RELEASE,
       al: "release",
+      at: ["id", "title", "artwork"],
       i: [
-        { m: TRACK, at: ["artwork", "title", "featured"] },
-        { m: ALBUM, at: ["artwork", "title"] },
         {
           m: USER,
           at: ["id"],

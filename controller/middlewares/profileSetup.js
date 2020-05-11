@@ -62,6 +62,7 @@ const isUserAccountOnSetup = ({ req, res }) => () => {
       "/contact-us",
       "/profile",
       "/logout",
+      "/getReleaseLinks",
     ];
 
     if (

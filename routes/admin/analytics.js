@@ -199,7 +199,8 @@ module.exports = (Controller) => {
 
   router.get(
     "/releases/:releaseId/get",
-    fromReq("params", ["releaseId", "type"], TEMPKEY),
+    fromReq("params", ["releaseId"], TEMPKEY),
+    fromReq("query", ["type"], TEMPKEY),
     fromReq("query", ["range"], "ANALYTICS_RANGE"),
     addToSchema(SCHEMAQUERY, { status: "published" }),
     addToSchema(SCHEMAINCLUDE, [
@@ -215,6 +216,7 @@ module.exports = (Controller) => {
     ]),
     analytics_intercept("multiply", 2, ["ANALYTICS_RANGE", "range"]),
     addToSchema(SCHEMAQUERY, { status: "published" }),
+    seeStore(),
     getAllFromSchema(ANALYTICSDATE),
     analyticsHandler("release_analytics", ["trackId", ["track", "title"]]),
     seeStore([SCHEMARESULT]),
