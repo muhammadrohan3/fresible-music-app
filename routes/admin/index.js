@@ -310,7 +310,7 @@ module.exports = (Controller) => {
   );
 
   /////////
-  router.post(
+  router.put(
     "/submission/action/edit-comment",
     schemaQueryConstructor("query", ["id"]),
     schemaDataConstructor("body"),

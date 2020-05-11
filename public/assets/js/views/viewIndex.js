@@ -12,11 +12,6 @@ class View {
     this.MAIN_PAGE = this.getElement("#main-page");
     this.mobileMenuElement = this.getElement("#hamburger");
     this.LOADER_TEXT = this.getElement("#loader-text");
-
-    flatpickr("input[type=date]", {
-      minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12),
-    });
-
     //SUBSCRIPTIONS
     pubSub.subscribe("loader/loading", this.showLoaderText, this);
 

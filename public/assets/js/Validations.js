@@ -43,11 +43,10 @@ const completeProfile = (data) => {
     instagram = "",
     phone,
     bankAccountNo = "",
-    stageName,
+    stageName = "",
+    label = "",
   } = data;
-  Object.entries({ stageName }).forEach(([key, value]) => {
-    _valEmpty(key, value, errors);
-  });
+
   if (!isEmpty(twitter) && !twitter.startsWith("@"))
     errors["twitter"] = "@ should be at the start of the input";
   if (!isEmpty(instagram) && !instagram.startsWith("@"))

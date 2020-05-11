@@ -20,7 +20,8 @@
 
     <!-- RECORD LABEL -->
     <%- include('./partials/form/input', {formData: { label: `Record Label`,
-    name: 'label', inputText: `Fill this only if you have a record label`}}) %>
+    name: 'label', inputText: `Fill this only if you have a record label`,
+    required: loggedInAccountType === 'label' ? '*' : undefined}}) %>
 
     <!-- TWITTER HANDLE -->
     <%- include('./partials/form/input', {formData: {label: `Twitter handle`,

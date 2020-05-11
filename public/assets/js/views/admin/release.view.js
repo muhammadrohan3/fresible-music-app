@@ -8,14 +8,17 @@ export default class ReleaseView extends ViewIndex {
   constructor() {
     super();
     const { data } = super.getElement("#submission").dataset;
-    const { id, linkId, stageName, title, link } = JSON.parse(data);
+    const { id, linkId, stageName, title, link, status } = JSON.parse(data);
     this.RELEASE_ID = id;
     this.LINK_ID = linkId;
     this.STAGE_NAME = stageName;
     this.RELEASE_TITLE = title;
-    (this.RELEASE_LINKS = link),
-      (this.APPROVE_BTN = super.getElement("#approve"));
+    this.RELEASE_LINKS = link;
+    this.RELEASE_STATUS = status;
+    this.APPROVE_BTN = super.getElement("#approve");
     this.DECLINE_BTN = super.getElement("#decline");
+    this.DECLINE_COMMENT_EDIT_BTN = super.getElement("#decline-comment-edit");
+    this.DECLINE_COMMENT_BOX = super.getElement("#decline-comment");
     this.DELETE_BTN = super.getElement("#delete");
     this.EDIT_LINKS_BTN = super.getElement("#edit-links");
     this.ADD_LINKS_BTN = super.getElement("#add-links");
@@ -40,20 +43,52 @@ export default class ReleaseView extends ViewIndex {
 
   bindApproveBtn(handler) {
     this.APPROVE_BTN.addEventListener("click", async (e) => {
+      this.showLoader(true);
       const response = await this._mutationHelper("approve", handler);
       response && this.refresh();
     });
   }
 
+  async _getDeclineCommentFromPopup() {
+    const declineComment = this.DECLINE_COMMENT_BOX
+      ? this.DECLINE_COMMENT_BOX.textContent.trim()
+      : "";
+    const { value: comment, dismiss } = await Swal.fire({
+      input: "textarea",
+      inputValue: declineComment,
+      showCancelButton: true,
+    });
+    if (dismiss || comment.toLowerCase() === declineComment.toLowerCase())
+      return;
+    if (!comment) {
+      super.showAlert("There should be a comment for the declined release");
+    }
+    return comment;
+  }
+
   bindDeclineBtn(handler) {
     this.DECLINE_BTN.addEventListener("click", async (e) => {
-      const response = await this._mutationHelper("decline", handler);
+      const comment = await this._getDeclineCommentFromPopup();
+      if (!comment) return;
+      this.showLoader(true);
+      const response = await handler("decline", this.RELEASE_ID, { comment });
+      response && this.refresh();
+    });
+  }
+
+  bindDeclineEdit(handler) {
+    this.DECLINE_COMMENT_EDIT_BTN.addEventListener("click", async (e) => {
+      const comment = await this._getDeclineCommentFromPopup();
+      if (!comment) return;
+      this.showLoader(true);
+      const response = await handler(this.RELEASE_ID, { comment });
       response && this.refresh();
     });
   }
 
   bindDeleteBtn(handler) {
     this.DELETE_BTN.addEventListener("click", async (e) => {
+      this.showLoader(true);
       const response = await this._mutationHelper("delete", handler);
       response && super.replace("/fmadmincp/submissions");
     });

@@ -7,17 +7,6 @@ import RoyaltiesGraph from "../components/RoyaltiesGraph";
 import Analytics from "../components/Analytics";
 
 export default (Controller) => {
-  let E;
-  if (location.pathname.startsWith("/add-music")) {
-    //This opens the bootstrap modal containing informations relevant to the add music page (Maybe I will work on a generic form of notification later)
-    //You may as well work on this (GREAT).
-    // if (location.pathname === "/add-music/create") $("#modal").modal();
-    //Flatpickr date component
-    flatpickr("input[type=date]", {
-      minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12),
-    });
-  }
-
   if (location.pathname === "/royalties") {
     injectLoader(["royalties-graph-container"]);
     RoyaltiesGraph();
@@ -33,18 +22,7 @@ export default (Controller) => {
 
   //CHANGE EVENT LISTENER GROUP
   document.body.addEventListener("change", (e) => {
-    const {
-      id,
-      type,
-      tagName,
-      dataset: { filter_target },
-    } = e.target;
-    if (id === "hamburger") return Controller.handleMobileMenu(e.target);
-    if (View.getElement("#analyticsOptions").contains(e.target))
-      return Analytics.handle(e.target);
-    if (filter_target) Controller.handleSelectFilter(e.target);
-    if (e.target.classList.contains("form__input--element"))
-      processInputIgnore(e.target);
+    const { id, type, tagName } = e.target;
     if (type === "file") return Controller.handleFile(e.target);
   });
 

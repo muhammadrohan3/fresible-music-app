@@ -1,6 +1,6 @@
 const ejs = require("ejs");
 const sgMail = require("@sendgrid/mail");
-// const transporter = require("./config");
+const transporter = require("./config");
 const getMailTemplate = require("../public/path/getMailTemplate");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);

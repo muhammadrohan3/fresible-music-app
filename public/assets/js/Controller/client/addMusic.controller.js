@@ -82,7 +82,6 @@ class AddMusicController extends ControllerIndex {
         const toBeSubmittedTrackData = { ...rawFormData, ...fileUrls };
 
         if (!isObjEmpty(toBeSubmittedTrackData)) {
-          debugger;
           if (trackId) {
             trackResponse = await this.Release.query("updateTrack", {
               releaseId,

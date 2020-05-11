@@ -1,3 +1,4 @@
+import flatpickr from "flatpickr";
 import View from "../viewIndex";
 import {
   validateForms,
@@ -47,6 +48,10 @@ export default class AddMusicView extends View {
 
     //
     this.albumFn = null;
+
+    flatpickr("input[type=date]", {
+      minDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),
+    });
   }
 
   bindTermsForm() {
