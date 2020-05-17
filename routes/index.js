@@ -279,7 +279,7 @@ router.get(
     {
       m: RELEASE,
       al: "releases",
-      // w: [{ status: "deleted" }, "not"],
+      w: [{ status: "deleted" }, "not"],
       // r: false,
     },
     { m: PACKAGE, at: ["package", "maxTracks", "maxAlbums"] },

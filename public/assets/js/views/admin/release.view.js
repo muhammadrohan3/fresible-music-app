@@ -43,7 +43,6 @@ export default class ReleaseView extends ViewIndex {
 
   bindApproveBtn(handler) {
     this.APPROVE_BTN.addEventListener("click", async (e) => {
-      this.showLoader(true);
       const response = await this._mutationHelper("approve", handler);
       response && this.refresh();
     });
@@ -88,7 +87,6 @@ export default class ReleaseView extends ViewIndex {
 
   bindDeleteBtn(handler) {
     this.DELETE_BTN.addEventListener("click", async (e) => {
-      this.showLoader(true);
       const response = await this._mutationHelper("delete", handler);
       response && super.replace("/fmadmincp/submissions");
     });

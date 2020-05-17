@@ -449,7 +449,7 @@
         width: 100%;
         overflow: hidden;
         &__container {
-          @include border($color-light-grey);
+          // @include border($color-light-grey);
           padding: 0.6rem;
           height: 100%;
           width: 100%;

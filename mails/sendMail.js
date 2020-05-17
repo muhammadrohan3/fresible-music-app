@@ -16,15 +16,17 @@ module.exports = ({ subject, email, template, variables }) => {
         html: data, // html body
       };
       console.log("SENDING MAIL TO: ", email);
-      // transporter
-      //   .sendMail(mailOptions)
-      //   .then((status) => (status ? resolve(true) : resolve(false)))
-      //   .catch((e) => reject(e));
-
-      sgMail
-        .send(mailOptions)
-        .then((res) => resolve(res))
-        .catch((e) => reject(e.response ? e.response.body : e));
+      if (process.env.LIVE_SERVER === "true") {
+        sgMail
+          .send(mailOptions)
+          .then((res) => resolve(res))
+          .catch((e) => reject(e.response ? e.response.body : e));
+      } else {
+        transporter
+          .sendMail(mailOptions)
+          .then((status) => (status ? resolve(true) : resolve(false)))
+          .catch((e) => reject(e));
+      }
     })
   );
 };
