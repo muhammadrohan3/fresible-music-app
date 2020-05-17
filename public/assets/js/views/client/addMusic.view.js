@@ -264,7 +264,13 @@ export default class AddMusicView extends View {
           return this.showAlert("Error: something went wrong try again");
         }
         const publishResponse = await publishHandler(this.RELEASE_ID);
-        this.replace(`/submission/${publishResponse.id}`);
+        const {
+          id,
+          subscription: { id: subscriptionId, status: subscriptionStatus },
+        } = publishResponse.data;
+        if (subscriptionStatus === "active")
+          return this.replace(`/submission/${id}`);
+        return this.replace(`/payment/${subscriptionId}`);
       } else {
         this.showAlert("Some input fields require information from you", 8);
       }

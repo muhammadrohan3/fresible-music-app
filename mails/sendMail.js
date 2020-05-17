@@ -22,10 +22,11 @@ module.exports = ({ subject, email, template, variables }) => {
           .then((res) => resolve(res))
           .catch((e) => reject(e.response ? e.response.body : e));
       } else {
-        transporter
-          .sendMail(mailOptions)
-          .then((status) => (status ? resolve(true) : resolve(false)))
-          .catch((e) => reject(e));
+        resolve("MAIL SENT (NOT REAL)");
+        // transporter
+        //   .sendMail(mailOptions)
+        //   .then((status) => (status ? resolve(true) : resolve(false)))
+        //   .catch((e) => reject(e));
       }
     })
   );

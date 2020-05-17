@@ -14,84 +14,367 @@
     <link rel="stylesheet" href="/dist/bundle.css" />
     <title>Sign In - Account | Fresible Music Distribution</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-150022065-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-150022065-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-  gtag('config', 'UA-150022065-1');
-</script>
-<!-- Facebook Pixel Code -->
-<script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window,document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-   fbq('init', '2918289281524709'); 
-  fbq('track', 'PageView');
-  </script>
-  <noscript>
-   <img height="1" width="1" 
-  src="https://www.facebook.com/tr?id=2918289281524709&ev=PageView
-  &noscript=1"/>
-  </noscript>
-  <!-- End Facebook Pixel Code -->
+      gtag("config", "UA-150022065-1");
+    </script>
+    <!-- Facebook Pixel Code -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js"
+      );
+      fbq("init", "2918289281524709");
+      fbq("track", "PageView");
+    </script>
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        src="https://www.facebook.com/tr?id=2918289281524709&ev=PageView
+  &noscript=1"
+      />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
   </head>
-<body>
-  <!-- SIGNIN FORM -->
-  <main id="main" class="main">
-    <aside class="left" id="left">
-      <div class="left__overlay">
-        <div class="left__overlay--logo">
-          <img src="images/fresible-logo-white.png" alt="" />
-        </div>
-        <div class="left__overlay--body">
-          <h1>Welcome to Fresible Music Distribution</h1>
-          <div>
-            <p>
-              Fresible Music Distribution ensures that your music is spread on
-              all platforms reaching the right amount of audience at a go
-            </p>
+  <body>
+    <!-- SIGNIN FORM -->
+    <main id="main" class="account">
+      <aside class="account__left" id="left">
+        <div class="account__left__overlay">
+          <div class="account__left__overlay__logo">
+            <img src="images/fresible-logo-white.png" alt="" />
           </div>
-        </div>
-        <div class="left__overlay--footer">
-            <div><a href="https://fresible.com">&copy; 2019 Fresible Limited</a></div>
-          <ul class="left__overlay--footer--list">
+          <div class="account__left__overlay__body">
+            <h1>Welcome to Fresible Music Distribution</h1>
+            <div>
+              <p>
+                Fresible Music Distribution ensures that your music is spread on
+                all platforms reaching the right amount of audience at a go
+              </p>
+            </div>
+          </div>
+          <div class="account__left__overlay__footer">
+            <div>
+              <a href="https://fresible.com">&copy; 2019 Fresible Limited</a>
+            </div>
+            <ul class="account__left__overlay__footer__list">
               <li><a href="https://fresible.com/privacy-policy">Privacy</a></li>
               <li><a href="http://fresible.com/download/13868">Legal</a></li>
               <li><a href="https://fresible.com/contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="slider" id="slider">
+          <div class="slider__item slider__item--1 slide-show">
+            <!-- <img src="images/burna.jpg" alt="Burna Boy" /> -->
+          </div>
+          <div class="slider__item slider__item--2 slide-hide">
+            <!-- <img src="images/wizkid.jpg" alt="Wizkid Ayo" /> -->
+          </div>
+          <div class="slider__item slider__item--3 slide-hide">
+            <!-- <img src="images/tiwa.jpg" alt="Tiwa Savage" /> -->
+          </div>
+        </div>
+      </aside>
+      <aside class="account__right" id="right">
+        <div class="account__right__mobile-header">
+          <div>
+            <h1>Welcome to Fresible Music Distribution</h1>
+            <div>
+              <p>
+                Fresible Music Distribution ensures that your music is spread on
+                all platforms reaching the right amount of audience at a go
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <section class="account__right__main">
+          <form
+            class="form -u-form-input-spacing"
+            data-submiturl="/account/login"
+            data-validation="login"
+            id="signin"
+          >
+            <div class="form__head">
+              <h2>Sign In</h2>
+            </div>
+            <div class="form--notification hide"></div>
+            <div class="form__input">
+              <label for="" class="form__input--label">Email</label>
+              <input
+                type="email"
+                name="email"
+                class="form__input--element"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form__input--element"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__submit">
+              <div class="form__submit--text">
+                <div>
+                  <a href="#forgotPassword">Forgot Password?</a>
+                </div>
+                <div>
+                  Don't have an account yet? <a href="#signup">Sign Up</a>
+                </div>
+              </div>
+              <button type="submit" class="form__submit--btn btn-primary">
+                Sign In
+              </button>
+            </div>
+          </form>
+          <form
+            class="form -u-form-input-spacing hide"
+            id="signup"
+            data-submiturl="/account/register"
+            data-validation="register"
+          >
+            <div class="form__head">
+              <h2>Sign Up</h2>
+            </div>
+
+            <div class="form--notification hide"></div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>First Name</span> <span>*required</span></label
+              >
+              <input
+                type="text"
+                class="form__input--element"
+                placeholder=""
+                name="firstName"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>Last Name</span> <span>*required</span></label
+              >
+              <input
+                type="text"
+                class="form__input--element"
+                placeholder=""
+                name="lastName"
+                required
+              />
+              <div class="form__input--text"></div>
+              <div class="form__input--error"></div>
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>Email</span> <span>*required</span></label
+              >
+              <input
+                type="text"
+                class="form__input--element"
+                placeholder=""
+                name="email"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>Password</span> <span>*required</span></label
+              >
+              <input
+                type="password"
+                class="form__input--element"
+                placeholder=""
+                name="password"
+                required
+              />
+              <div class="form__input--text">
+                Password should be alphanumeric and length between 6 - 20
+              </div>
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>Confirm Password</span> <span>*required</span></label
+              >
+              <input
+                type="password"
+                class="form__input--element"
+                placeholder=""
+                name="confirmPassword"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__submit">
+              <div class="form__submit--text">
+                <div>
+                  Already have an account? <a href="#signin">Sign In</a>
+                </div>
+              </div>
+              <button type="submit" class="form__submit--btn btn-primary">
+                Sign Up
+              </button>
+            </div>
+          </form>
+          <form
+            class="form -u-form-input-spacing hide"
+            data-submiturl="/account/forgot-password"
+            id="forgotPassword"
+          >
+            <div class="form__head">
+              <h2>Forgot Password</h2>
+            </div>
+            <div class="form--notification hide"></div>
+            <div class="form--info alert alert-info">
+              We require the Email address you registered with to send a
+              confirmation link
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>Email</span> <span>*required</span></label
+              >
+              <input
+                type="text"
+                class="form__input--element"
+                placeholder=""
+                name="email"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__submit">
+              <div>
+                <a href="#signin">Sign In</a>
+              </div>
+              <button type="submit" class="form__submit--btn btn-primary">
+                Send instructions &rarr;
+              </button>
+            </div>
+          </form>
+
+          <form
+            class="form -u-form-input-spacing hide"
+            data-submiturl="/account/reset-password"
+            data-query_include="true"
+            data-validation="passValidator"
+            id="passwordReset"
+          >
+            <div class="form__head">
+              <h2>Reset Password</h2>
+            </div>
+            <div class="form--notification hide"></div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>New Password</span> <span>*required</span></label
+              >
+              <input
+                type="password"
+                class="form__input--element"
+                placeholder=""
+                name="password"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__input">
+              <label for="" class="form__input--label"
+                ><span>Confirm Password</span> <span>*required</span></label
+              >
+              <input
+                type="password"
+                class="form__input--element"
+                placeholder=""
+                name="confirmPassword"
+                required
+              />
+              <div class="form__input--text"></div>
+            </div>
+            <div class="form__submit">
+              <div>
+                <a href="#forgotPassword">Get a new token</a>
+              </div>
+              <button type="submit" class="form__submit--btn btn-primary">
+                Reset Password
+              </button>
+            </div>
+          </form>
+          <section class="password-changed hide" id="passwordChanged">
+            <div class="password-changed--head">
+              <h1>Password Changed!</h1>
+            </div>
+            <div class="password-changed--icon">
+              <span
+                class="iconify"
+                data-icon="ei:check"
+                data-inline="false"
+              ></span>
+            </div>
+            <a href="#signin" class="password-changed--link"
+              >Click here to Sign In &rarr;</a
+            >
+          </section>
+        </section>
+
+        <div class="account__left__overlay__footer">
+          <div>
+            <a href="https://fresible.com">&copy; 2019 Fresible Limited</a>
+          </div>
+          <ul class="account__left__overlay__footer__list">
+            <li><a href="https://fresible.com/privacy-policy">Privacy</a></li>
+            <li><a href="http://fresible.com/download/13868">Legal</a></li>
+            <li><a href="https://fresible.com/contact">Contact</a></li>
           </ul>
         </div>
-      </div>
-      <div class="slider" id="slider">
-        <div class="slider__item slider__item--1 slide-show">
-          <!-- <img src="images/burna.jpg" alt="Burna Boy" /> -->
-        </div>
-        <div class="slider__item slider__item--2 slide-hide">
-          <!-- <img src="images/wizkid.jpg" alt="Wizkid Ayo" /> -->
-        </div>
-        <div class="slider__item slider__item--3 slide-hide">
-          <!-- <img src="images/tiwa.jpg" alt="Tiwa Savage" /> -->
-        </div>
-      </div>
-    </aside>
-    <aside class="right" id="right">
-      <div class="right__mobile">
-        <h1>Welcome to Fresible Music Distribution</h1>
-        <div>
-          <p>
-            Fresible Music Distribution ensures that your music is spread on all
-            platforms reaching the right amount of audience at a go
-          </p>
-        </div>
-      </div>
-
-      <section class="right__main">
+        <!-- 
+        <section
+          class="account__left__overlay__footer account__right__mobile-footer"
+        >
+          <div>
+            <a href="https://fresible.com">&copy; 2019 Fresible Limited</a>
+          </div>
+          <ul class="account__right__mobile-footer__list">
+            <li><a href="https://fresible.com/privacy-policy">Privacy</a></li>
+            <li><a href="http://fresible.com/download/13868">Legal</a></li>
+            <li><a href="https://fresible.com/contact">Contact</a></li>
+          </ul>
+        </section> -->
         <div class="loader hide" id="loader">
           <div class="lds-roller">
             <div></div>
@@ -104,213 +387,23 @@
             <div></div>
           </div>
         </div>
-        <section class="right__main--body">
-        <form class="form -u-form-input-spacing" data-submiturl="/account/login" data-validation='login' id="signin">
-          <div class="form__head">
-            <h2>Sign In</h2>
-          </div>
-          <div class="form--notification hide"></div>
-          <div class="form__input">
-            <label for="" class="form__input--label">Email</label>
-            <input type="email" name="email" class="form__input--element" required />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label">Password</label>
-            <input
-              type="password"
-              name="password"
-              class="form__input--element"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__submit">
-            <div class="form__submit--text">
-              <div>
-                <a href="#forgotPassword">Forgot Password?</a>
-              </div>
-              <div>
-                Don't have an account yet? <a href="#signup">Sign Up</a>
-              </div>
-            </div>
-            <button type="submit" class="form__submit--btn btn-primary">
-              Sign In
-            </button>
-          </div>
-        </form>
-        <form
-          class="form -u-form-input-spacing hide"
-          id="signup"
-          data-submiturl="/account/register" data-validation='register'
-        >
-          <div class="form__head">
-            <h2>Sign Up</h2>
-          </div>
-
-          <div class="form--notification hide"></div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>First Name</span> <span>*required</span></label>
-            <input
-              type="text"
-              class="form__input--element"
-              placeholder=""
-              name="firstName"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>Last Name</span> <span>*required</span></label>
-            <input
-              type="text"
-              class="form__input--element"
-              placeholder=""
-              name="lastName"
-              required
-            />
-            <div class="form__input--text"></div>
-            <div class="form__input--error"></div>
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>Email</span> <span>*required</span></label>
-            <input
-              type="text"
-              class="form__input--element"
-              placeholder=""
-              name="email"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>Password</span> <span>*required</span></label>
-            <input
-              type="password"
-              class="form__input--element"
-              placeholder=""
-              name="password"
-              required
-            />
-            <div class="form__input--text">Password should be alphanumeric and length between 6 - 20</div>
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>Confirm Password</span> <span>*required</span></label>
-            <input
-              type="password"
-              class="form__input--element"
-              placeholder=""
-              name="confirmPassword"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__submit">
-            <div class="form__submit--text">
-              <div>Already have an account? <a href="#signin">Sign In</a></div>
-            </div>
-            <button type="submit" class="form__submit--btn btn-primary">
-              Sign Up
-            </button>
-          </div>
-        </form>
-        <form class="form -u-form-input-spacing hide" data-submiturl="/account/forgot-password"  id="forgotPassword">
-          <div class="form__head">
-            <h2>Forgot Password</h2>
-          </div>
-          <div class="form--notification hide"></div>
-          <div class="form--info alert alert-info">
-            We require the Email address you registered with to send a
-            confirmation link
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>Email</span> <span>*required</span></label>
-            <input type="text" class="form__input--element" placeholder="" name="email" required />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__submit">
-            <div>
-              <a href="#signin">Sign In</a>
-            </div>
-            <button type="submit" class="form__submit--btn btn-primary">
-              Send instructions &rarr;
-            </button>
-          </div>
-        </form>
-
-        <form class="form -u-form-input-spacing hide" data-submiturl="/account/reset-password" data-query_include='true' data-validation='passValidator' id="passwordReset">
-          <div class="form__head">
-            <h2>Reset Password</h2>
-          </div>
-          <div class="form--notification hide"></div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>New Password</span> <span>*required</span></label>
-            <input
-              type="password"
-              class="form__input--element"
-              placeholder=""
-              name="password"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__input">
-            <label for="" class="form__input--label"><span>Confirm Password</span> <span>*required</span></label>
-            <input
-              type="password"
-              class="form__input--element"
-              placeholder=""
-              name="confirmPassword"
-              required
-            />
-            <div class="form__input--text"></div>
-          </div>
-          <div class="form__submit">
-            <div>
-              <a href="#forgotPassword">Get a new token</a>
-            </div>
-            <button type="submit" class="form__submit--btn btn-primary">
-              Reset Password
-            </button>
-          </div>
-        </form>
-        <section class="password-changed hide" id="passwordChanged">
-          <div class="password-changed--head">
-            <h1>Password Changed!</h1>
-          </div>
-          <div class="password-changed--icon">
-            <span class="iconify" data-icon="ei:check" data-inline="false"></span>
-          </div>
-          <a href="#signin" class="password-changed--link"
-            >Click here to Sign In &rarr;</a
-          >
-        </section>
-      </section>
-      </section>
-
-      <section class="right__mobile-footer">
-        <div><a href="https://fresible.com">&copy; 2019 Fresible Limited</a></div>
-        <ul class="right__mobile-footer--list">
-          <li><a href="https://fresible.com/privacy-policy">Privacy</a></li>
-          <li><a href="http://fresible.com/download/13868">Legal</a></li>
-          <li><a href="https://fresible.com/contact">Contact</a></li>
-        </ul>
-      </section>
-    </aside>
-  </main>
-</body>
-<script src="/dist/clientAuth.bundle.js"></script>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/59e100ccc28eca75e4625eb6/default';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
+      </aside>
+    </main>
+  </body>
+  <script src="/dist/clientAuth.bundle.js"></script>
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {},
+      Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"),
+        s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = "https://embed.tawk.to/59e100ccc28eca75e4625eb6/default";
+      s1.charset = "UTF-8";
+      s1.setAttribute("crossorigin", "*");
+      s0.parentNode.insertBefore(s1, s0);
+    })();
   </script>
   <!--End of Tawk.to Script-->
 </html>

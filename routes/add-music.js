@@ -231,7 +231,11 @@ module.exports = (Controller) => {
     urlFormer("/submission", TEMPKEY),
     sendMail(NEWRELEASE),
     handleProfileSetupUpdate("add-release"),
-    respond([TEMPKEY])
+    addToSchema(SCHEMAINCLUDE, [
+      { m: USERPACKAGE, al: "subscription", at: ["status", "id"] },
+    ]),
+    getOneFromSchema(RELEASE, ["id"]),
+    respond([SCHEMARESULT])
   );
 
   //Creates a new track for a release (happens when a subscriber is adding a new release)

@@ -1,4 +1,4 @@
-<% const {id, type, status, title, comment, subscription, releaseDate,
+<% const {id, type, status, title, comment, subscription, releaseDate, price, storeType,
   approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artwork, copyrightYear, copyrightHolder, primaryGenre, secondaryGenre} = pageData;
   %>
   <% const stageName = labelArtist ? labelArtist.stageName :
@@ -131,6 +131,18 @@
                 <div class="submission__list__item--title">profile</div>
                 <div class="submission__list__item--details">
                   <a href="/fmadmincp/subscriber/<%= user.id %>">view</a>
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Pricing</div>
+                <div class="submission__list__item--details">
+                  <%= price %>c
+                </div>
+              </li>
+              <li class="submission__list__item">
+                <div class="submission__list__item--title">Stores Type</div>
+                <div class="submission__list__item--details">
+                  <%= storeType %>
                 </div>
               </li>
             </ul>
