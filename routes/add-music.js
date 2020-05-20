@@ -97,13 +97,13 @@ module.exports = (Controller) => {
   //This GET route renders the add-music create page
   router.get(
     "/create",
-    isValueIn("profileSetup", ["select-package"], USER),
+    sameAs("profileSetup", "select-package", USER),
     redirectIf(SAMEAS, true, "/select-package"),
     sameAs("type", "label", USER),
     redirectIf(SAMEAS, true, "/add-music/create/label"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: RELEASE, at: ["type"], w: [{ status: "deleted" }, "not"] },
+      { m: RELEASE, at: ["type"] },
       {
         m: PACKAGE,
         at: ["package", "maxAlbums", "maxTracks"],
