@@ -158,12 +158,6 @@ const whereGen = (store, data = {}) => {
       const propVal = schemaQuery[prop];
       if (Array.isArray(propVal)) {
         let [operator, vals] = propVal;
-        // if (Array.isArray(vals)) {
-        //   vals = vals.map(
-        //     (item) => item
-        //     // Array.isArray(item) ? { [item]: store[item] } : item
-        //   );
-        // }
         items.push({ [prop]: { [Op[operator || "and"]]: vals } });
       } else {
         items.push({ [prop]: propVal });
@@ -200,7 +194,7 @@ const whereGen = (store, data = {}) => {
 
   if (mutation && !items.length)
     throw new Error("ERROR: WHEREGEN, where items empty ");
-
+  console.log("-----SCHEMA-WHERE: ", { [Op[queryMainOp || "and"]]: items });
   return {
     where: {
       [Op[queryMainOp || "and"]]: items,

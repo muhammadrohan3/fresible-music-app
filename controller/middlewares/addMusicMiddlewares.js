@@ -4,12 +4,19 @@ const addMusic_structureSubs = ({ getStore, setStore }) => () => {
   const data = getStore("schemaResult");
   if (!data) return setStore("USER_SUBSCRIPTIONS", null);
   const USER_SUBSCRIPTIONS = [];
+  console.log("---: ", data);
   data.forEach(
     ({ id, status, package: { package, maxAlbums, maxTracks }, releases }) => {
       let trackCount = 0;
       let albumCount = 0;
       releases.forEach(({ type }) =>
         type === "album" ? albumCount++ : trackCount++
+      );
+      console.log(
+        "***: ",
+        trackCount >= maxTracks && albumCount >= maxAlbums,
+        trackCount,
+        albumCount
       );
       if (trackCount >= maxTracks && albumCount >= maxAlbums) return null;
       return USER_SUBSCRIPTIONS.push([
