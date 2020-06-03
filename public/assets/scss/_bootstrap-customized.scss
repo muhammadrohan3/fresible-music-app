@@ -1,17 +1,20 @@
 .custom-tab {
+  border-bottom: 1px solid $color-light-grey;
   a {
     color: inherit;
   }
   display: flex;
   background: inherit;
   &__item {
+    cursor: pointer;
     &--link {
-      padding: 8px 10px;
-      background-color: $color-primary;
-      color: $color-white;
-      & .active {
-        background-color: $color-white;
-        color: $color-light-black;
+      border: none !important;
+      color: $color-light-black !important;
+      padding: 8px 15px;
+      background-color: inherit;
+      &.active {
+        color: $color-primary !important;
+        border-bottom: 3px solid $color-primary !important;
       }
     }
   }

@@ -14,7 +14,7 @@ import formatNumber from "../utilities/formatNumber";
 import DoughnutChart from "./DoughnutChart";
 
 export default (() => {
-  const internalCache = {};
+  const internalCache = new Map();
   const SelectBox = View.getElement("#analytics-options");
   let href;
 
@@ -65,7 +65,6 @@ export default (() => {
       dataValues[index] = Number(total);
       labels.push(store);
     });
-    debugger;
     const data = {
       datasets: [
         {
@@ -132,8 +131,6 @@ export default (() => {
       ejs.render(analyticsGraphCanvas),
       true
     );
-
-    debugger;
 
     const data = {
       labels: formattedDates,
@@ -233,29 +230,41 @@ export default (() => {
   };
 
   const _handle = async (query) => {
+    let isDataFromServer = true;
     if (!href)
       return View.showAlert(
         "ERROR: link missing in analytic handler - contact admin"
       );
     const { type, range } = query;
     const cacheKey = type + range;
-    let Response = internalCache[cacheKey];
-    if (!Response) {
-      Response = await serverRequest({ href, params: query, method: "get" });
+    let RESPONSE;
+    if (internalCache.has(cacheKey)) {
+      isDataFromServer = false;
+      const data = internalCache.get(cacheKey);
+      RESPONSE = JSON.parse(data);
+    } else {
+      const { status, data } = await serverRequest({
+        href,
+        params: query,
+        method: "get",
+      });
+      if (status === "error") {
+        SelectBox.display = "none";
+        RESPONSE = {
+          ChartData: { dates: [], datasets: [] },
+          TableData: [],
+          Report: {},
+        };
+      } else RESPONSE = data;
     }
-    if (Response.status === "error") {
-      Response.data = {
-        ChartData: { dates: [], datasets: [] },
-        TableData: [],
-        Report: {},
-      };
-      SelectBox.display = "none";
-    }
-    const { Report, TableData, ChartData } = Response.data;
+
+    const { Report, TableData, ChartData } = RESPONSE;
     _chartUI(ChartData, query);
     _tableUI(TableData, query);
     _reportUI(Report, query);
-    internalCache[cacheKey] = Response;
+    if (isDataFromServer) {
+      internalCache.set(cacheKey, JSON.stringify(RESPONSE));
+    }
     View.showLoader(false);
   };
 

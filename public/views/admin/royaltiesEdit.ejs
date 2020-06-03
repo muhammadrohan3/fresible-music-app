@@ -1,0 +1,41 @@
+<% const {id, status, monthValue, yearValue} = pageData %>
+<div
+  class="mt-4 -u-font-bold text-center"
+  id="royaltiesEdit"
+  data-month_data="<%= JSON.stringify({status, id}) %>"
+>
+  Royalties Datasheet - <%= Fns.monthFormat(monthValue) %> <%= yearValue %>
+</div>
+<section class="-u-page analyticsAdd royaltiesAdd">
+  <div class="royaltiesAdd__top mb-4">
+    <button class="btn-outline" data-action="new-release">+ New Release</button>
+  </div>
+
+  <!-- MAIN-TAB-->
+  <div
+    id="accordion"
+    role="tablist"
+    aria-multiselectable="true"
+    action-target="new-release"
+  ></div>
+</section>
+<div class="-u-group mb-5 btn-group">
+  <button class="btn-outline" id="save">
+    <span
+      class="iconify"
+      data-icon="ic:outline-save-alt"
+      data-inline="false"
+    ></span>
+    <span>Save</span>
+  </button>
+  <% if(status !== 'published') { %>
+  <button class="btn-primary" id="publish">
+    <span
+      class="iconify"
+      data-icon="ic:baseline-done"
+      data-inline="false"
+    ></span>
+    Publish
+  </button>
+  <% } %>
+</div>

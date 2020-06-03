@@ -26,8 +26,13 @@ export default class Modal {
     return this;
   }
 
+  title(title = "") {
+    $("modal-title").text(title);
+    return this;
+  }
+
   launch() {
-    $(this.modalId).modal();
+    $(this.modalId).modal("show");
     return this;
   }
 

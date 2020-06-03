@@ -29,6 +29,9 @@ export default class ReleaseModel extends ModelIndex {
         url: _url("/store-links/update"),
         params: ["id"],
       },
+      liveForRoyalties: {
+        url: "/fmadmincp/submissions/live/data",
+      },
     };
   }
 

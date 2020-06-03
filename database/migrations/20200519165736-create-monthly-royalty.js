@@ -9,10 +9,15 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       monthValue: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.INTEGER,
+      },
+      yearValue: {
+        type: Sequelize.INTEGER,
       },
       status: {
         type: Sequelize.ENUM,
+        values: ["processing", "published"],
+        defaultValue: "processing",
       },
       createdAt: {
         allowNull: false,
@@ -25,6 +30,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("MonthlyRoyalties");
+    return queryInterface.dropTable("monthlyroyalties");
   },
 };

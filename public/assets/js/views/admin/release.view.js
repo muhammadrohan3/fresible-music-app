@@ -1,7 +1,6 @@
 import Swal from "sweetalert2";
 import ViewIndex from "../viewIndex";
 import Modal from "../../components/Modal";
-import { getStore } from "../../Store";
 const modal = new Modal("admin");
 
 export default class ReleaseView extends ViewIndex {

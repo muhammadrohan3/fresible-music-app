@@ -61,6 +61,9 @@ module.exports = () => ({
     if (raw) return moment(date).format("YYYY-MM-DD");
     return moment(date).format("Do MMM, YYYY");
   },
+  monthFormat: (month) => {
+    return moment(month, "MM").format("MMMM");
+  },
   nextYear: (date) => date && moment(date).add(1, "year").format("YYYY-MM-DD"),
   dateTimeFormat: (date) => date && moment(date).format("YYYY-MM-DD h:mma"),
   dirs: { viewsDir },

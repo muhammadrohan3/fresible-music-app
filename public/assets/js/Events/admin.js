@@ -106,7 +106,7 @@ export default (Controller) => {
 
   //BOOTSTRAP EVENTS
   const toggleIcon = (status) => (e) => {
-    $(e.target).prev().find(".iconify").replaceWith(`<span
+    $(e.target).prev().find(".iconify-tab-toggle").replaceWith(`<span
       class="iconify"
       data-icon="bx:bx-chevron-${status ? "up" : "down"}-circle"
       data-inline="false"

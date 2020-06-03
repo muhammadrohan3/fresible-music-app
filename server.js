@@ -34,8 +34,10 @@ server.use(cors());
 
 //
 server.use("/favicon.ico", (req, res, next) => res.status(204).send());
-server.use(express.urlencoded({ extended: false, limit: "50mb" }));
-server.use(express.json({ strict: false }));
+server.use(
+  express.urlencoded({ extended: false, limit: "50mb", parameterLimit: 50000 })
+);
+server.use(express.json({ strict: false, limit: "50mb" }));
 server.use(
   cookieSession({
     maxAge: 24 * 60 * 60 * 1000,

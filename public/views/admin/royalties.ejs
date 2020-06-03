@@ -1,0 +1,93 @@
+<section class="-u-page" style="margin-top: 3rem; margin-bottom: 5rem;">
+  <!-- <section class="d-flex flex-column flex-md-row">
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Streams</div>
+      <div class="analytics__card--icon">
+        <span
+          class="iconify"
+          data-icon="openmoji:headphone"
+          data-inline="false"
+        ></span>
+      </div>
+      <div class="analytics__card--number" id="analytics-total-streams">
+        ...
+      </div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Total Downloads</div>
+      <div class="analytics__card--icon">
+        <span
+          class="iconify"
+          data-icon="bi:download"
+          data-inline="false"
+        ></span>
+      </div>
+      <div class="analytics__card--number" id="analytics-total-downloads">
+        ...
+      </div>
+    </div>
+    <div class="analytics__card">
+      <div class="analytics__card--title">Top 3 stores</div>
+      <div class="analytics__card--chart">
+        <canvas id="analytics-top-stores"></canvas>
+      </div>
+    </div>
+  </section> -->
+  <section class="mt-5 bg-white p-4">
+    <% const rows = pageData %>
+    <div class="analytics__date text-left">
+      <input
+        class="analytics__date--input"
+        type="date"
+        name=""
+        id="new-datasheet-input"
+      />
+      <button id="new-datasheet-btn" class="btn-outline analytics__date--btn">
+        + New Datasheet
+      </button>
+    </div>
+    <section class="analytics__table mt-4" id="analytics-table">
+      <table
+        data-toggle="table"
+        data-classes="table"
+        class="text-center submissions__table"
+      >
+        <thead class="submissions__table--head">
+          <tr>
+            <th>Id</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows && rows.forEach((row) => { %>
+          <!--  -->
+          <% const {id, monthValue, status} = row %>
+          <tr>
+            <td>
+              <a href="/fmadmincp/royalties/<%= id %>/edit"><%= id %></a>
+            </td>
+            <td><%= Fns.dateFormat(monthValue) %></td>
+            <td>
+              <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
+                ><%= status %></span
+              >
+            </td>
+            <td>
+              <div class="d-flex justify-content-center">
+                <a href="/fmadmincp/royalties/<%= id %>/edit">edit</a>
+                <a
+                  href="/fmadmincp/royalties/<%= id %>/delete"
+                  class="ml-3 text-danger"
+                  >delete</a
+                >
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+  </section>
+</section>

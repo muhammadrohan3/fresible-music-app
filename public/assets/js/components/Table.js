@@ -41,6 +41,23 @@ export default (target, tableData, dataColumns, functions = {}) => {
       mobileResponsive: true,
       pagination: data.length > 10 ? true : false,
     });
+
+    //LISTENS FOR SUBTABLE EVENTS
+    table.on("expand-row.bs.table", (e, row, functions) => {
+      const $tr = $(e.target);
+      const index = row.children[0].level - 1;
+      const $subTable = $(`<tr><td colspan=12><table
+          data-mobile-responsive="true"
+          style="width: 95%; margin: 0 auto; background-color: ${bgColors[index]}"
+        ></table></td></tr>`)
+        .insertAfter($tr)
+        .find("table");
+      _buildTable(row.children, $subTable, index, functions);
+    });
+    table.on("collapse-row.bs.table", (e) => {
+      const $tr = $(e.target);
+      $tr.next().remove();
+    });
   };
 
   _buildTable(tableData, mainTable, 0, functions);
@@ -48,27 +65,21 @@ export default (target, tableData, dataColumns, functions = {}) => {
   function _handleNestClick(columnIndex, functions, e, val, row) {
     const $tr = $(_getParent(e.target, "tr"));
     const { view_open } = $(e.target).data();
-    if (!view_open) {
-      const index = row.children[0].level - 1;
-      const $nTable = $(`<tr><td colspan=12><table
-          data-mobile-responsive="true"
-          style="width: 95%; margin: 0 auto; background-color: ${bgColors[index]}"
-        ></table></td></tr>`)
-        .insertAfter($tr)
-        .find("table");
-      _buildTable(row.children, $nTable, index, functions);
+    const subTableNotActive = Boolean(view_open) === false;
+    if (subTableNotActive) {
       $(e.target)
         .data("view_open", true)
         .html(
           `<span class="iconify" data-icon="ant-design:up-square-outlined" data-inline="false"></span>`
         );
+      $tr.trigger("expand-row.bs.table", [row, functions]);
     } else {
       $(e.target)
         .data("view_open", false)
         .html(
           `<span class="iconify" data-icon="ant-design:down-square-outlined" data-inline="false"></span>`
         );
-      $tr.next().remove();
+      $tr.trigger("collapse-row.bs.table");
     }
   }
 };

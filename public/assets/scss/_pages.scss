@@ -133,23 +133,32 @@
   &__info {
     &__graph {
       flex: 3;
+      display: flex;
       position: relative;
       &__container {
-        height: 100%;
-        &.blur {
-          filter: blur(3px);
-        }
-        &--graph {
+        flex: 1;
+        &__graph {
+          height: 100%;
           flex: 3;
           padding: 15px 15px 0 0;
         }
-        &--report {
+        &__report {
           flex: 1;
           border-left: 1px solid $color-light-grey;
           padding: 1.5rem 1.5rem 0;
+          &__notice {
+            &__title {
+              font-size: 1.3rem;
+              font-weight: 600;
+            }
+            &__text {
+              font-size: 1.1rem;
+            }
+          }
         }
       }
       &__inactive {
+        visibility: hidden;
         position: absolute;
         top: 0;
         left: 0;
@@ -170,9 +179,78 @@
           }
         }
       }
+
+      &--inactive {
+        & > * {
+          &:first-child {
+            filter: blur(3px);
+          }
+          &:last-child {
+            visibility: visible;
+          }
+        }
+      }
     }
     &__money {
       flex: 0.86;
+    }
+  }
+
+  &__inject {
+    margin: 2rem 0;
+    & > * {
+      &:not(:last-child) {
+        margin-bottom: 2rem;
+      }
+    }
+    &__charts {
+      display: flex;
+      &__item {
+        flex: 1;
+        min-height: 40rem;
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+        @include border($color-light-grey);
+        padding: 1rem;
+        &:not(:last-child) {
+          margin-right: 2rem;
+        }
+        &__title {
+          margin-bottom: 3rem;
+        }
+        &__element {
+          flex: 1;
+        }
+        &__store-list {
+          margin-top: 1rem;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-gap: 1rem;
+        }
+      }
+      @media screen and (max-width: $sm) {
+        flex-direction: column;
+        &__item {
+          &:not(:last-child) {
+            margin: 0;
+            margin-bottom: 2rem;
+          }
+        }
+      }
+    }
+    &__table {
+      &__header {
+        overflow-x: auto;
+        &__tabs {
+          flex-wrap: nowrap;
+          & > * {
+            & a.active {
+              background-color: inherit !important;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -511,6 +589,15 @@
       }
     }
   }
+}
+
+///////////////////// ROYALTIES
+.royaltiesInitiate {
+  max-width: 60rem;
+}
+
+.royaltiesAdd {
+  max-width: 90rem;
 }
 
 ///////////////// ----> SUBMISSION <----------//////////////

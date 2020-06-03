@@ -61,6 +61,10 @@ const View = ((document) => {
     isHTML && injectIconToAlert(elem);
   };
 
+  const addHTML = (element, html) => {
+    return (getElement(element).innerHTML = html);
+  };
+
   const getElement = (id, parent) => {
     const source = parent && typeof parent === "string" ? _(parent) : parent;
     if (source) return source.querySelector(id);
@@ -124,6 +128,7 @@ const View = ((document) => {
     getFormData,
     elemAttribute,
     addContent,
+    addHTML,
     confirmAction,
   };
 })(document);

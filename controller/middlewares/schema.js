@@ -23,6 +23,9 @@ const {
   Analytic,
   Analyticsdate,
   Releasestore,
+  Country,
+  MonthlyRoyalty,
+  Royalty,
   sequelize,
   Sequelize,
 } = require("../../database/models");
@@ -50,6 +53,9 @@ const schemaType = (schema) => {
   if (schema.search(/^analytics?$/) >= 0) return Analytic;
   if (schema.search(/^analyticsdates?$/) >= 0) return Analyticsdate;
   if (schema.search(/^releasestores?$/) >= 0) return Releasestore;
+  if (schema.search(/^countr(ies|y)?$/) >= 0) return Country;
+  if (schema.search(/^monthlyroyalt(ies|y)?$/) >= 0) return MonthlyRoyalty;
+  if (schema.search(/^royalt(ies|y)$/) >= 0) return Royalty;
   return undefined;
 };
 

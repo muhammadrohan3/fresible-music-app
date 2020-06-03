@@ -13,7 +13,8 @@ class View {
     this.mobileMenuElement = this.getElement("#hamburger");
     this.LOADER_TEXT = this.getElement("#loader-text");
     //SUBSCRIPTIONS
-    pubSub.subscribe("loader/loading", this.showLoaderText, this);
+    pubSub.subscribe("loader/uploading", this.showLoaderText, this);
+    pubSub.subscribe("loader/loading", this.showLoader, this);
 
     //EVENTS
     //CLICK
@@ -90,14 +91,15 @@ class View {
     return typeof id === "string" ? document.querySelector(id) : id;
   }
 
-  showAlert(text, stay = true) {
-    if (!text) return this.removeClass("#page-alert", "page__alert--show");
+  showAlert(text, stay = 10) {
+    if (typeof text === "boolean") {
+      return this.removeClass("#page-alert", "page__alert--show");
+    }
     this.showLoader(false);
     this.addContent("#page-alert-text", text, true);
     this.addClass("#page-alert", "page__alert--show");
-    if (stay && Number.isNaN(stay)) stay = 10;
     return setTimeout(
-      () => removeClass("#page-alert", "page__alert--show"),
+      () => this.removeClass("#page-alert", "page__alert--show"),
       stay * 1000
     );
   }

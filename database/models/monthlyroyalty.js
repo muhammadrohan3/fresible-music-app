@@ -1,15 +1,20 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const MonthlyRoyalty = sequelize.define(
-    "MonthlyRoyalty",
+    "monthlyroyalties",
     {
-      monthValue: DataTypes.DATEONLY,
-      // status: DataTypes.ENUM
+      monthValue: DataTypes.INTEGER,
+      yearValue: DataTypes.INTEGER,
+      status: {
+        type: DataTypes.ENUM,
+        values: ["processing", "published"],
+      },
     },
     {}
   );
-  MonthlyRoyalty.associate = function (models) {
-    // associations can be defined here
+  MonthlyRoyalty.associate = function ({ Royalty }) {
+    this.hasMany(Royalty, { foreignKey: "monthId", as: "royalties" });
   };
+  MonthlyRoyalty.toBeCalled = "MonthlyRoyalty";
   return MonthlyRoyalty;
 };

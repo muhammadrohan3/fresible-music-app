@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Dashboard = require("./dashboard");
 const Analytics = require("./analytics");
+const Royalties = require("./royalties");
 const {
   SITEDATA,
   SAMEAS,
@@ -23,6 +24,8 @@ const {
   LINKSADDED,
   LABELARTIST,
   ACCOUNTTYPECHANGED,
+  COUNTRY,
+  STORE,
 } = require("../../constants");
 module.exports = (Controller) => {
   const {
@@ -61,6 +64,7 @@ module.exports = (Controller) => {
 
   router.use("/dashboard", Dashboard(Controller));
   router.use("/analytics", Analytics(Controller));
+  router.use("/royalties", Royalties(Controller));
 
   ////LOGS
   router.get(
@@ -73,6 +77,20 @@ module.exports = (Controller) => {
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
     addToSchema(SITEDATA, { page: "logs" }),
     pageRender()
+  );
+
+  ////COUNTRIES
+  router.get(
+    "/countries/data",
+    getAllFromSchema(COUNTRY),
+    respond([SCHEMARESULT], null, { limit: null })
+  );
+
+  //STORES
+  router.get(
+    "/stores/data",
+    getAllFromSchema(STORE, null, { limit: null }),
+    respond([SCHEMARESULT])
   );
 
   router.get(
@@ -214,6 +232,16 @@ module.exports = (Controller) => {
       title: "All Submissions",
     }),
     pageRender()
+  );
+
+  router.get(
+    "/submissions/live/data",
+    addToSchema(SCHEMAQUERY, { status: "in stores" }),
+    addToSchema(SCHEMAINCLUDE, [{ m: TRACK, at: ["id", "title"] }]),
+    getAllFromSchema(RELEASE, ["id", "userId", "title", "type"], {
+      limit: null,
+    }),
+    respond([SCHEMARESULT])
   );
 
   router.get(

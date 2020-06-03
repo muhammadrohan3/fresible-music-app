@@ -27,10 +27,15 @@ fs.readdirSync(__dirname)
   })
   .forEach((file) => {
     const model = sequelize["import"](path.join(__dirname, file));
-    let { name } = model;
-    name = name.toLowerCase();
-    const newName =
-      name.substr(0, 1).toUpperCase() + name.substr(1, name.length - 2);
+    let { name, toBeCalled } = model;
+    let newName;
+    if (toBeCalled) {
+      newName = toBeCalled;
+    } else {
+      name = name.toLowerCase();
+      newName =
+        name.substr(0, 1).toUpperCase() + name.substr(1, name.length - 2);
+    }
     db[newName] = model;
   });
 

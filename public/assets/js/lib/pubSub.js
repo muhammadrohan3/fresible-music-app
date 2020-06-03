@@ -25,7 +25,8 @@ const pubSub = (() => {
     return true;
   };
 
-  const publish = (subject, args = [], context = null) => {
+  const publish = (subject, args, context = null) => {
+    args = Array.isArray(args) ? args : [args];
     if (!Subjects[subject]) return false;
     Subjects[subject].forEach(({ callback, callbackContext }) =>
       callback.apply(context || callbackContext, args)

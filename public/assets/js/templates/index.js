@@ -6,9 +6,10 @@ import icons from "./icons";
 import loader from "./loader";
 import log from "./log";
 import options from "./options";
-import royalties from "./royalties";
 import analyticsNewStoreInput from "./analyticsNewStoreInput";
 import addMusic from "./addMusic/index";
+import royalties from "./royalties/index";
+import royaltiesTab from "./tab";
 
 export default {
   albumTemplate,
@@ -20,6 +21,7 @@ export default {
   loader,
   log,
   options,
-  royalties,
   addMusic,
+  royalties,
+  tab: royaltiesTab,
 };

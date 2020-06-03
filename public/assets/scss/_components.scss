@@ -127,6 +127,10 @@
   color: $color-white;
   cursor: pointer;
   transition: all 0.3s ease;
+  &:focus,
+  &:active {
+    outline: none;
+  }
 
   &-disabled {
     pointer-events: none !important;
@@ -1863,6 +1867,28 @@ $font-size-base: 15px !default;
       circle {
         stroke: currentColor;
       }
+    }
+  }
+}
+
+//////////////////////////////////// STORE-ROYALTY
+.store-royalty {
+  display: flex;
+  &__color {
+    align-self: baseline;
+    padding: 0.8rem;
+    margin-top: 0.6rem;
+    margin-right: 0.5rem;
+    background-color: green;
+  }
+  &__details {
+    &__store {
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    &__amount {
+      font-size: 1.1rem;
+      color: rgba(#000000, 0.6);
     }
   }
 }

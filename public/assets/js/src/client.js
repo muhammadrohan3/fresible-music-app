@@ -6,6 +6,7 @@ import ViewIndex from "../views/viewIndex";
 // import { async } from "regenerator-runtime/runtime";
 import injectIconToAlert from "../components/AlertIcon";
 import AudioPlayer from "../components/AudioPlayer";
+import Royalty from "../components/Royalty";
 import "popper.js";
 import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/modal";
@@ -20,6 +21,7 @@ import View from "../View";
 (() => {
   injectIconToAlert();
   AudioPlayer().listenForEvents();
+  Royalty().initiate();
   try {
     if (location.pathname.startsWith("/add-music")) {
       new AddMusicController(new AddMusicView());
