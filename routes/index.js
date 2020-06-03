@@ -210,8 +210,12 @@ router.get(
       i: [
         {
           m: USER,
-          at: ["id"],
+          at: ["id", "type"],
           i: [{ m: USERPROFILE, al: "profile", at: ["stageName"] }],
+        },
+        {
+          m: LABELARTIST,
+          at: ["id", "stagename"],
         },
       ],
     },
