@@ -21,6 +21,7 @@ import View from "../View";
 (() => {
   injectIconToAlert();
   AudioPlayer().listenForEvents();
+  new ViewIndex();
   try {
     if (location.pathname.startsWith("/add-music")) {
       return new AddMusicController(new AddMusicView());
@@ -30,8 +31,6 @@ import View from "../View";
       Royalty("/royalties/data").initiate();
       return;
     }
-
-    new ViewIndex();
     Event(Controller());
   } catch (err) {
     console.log(err);

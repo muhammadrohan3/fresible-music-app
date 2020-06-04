@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         primaryKey: true,
         type: DataTypes.UUID,
-        defaultValue: uuid(),
       },
       userId: DataTypes.UUID,
       countryId: DataTypes.INTEGER,
@@ -25,6 +24,18 @@ module.exports = (sequelize, DataTypes) => {
     {
       timestamps: false,
     }
+  );
+
+  Royalty.beforeCreate((royalty) => {
+    royalty.id = uuid();
+    return royalty;
+  });
+
+  Royalty.beforeBulkCreate((royalties) =>
+    royalties.map((royalty) => {
+      royalty.id = uuid();
+      return royalty;
+    })
   );
 
   Royalty.associate = function ({
