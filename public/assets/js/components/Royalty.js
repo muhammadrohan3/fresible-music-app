@@ -12,6 +12,7 @@ const royalty = (BASEURL) => {
   const CACHE = new Map();
 
   const _getTableData = async (params) => {
+    View.showLoader(true);
     let isDataFromServer = false;
     const key = _getParamsCacheKey(params);
     let tableData;
@@ -28,6 +29,7 @@ const royalty = (BASEURL) => {
       tableData = data;
     }
     if (isDataFromServer) CACHE.set(key, JSON.stringify(tableData));
+    View.showLoader(false);
     return tableData;
   };
 
@@ -55,20 +57,23 @@ const royalty = (BASEURL) => {
     );
   };
 
+  const _allObjectValuesAreNull = (obj) => {
+    if (obj.earning === null) return true; //not reliable
+    const objValues = Object.values(obj);
+    const nullObjectValues = objValues
+      .filter((item) => !Boolean(item))
+      .map((item) => item);
+    const status = nullObjectValues.length === objValues.length ? true : false;
+    return status;
+  };
+
   const _checkIfServerResponseIsNull = (data) => {
-    const _checkNull = (obj) => {
-      const objValues = Object.values(obj);
-      const nullObjectValues = objValues
-        .filter((item) => !!item)
-        .map((item) => item);
-      return nullObjectValues.length === objValues.length ? true : false;
-    };
     if (Array.isArray(data)) {
       if (data.length > 1) return false;
       const [firstData] = data;
-      return _checkNull(firstData);
+      return _allObjectValuesAreNull(firstData);
     }
-    return _checkNull(data);
+    return _allObjectValuesAreNull(data);
   };
 
   const _handleTopGraphAndTotal = async () => {
@@ -471,9 +476,10 @@ const royalty = (BASEURL) => {
   };
 
   const initiate = async () => {
+    View.showLoader(true);
     const topGraphSuccess = await _handleTopGraphAndTotal();
-    if (topGraphSuccess === false) return; //don't render the remaining components.
     _injectIfTopGraphSuccess(topGraphSuccess);
+    View.showLoader(false);
   };
 
   return { initiate };

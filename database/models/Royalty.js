@@ -1,9 +1,15 @@
 "use strict";
+const uuid = require("uuidv4").default;
 module.exports = (sequelize, DataTypes) => {
   const Royalty = sequelize.define(
     "royalties",
     {
-      userId: DataTypes.INTEGER,
+      id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: uuid(),
+      },
+      userId: DataTypes.UUID,
       countryId: DataTypes.INTEGER,
       monthId: DataTypes.INTEGER,
       releaseId: DataTypes.INTEGER,
@@ -20,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false,
     }
   );
+
   Royalty.associate = function ({
     Country,
     User,

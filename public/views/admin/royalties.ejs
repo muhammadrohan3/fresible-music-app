@@ -63,12 +63,12 @@
         <tbody>
           <% rows && rows.forEach((row) => { %>
           <!--  -->
-          <% const {id, monthValue, status} = row %>
+          <% const {id, monthValue, yearValue, status} = row %>
           <tr>
             <td>
               <a href="/fmadmincp/royalties/<%= id %>/edit"><%= id %></a>
             </td>
-            <td><%= Fns.dateFormat(monthValue) %></td>
+            <td><%= Fns.monthFormat(monthValue) + " " + yearValue %></td>
             <td>
               <span class="badge badge-pill badge-<%= Fns.colorText(status) %>"
                 ><%= status %></span
@@ -77,11 +77,6 @@
             <td>
               <div class="d-flex justify-content-center">
                 <a href="/fmadmincp/royalties/<%= id %>/edit">edit</a>
-                <a
-                  href="/fmadmincp/royalties/<%= id %>/delete"
-                  class="ml-3 text-danger"
-                  >delete</a
-                >
               </div>
             </td>
           </tr>

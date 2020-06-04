@@ -21,14 +21,18 @@ import View from "../View";
 (() => {
   injectIconToAlert();
   AudioPlayer().listenForEvents();
-  Royalty().initiate();
   try {
     if (location.pathname.startsWith("/add-music")) {
-      new AddMusicController(new AddMusicView());
-    } else {
-      new ViewIndex();
-      Event(Controller());
+      return new AddMusicController(new AddMusicView());
     }
+
+    if (location.pathname.startsWith("/royalties")) {
+      Royalty("/royalties/data").initiate();
+      return;
+    }
+
+    new ViewIndex();
+    Event(Controller());
   } catch (err) {
     console.log(err);
     View.showAlert(err);

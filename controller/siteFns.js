@@ -17,6 +17,7 @@ module.exports = () => ({
       inactive: "danger",
       incomplete: "warning",
       approved: "success",
+      published: "success",
       "in stores": "success",
       declined: "danger",
       deleted: "danger",

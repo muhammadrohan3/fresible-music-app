@@ -8,10 +8,13 @@
   &__item {
     cursor: pointer;
     &--link {
-      border: none !important;
       color: $color-light-black !important;
       padding: 8px 15px;
       background-color: inherit;
+      &,
+      &.active {
+        border: none;
+      }
       &.active {
         color: $color-primary !important;
         border-bottom: 3px solid $color-primary !important;
