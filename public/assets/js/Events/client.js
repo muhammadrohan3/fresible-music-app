@@ -3,13 +3,12 @@ import flatpickr from "flatpickr";
 import AudioPlayer from "../components/AudioPlayer";
 import processInputIgnore from "../utilities/processFormElementChange";
 import injectLoader from "../components/Loader";
-import RoyaltiesGraph from "../components/RoyaltiesGraph";
+import Royalty from "../components/Royalty";
 import Analytics from "../components/Analytics";
 
 export default (Controller) => {
   if (location.pathname === "/royalties") {
-    injectLoader(["royalties-graph-container"]);
-    RoyaltiesGraph();
+    Royalty("/royalties/data").initiate();
   }
 
   if (location.pathname === "/analytics") {

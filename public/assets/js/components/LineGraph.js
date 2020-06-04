@@ -3,7 +3,15 @@ import View from "../View";
 import sortGraph from "../utilities/sortGraph";
 
 export default (data, target, options = {}) => {
-  const { legend = false } = options;
+  const { legend = false, toolTipsCallback } = options;
+  const defaultToolTipsCallback = {
+    title: () => "",
+    label: function (tooltipItem, data) {
+      return `${
+        data.datasets[tooltipItem.datasetIndex].label || ""
+      }: ${tooltipItem.yLabel.toString()}`;
+    },
+  };
   data.datasets = sortGraph(data.datasets);
   new Chart(View.getElement(target), {
     type: "line",
@@ -13,14 +21,7 @@ export default (data, target, options = {}) => {
       maintainAspectRatio: false,
       tooltips: {
         backgroundColor: "#333",
-        callbacks: {
-          title: () => "",
-          label: function (tooltipItem, data) {
-            return `${
-              data.datasets[tooltipItem.datasetIndex].label || ""
-            }: ${tooltipItem.yLabel.toString()}`;
-          },
-        },
+        callbacks: toolTipsCallback || defaultToolTipsCallback,
       },
       legend: {
         display: legend,

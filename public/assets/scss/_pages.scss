@@ -145,7 +145,7 @@
         &__report {
           flex: 1;
           border-left: 1px solid $color-light-grey;
-          padding: 1.5rem 1.5rem 0;
+          padding: 1.5rem 1.5rem 0.5rem;
           &__notice {
             &__title {
               font-size: 1.3rem;
@@ -229,15 +229,6 @@
           grid-gap: 1rem;
         }
       }
-      @media screen and (max-width: $sm) {
-        flex-direction: column;
-        &__item {
-          &:not(:last-child) {
-            margin: 0;
-            margin-bottom: 2rem;
-          }
-        }
-      }
     }
     &__table {
       &__header {
@@ -248,6 +239,28 @@
             & a.active {
               background-color: inherit !important;
             }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: $sm) {
+    &__info {
+      &__graph {
+        &__container {
+          &__graph {
+            min-height: 18rem;
+          }
+        }
+      }
+    }
+    &__inject {
+      &__charts {
+        flex-direction: column;
+        &__item {
+          &:not(:last-child) {
+            margin: 0;
+            margin-bottom: 2rem;
           }
         }
       }

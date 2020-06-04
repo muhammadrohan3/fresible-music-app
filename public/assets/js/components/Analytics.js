@@ -116,25 +116,23 @@ export default (() => {
     let { dates, datasets } = chartData;
     const { range } = query;
 
-    dates = [...dates].reverse();
-    datasets = datasets.map((item) => ({
+    const DATASETS = datasets.map((item) => ({
       ...item,
-      data: [...item.data].reverse(),
+      data: item.data.reverse(),
     }));
-    const formattedDates = dates.map((date) => {
+    const formattedDates = dates.reverse().map((date) => {
       const m = moment(date);
       if (range === 7) return m.format("ddd");
       return m.format("MMM DD");
     });
-    View.addContent(
+    View.addHTML(
       "#analytics-graph-container",
-      ejs.render(analyticsGraphCanvas),
-      true
+      ejs.render(analyticsGraphCanvas)
     );
 
     const data = {
       labels: formattedDates,
-      datasets: datasets.reverse(),
+      datasets: DATASETS,
     };
     LineGraph(data, "#analytics-graph");
   };
@@ -258,13 +256,13 @@ export default (() => {
       } else RESPONSE = data;
     }
 
+    if (isDataFromServer) {
+      internalCache.set(cacheKey, JSON.stringify(RESPONSE));
+    }
     const { Report, TableData, ChartData } = RESPONSE;
     _chartUI(ChartData, query);
     _tableUI(TableData, query);
     _reportUI(Report, query);
-    if (isDataFromServer) {
-      internalCache.set(cacheKey, JSON.stringify(RESPONSE));
-    }
     View.showLoader(false);
   };
 

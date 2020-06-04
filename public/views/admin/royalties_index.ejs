@@ -9,7 +9,10 @@
   </div>
 
   <section class="royalties__info d-flex flex-column flex-md-row">
-    <div class="mb-4 mb-md-0 mr-md-5 bg-white royalties__info__graph">
+    <div
+      class="mb-4 mb-md-0 mr-md-5 bg-white royalties__info__graph royalties__info__graph--inactive"
+      id="top-graph-container"
+    >
       <div
         class="royalties__info__graph__container d-flex flex-column flex-md-row"
       >
@@ -33,7 +36,7 @@
             <h3
               class="royalties__info__graph__container__report__notice__title"
             >
-              Why Am I Only Seeing Up To <span id="monthdata-month">Mar</span>?
+              Why Am I Only Seeing Up To <span id="monthdata-month">Jan</span>?
             </h3>
             <div
               class="royalties__info__graph__container__report__notice__text"
@@ -96,33 +99,5 @@
       </section>
     </div>
   </section>
-  <section class="royalties__inject">
-    <section class="royalties__inject__charts">
-      <div class="royalties__inject__charts__item">
-        <div class="royalties__inject__charts__item__title -u-font-bold">
-          Best Performing Countries
-        </div>
-        <div class="royalties__inject__charts__item__element">
-          <canvas id="countries-chart"></canvas>
-        </div>
-      </div>
-      <div class="royalties__inject__charts__item">
-        <div class="royalties__inject__charts__item__title -u-font-bold">
-          Best Performing Stores
-        </div>
-        <div class="royalties__inject__charts__item__element">
-          <canvas id="stores-chart"></canvas>
-        </div>
-        <div
-          class="royalties__inject__charts__item__store-list"
-          id="stores-chart-list"
-        ></div>
-      </div>
-    </section>
-    <section
-      class="royalties__inject__table bg-white p-md-4"
-      id="royalties-table"
-    ></section>
-  </section>
-  <div class="royalties--footer mt-2">*Last Updated - 31st January, 2020</div>
+  <div id="container-inject"></div>
 </section>

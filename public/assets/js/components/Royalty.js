@@ -5,6 +5,8 @@ import serverRequest from "../utilities/serverRequest";
 import { horizontalBarChart } from "../components/Barchart";
 import DoughnutChart from "../components/DoughnutChart";
 import rangeFormatter from "../utilities/rangeFormatter";
+import generateRandomNumber from "../utilities/randomNumberGenerator";
+import LineGraph from "./LineGraph";
 
 const royalty = (BASEURL) => {
   const CACHE = new Map();
@@ -37,13 +39,36 @@ const royalty = (BASEURL) => {
     return data;
   };
 
+  const _injectIfTopGraphSuccess = (topGraphSuccess) => {
+    if (!topGraphSuccess) return;
+    _injectBaseContainer();
+    _handleTopCountriesChart();
+    _handleTopStoresChart();
+    _insertComponent("#royalties-table", "index");
+    _attachTabEvents();
+  };
+
+  const _injectBaseContainer = () => {
+    View.addHTML(
+      "#container-inject",
+      Template(["royalties", "CONTAINERINJECT"])
+    );
+  };
+
   const _checkIfServerResponseIsNull = (data) => {
+    const _checkNull = (obj) => {
+      const objValues = Object.values(obj);
+      const nullObjectValues = objValues
+        .filter((item) => !!item)
+        .map((item) => item);
+      return nullObjectValues.length === objValues.length ? true : false;
+    };
     if (Array.isArray(data)) {
       if (data.length > 1) return false;
       const [firstData] = data;
-      if (!firstData.id) return true;
+      return _checkNull(firstData);
     }
-    return false;
+    return _checkNull(data);
   };
 
   const _handleTopGraphAndTotal = async () => {
@@ -60,7 +85,16 @@ const royalty = (BASEURL) => {
     _renderMonthlySalesGraph(monthlySalesData);
     const totalSales = await _getChartData("total");
     _renderTotalSales(totalSales);
+    _removeTopGraphInactiveOverlay();
     return true;
+  };
+
+  const _removeTopGraphInactiveOverlay = () => {
+    const TOP_GRAPH_CONTAINER_ID = "#top-graph-container";
+    View.removeClass(
+      TOP_GRAPH_CONTAINER_ID,
+      "royalties__info__graph--inactive"
+    );
   };
 
   const _renderRecentPublishedMonthTotal = (data) => {
@@ -84,11 +118,84 @@ const royalty = (BASEURL) => {
   };
 
   const _renderMonthlySalesGraph = async (data) => {
-    const canvasID = "royalties-graph";
-    if (!data) return _monthlySalesGraphDefaultData(canvasID);
+    const canvasID = "#royalties-graph";
+    let dataToBeRendered;
+    if (data) dataToBeRendered = _processMonthlySalesGraphData(data);
+    else dataToBeRendered = _monthlySalesGraphDefaultData(canvasID);
+    const { months, monthValues, fullMonths } = dataToBeRendered;
+    const graphData = {
+      labels: months.reverse(),
+      datasets: [
+        {
+          data: monthValues.reverse(),
+          fullMonths: fullMonths.reverse(),
+          backgroundColor: "#F6FAFF",
+          borderColor: "#418DF8",
+        },
+      ],
+    };
+    LineGraph(graphData, canvasID, _monthlySalesGraphConfig());
   };
 
-  const _monthlySalesGraphDefaultData = (data) => {};
+  const _processMonthlySalesGraphData = (data) => {
+    const months = [];
+    const monthValues = [];
+    const fullMonths = [];
+    let dataToBeRendered = data;
+    const monthsNotComplete = data.length < 12;
+    if (monthsNotComplete)
+      dataToBeRendered = _fillUpMissingMonthlySalesGraphData(data);
+    dataToBeRendered.forEach(({ monthValue, royalties: [royaltyData] }) => {
+      const earning = _getRowTotalEarning(royaltyData) || 0;
+      const month = moment(monthValue, "M").format("MMM");
+      const fullMonth = moment(monthValue, "M").format("MMMM");
+      fullMonths.push(fullMonth);
+      months.push(month);
+      monthValues.push(earning);
+    });
+    return { months, monthValues, fullMonths };
+  };
+
+  const _fillUpMissingMonthlySalesGraphData = (data) => {
+    //This expects the data to already be sorted;
+    const dataCopy = [...data];
+    let startValue = dataCopy[dataCopy.length - 1]["monthValue"];
+    const missingMonthsNumber = 12 - dataCopy.length;
+    for (let i = 0; i < missingMonthsNumber; i++) {
+      let value = startValue - 1;
+      value = value <= 0 ? 12 : value;
+      startValue = value;
+      dataCopy.push({ monthValue: value, royalties: [{ earning: 0 }] });
+    }
+    return dataCopy;
+  };
+
+  const _monthlySalesGraphDefaultData = (data) => {
+    const months = [];
+    const monthValues = [];
+    const fullMonths = [];
+    new Array(12).fill(0).forEach((num, index) => {
+      const value = generateRandomNumber(5000);
+      const month = moment(index + 1, "M").format("MMM");
+      const fullMonth = moment(index + 1, "M").format("MMMM");
+      fullMonths.push(fullMonth);
+      months.push(month);
+      monthValues.push(value);
+    });
+    return { months, monthValues, fullMonths };
+  };
+
+  const _monthlySalesGraphConfig = () => {
+    return {
+      toolTipsCallback: {
+        title: () => "",
+        label(tooltipItem, data) {
+          const { value, index } = tooltipItem;
+          return `${data.datasets[0].fullMonths[index] || ""}: ₦${value}`;
+        },
+      },
+    };
+  };
 
   const _getRowTotalEarning = (row = {}) => {
     const {
@@ -363,12 +470,10 @@ const royalty = (BASEURL) => {
     }
   };
 
-  const initiate = () => {
-    _handleTopGraphAndTotal();
-    _handleTopCountriesChart();
-    _handleTopStoresChart();
-    _insertComponent("#royalties-table", "index");
-    _attachTabEvents();
+  const initiate = async () => {
+    const topGraphSuccess = await _handleTopGraphAndTotal();
+    if (topGraphSuccess === false) return; //don't render the remaining components.
+    _injectIfTopGraphSuccess(topGraphSuccess);
   };
 
   return { initiate };

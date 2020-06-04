@@ -11,24 +11,39 @@
   <section class="royalties__info d-flex flex-column flex-md-row">
     <div
       class="mb-4 mb-md-0 mr-md-5 bg-white royalties__info__graph royalties__info__graph--inactive"
+      id="top-graph-container"
     >
       <div
         class="royalties__info__graph__container d-flex flex-column flex-md-row"
       >
-        <div
-          class="royalties__info__graph__container__graph"
-          id="royalties-graph-container"
-        ></div>
+        <div class="royalties__info__graph__container__graph">
+          <canvas id="royalties-graph"></canvas>
+        </div>
         <div class="royalties__info__graph__container__report text-center">
           <div class="mb-3 -u-font-bold">Monthly Report</div>
-          <div class="mb-3 -u-font-small-light">
+          <div class="mb-2 -u-font-small-light">
             Last reporting months <br />
             total earnings
           </div>
-          <div class="mb-3 -u-font-big">&#8358;0.00</div>
-          <div class="alert alert-info">
-            Some stores report sales with up to a month delay. When we receive
-            your sales you'll be able to collect of earnings.
+          <div class="mb-2 -u-font-big" id="monthdata-earning">&#8358;0.00</div>
+          <div id="monthdata-rate"></div>
+          <div class="mb-2 -u-font-small-light">
+            vs Previous Month
+          </div>
+          <div
+            class="alert alert-info royalties__info__graph__container__report__notice"
+          >
+            <h3
+              class="royalties__info__graph__container__report__notice__title"
+            >
+              Why Am I Only Seeing Up To <span id="monthdata-month">Jan</span>?
+            </h3>
+            <div
+              class="royalties__info__graph__container__report__notice__text"
+            >
+              Some stores report sales with up to a month delay. When we receive
+              your sales you'll be able to collect of earnings.
+            </div>
           </div>
         </div>
       </div>
@@ -51,7 +66,9 @@
         <div class="-u-font-small-light">
           Your available balance to withdraw is:
         </div>
-        <div class="-u-font-big -u-color-primary">&#8358;0.00</div>
+        <div class="-u-font-big -u-color-primary" id="total-sales-main">
+          &#8358;0.00
+        </div>
         <div>
           <button
             class="btn-outline px-5 py-3"
@@ -71,21 +88,16 @@
             <div class="royalty-wallet__footer__item--name -u-font-small-light">
               Total Balance
             </div>
-            <div class="royalty-wallet__footer__item--money">&#8358;0.00</div>
+            <div
+              class="royalty-wallet__footer__item--money"
+              id="total-sales-sub"
+            >
+              &#8358;0.00
+            </div>
           </div>
         </section>
       </section>
     </div>
   </section>
-  <section class="royalties__inject">
-    <section class="royalties__inject__charts">
-      <div class="royalties__inject__charts__countries"></div>
-      <div class="royalties__inject__charts__stores"></div>
-    </section>
-    <section
-      class="royalties__inject__table bg-white"
-      id="royalties-table"
-    ></section>
-  </section>
-  <div class="royalties--footer mt-2">*Last Updated - 31st January, 2020</div>
+  <div id="container-inject"></div>
 </section>
