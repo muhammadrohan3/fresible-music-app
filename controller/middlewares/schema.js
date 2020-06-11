@@ -32,7 +32,6 @@ const {
 const logger = require("../logger");
 
 const schemaType = (schema) => {
-  console.log(schema);
   schema = schema.toLowerCase();
   if (schema.search(/^users?$/) >= 0) return User;
   if (schema.search(/^userprofiles?$/) >= 0) return Userprofile;
@@ -200,7 +199,7 @@ const whereGen = (store, data = {}) => {
 
   if (mutation && !items.length)
     throw new Error("ERROR: WHEREGEN, where items empty ");
-  console.log("-----SCHEMA-WHERE: ", { [Op[queryMainOp || "and"]]: items });
+  // console.log("-----SCHEMA-WHERE: ", { [Op[queryMainOp || "and"]]: items });
   return {
     where: {
       [Op[queryMainOp || "and"]]: items,
@@ -326,7 +325,6 @@ const processRawSQL = ({ getStore, setStore, req }) => async (SQL) => {
     replacements,
     type: sequelize.QueryTypes.SELECT,
   });
-  console.log(schemaResult);
   return schemaResultHandler(
     { setStore, getStore, req, schema: "" },
     schemaResult,

@@ -62,6 +62,7 @@ module.exports = (Controller) => {
     sendMail,
     isValueIn,
     setStoreIf,
+    processRawSQL,
     royalties_GenerateStructureForEdit,
     royalties_queryIntercept,
     royalties_OverviewStructure,
@@ -104,54 +105,20 @@ module.exports = (Controller) => {
 
   router.get(
     "/data/month",
-    addToSchema(SCHEMAQUERY, { status: "published" }),
-    fromReq("user", ["id"], "USER_KEY"),
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: ROYALTY,
-        al: "royalties",
-        at: [
-          ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-          ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-          ["SUM", "trackStreamEarning", "trackStreamEarning"],
-        ],
-        i: [{ m: USER, at: [], w: ["USER_KEY"] }],
-      },
-    ]),
-    getAllFromSchema(MONTHLYROYALTY, ["id", "monthValue", "yearValue"], {
-      limit: 2,
-      order: [
-        ["monthValue", "DESC"],
-        ["yearValue", "DESC"],
-      ],
-    }),
+    fromReq("user", ["id"], "replacements"),
+    processRawSQL(`
+    SELECT id, monthValue, yearValue, earning FROM monthlyroyalties A JOIN (SELECT B.monthId, SUM(B.trackStreamEarning) + SUM(B.trackDownloadEarning) + SUM(B.releaseDownloadEarning) AS 'earning' FROM royalties B WHERE B.userId = :id GROUP BY B.monthId) B ON A.id = B.monthId WHERE A.status = 'published' ORDER BY A.monthValue DESC, A.yearValue DESC LIMIT 2
+    `),
     royalties_monthSerializer(),
     respond(["MONTH_SERIALIZED_DATA"])
   );
 
   router.get(
     "/data/months",
-    addToSchema(SCHEMAQUERY, { status: "published" }),
-    fromReq("user", ["id"], "USER_KEY"),
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: ROYALTY,
-        al: "royalties",
-        at: [
-          ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-          ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-          ["SUM", "trackStreamEarning", "trackStreamEarning"],
-        ],
-        i: [{ m: USER, at: [], w: ["USER_KEY"] }],
-      },
-    ]),
-    getAllFromSchema(MONTHLYROYALTY, ["id", "monthValue", "yearValue"], {
-      limit: 12,
-      order: [
-        ["monthValue", "DESC"],
-        ["yearValue", "DESC"],
-      ],
-    }),
+    fromReq("user", ["id"], "replacements"),
+    processRawSQL(`
+    SELECT id, monthValue, yearValue, earning FROM monthlyroyalties A JOIN (SELECT B.monthId, SUM(B.trackStreamEarning) + SUM(B.trackDownloadEarning) + SUM(B.releaseDownloadEarning) AS 'earning' FROM royalties B WHERE B.userId = :id GROUP BY B.monthId) B ON A.id = B.monthId WHERE A.status = 'published' ORDER BY A.monthValue DESC, A.yearValue DESC LIMIT 12
+    `),
     respond([SCHEMARESULT])
   );
 
