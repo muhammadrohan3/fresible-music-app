@@ -107,18 +107,16 @@ const royalty = (BASEURL) => {
   };
 
   const _handleTopGraphAndTotal = async () => {
-    const recentPublishedMonthTotal = await _getChartData("month");
-    const isRecentPublishedMonthTotalEmpty = _checkIfServerResponseIsNull(
-      recentPublishedMonthTotal
-    );
-    if (isRecentPublishedMonthTotalEmpty) {
+    const totalSales = await _getChartData("total");
+    const isTotalSalesEmpty = _checkIfServerResponseIsNull(totalSales);
+    if (isTotalSalesEmpty) {
       _renderMonthlySalesGraph();
       return false;
     }
+    const recentPublishedMonthTotal = await _getChartData("month");
     _renderRecentPublishedMonthTotal(recentPublishedMonthTotal);
     const monthlySalesData = await _getChartData("months");
     _renderMonthlySalesGraph(monthlySalesData);
-    const totalSales = await _getChartData("total");
     _renderTotalSales(totalSales);
     _removeTopGraphInactiveOverlay();
     return true;

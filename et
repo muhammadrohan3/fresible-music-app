@@ -1,0 +1,508 @@
+[33mcommit 4376a853a4a34b5daa29a9215118ed22633056ff[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 11 16:11:14 2020 +0100
+
+    webpack-ish
+
+[33mcommit f1bcd7463bab6bc0c44ad8cff124f66088e6e9a7[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Jun 3 23:02:45 2020 +0100
+
+    fix smartlink stagename confusion
+
+[33mcommit 0a78c28471a3941eb25e33a464a31bf7f9c995e5[m[33m ([m[1;31mtest/new-feature[m[33m, [m[1;32mnew-feature[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 11 16:42:10 2020 +0100
+
+    fixed clientside royalties data issues
+
+[33mcommit 625c43185f4c134e1c26a618ce1a68140aa900ad[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 11 16:04:38 2020 +0100
+
+    fixed sign-in bug
+
+[33mcommit adb2ae2ac2ef740f003eb5974b10a2c755c2df8c[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 11 15:35:41 2020 +0100
+
+    packaged the royalties feature and some other changes for deploy
+
+[33mcommit f7eb3d7aed2d3e17cb6183730910f6ee7838a5e5[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 4 23:45:20 2020 +0100
+
+    royalties beta release test version, fix duplicate keys issue
+
+[33mcommit 1a3bc7499e3a7c5c8b7b9e50342b3a3237b2d739[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 4 23:20:09 2020 +0100
+
+    royalties beta release test version
+
+[33mcommit 709616eabc15b96ce2ee4977da77977ead813d77[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Thu Jun 4 16:48:41 2020 +0100
+
+    made progress on the royalty feature, which now works for both admin and client ends
+
+[33mcommit 67c02f3cbe1ec77620ebbde4f88da50bec808440[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Jun 3 22:47:17 2020 +0100
+
+    first commit for the royalties feature
+
+[33mcommit cae544aad70d7b113cd28b8fbf96bc35d5782622[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed May 20 16:03:52 2020 +0100
+
+    fix deleted releases showing up bug
+
+[33mcommit 80c2d49e208503cfdcf2924860da844774d47de8[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed May 20 15:33:26 2020 +0100
+
+    build webpack for production
+
+[33mcommit a84fce3a653c7e26c2b180cf793247a5b448c9b4[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed May 20 15:25:30 2020 +0100
+
+    quickly fix subcription loop error
+
+[33mcommit 36386dd5587bfd9cfddebaeb9868db96bbd5e1dc[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun May 17 13:37:00 2020 +0100
+
+    fix account page layout, add pricing & store type options to admin release ui and make other tweaks
+
+[33mcommit c6cbd05bc4b3f8f22a3d6c159e74b4daa149e49a[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun May 17 03:08:22 2020 +0100
+
+    fix release counter adding deleted records
+
+[33mcommit fb2026bdddd6493811b47b9606f31b8dc4d52b3d[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun May 17 03:06:49 2020 +0100
+
+    fix release counter adding deleted records
+
+[33mcommit cdc26c4206cc8a43316124677f9bbf791280da77[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon May 11 15:20:29 2020 +0100
+
+    added the right mail config
+
+[33mcommit 5f3995a3ec52c10754132ce87609d2d0b69c38fb[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon May 11 15:18:57 2020 +0100
+
+    fix smartlink bug, analytics not loading types correctly for admin and also tested some routes to be sure
+
+[33mcommit a33b79f8b84819f86c63a86828b17d968b3fdba4[m[33m ([m[1;31mtest/master[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon May 11 13:52:32 2020 +0100
+
+    changed mail settings for test server
+
+[33mcommit cbc6ec70e21a19b04bd60615f6bb0c25a9425be9[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon May 11 13:49:58 2020 +0100
+
+    fix complete-profile and decline comment bug
+
+[33mcommit b299cdf22f4b93b69d63d2c4c6a9ba50aa8cdfaa[m[33m ([m[1;32mnew-feature-safe[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun May 10 22:51:33 2020 +0100
+
+    mail for beta release
+
+[33mcommit 60843117006b40fcf0efbf1a6c9d695c41699f7a[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun May 10 22:41:43 2020 +0100
+
+    ready for beta release
+
+[33mcommit 2e74420248ef78b7c6f817781e85c4c87ff3d6c7[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat May 9 13:21:40 2020 +0100
+
+    fix beta release bugs
+
+[33mcommit efad8655d4cc322459d36890fe6931ef971eb7be[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat May 9 13:15:56 2020 +0100
+
+    fix beta release bugs
+
+[33mcommit 5d27bbc1a8d0da601e2b62aee4759f68004a34c0[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Fri May 8 23:30:59 2020 +0100
+
+    fast-forward new feature progress to beta release
+
+[33mcommit 5dbe2cfc579205f755cc80de69c058d4a47f3d59[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue May 5 19:27:55 2020 +0100
+
+    fast forward the app to the process that contains daily progress on the app
+
+[33mcommit c34bc4f21f5698a96d0487f14dc90602a9217f5b[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 19:31:02 2020 +0100
+
+    fix bugs concerning first test on the beta release of the analytics feature
+
+[33mcommit c2c2e54f46d6c9c863ce61730d2e1e0f010512c9[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 17:49:47 2020 +0100
+
+    prepping app for beta release
+
+[33mcommit 8a41b33a9250aba4d232e5490ff7c93b00a16294[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 16:57:54 2020 +0100
+
+    prepping app for beta release
+
+[33mcommit a79a186db244989d25dc756a4acccd7a8a5fbb56[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 16:42:11 2020 +0100
+
+    make changes to the package.json file for db syncing
+
+[33mcommit b41e8896e7a5d6128a6743360b4bedf69a89dab3[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 16:14:02 2020 +0100
+
+    make changes to the package.json file for db syncing
+
+[33mcommit c38b9fe1fefd1ee1a52db379e1e5f7f2a3e0d36d[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 16:01:22 2020 +0100
+
+    make changes to the package.json file for db syncing
+
+[33mcommit 9c409af9e7649f8e67f367f43132b7d37addb30d[m[33m ([m[1;31mtest/git-test[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 29 15:47:27 2020 +0100
+
+    beta release for the analytics feature
+
+[33mcommit 1b5dfb48bd8a7ed0ae72a4b069e5469f5dbaa52b[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 28 22:28:55 2020 +0100
+
+    nearing test release
+
+[33mcommit be1fdd16e4ea7846410171903a83cf59c8032f4f[m[33m ([m[1;32mdevelop[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 28 09:45:00 2020 +0100
+
+    fast foward the system to contain recent work on the new feature
+
+[33mcommit 11ec3dced3ad7645f6a6253ea4398b83c520244d[m
+Merge: ea5e233 22097a5
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 21 21:54:31 2020 +0100
+
+    Merge branch 'master' into new-feature (**paystack quick fix included)
+
+[33mcommit 22097a51eec99fd0c04407d088ee043ab101e549[m[33m ([m[1;31mtest/dev[m[33m)[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 21 21:42:55 2020 +0100
+
+    fix paystack link not generating bug
+
+[33mcommit ea5e2330f196002a3d7cbdd0d21f622cb211bcdb[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 21 21:21:28 2020 +0100
+
+    progressed on the new feature, worked on the db merge algorithm to sync data
+
+[33mcommit c5ed60bc6df77abd22334c5fb1e13f0cbb67c33d[m
+Merge: a97d0c1 3ee39bd
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun Apr 19 13:46:14 2020 +0100
+
+    merge master to branch
+
+[33mcommit 3ee39bd285488639c23aef602c23a650433895c5[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun Apr 19 11:27:07 2020 +0100
+
+    fix validation error, internal server error, music submission
+
+[33mcommit a97d0c1a80f377a01da76a5d010be4d7806dfa5a[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun Apr 19 08:17:30 2020 +0100
+
+    analytics algo update
+
+[33mcommit 8edd0218f1b2cfba445b5bc6b5ae66402fc0e5fc[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 18 23:06:39 2020 +0100
+
+    fix payment related pages causing internal server
+
+[33mcommit 388fc48d7004215d35fe4e877852220480aa824d[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 18 18:13:05 2020 +0100
+
+    fix track missing from submission and paystack link generation error
+
+[33mcommit afaf8d7ba7d6a36732895702be1aa2642b689dd2[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 18 15:49:15 2020 +0100
+
+    add sengrid to fix the mail sending issues
+
+[33mcommit bbaf6cfeb9458e84011845f90fa87717a78b1f0a[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 18 12:50:56 2020 +0100
+
+    work
+
+[33mcommit 0a7219174e17a451212fb78ded2b4d6a5a944c96[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 15 18:31:48 2020 +0100
+
+    day progress
+
+[33mcommit 6ac0cf4cf0f9ccee7dc0e6f951c09866dc6ee7f9[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 14 18:13:54 2020 +0100
+
+    fix profile password change bug and file bug related to track upload
+
+[33mcommit 17346aac2cd969c1be55f4bdb709d1b75d13e92d[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 14 17:38:15 2020 +0100
+
+    made progress, commit contains algo for frontend rendering and table UI
+
+[33mcommit 99f44d1115431c0266805501a750337f12b315b5[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Wed Apr 8 18:47:34 2020 +0100
+
+    add royalties page containing graphs to the app
+
+[33mcommit 8ac846ec312149e111a9229ae48c976f3993495b[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 23:39:17 2020 +0100
+
+    fix the subscription packages inconsistencies from the raw code
+
+[33mcommit 8821a98b1f482be59959e515ceb8c0e1e8de687b[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 17:50:18 2020 +0100
+
+    fix select package loader bug, change approved to live releaseson admin dashboard
+
+[33mcommit f5a7d99d937bc85b58145c3ea839d636c0f20f11[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 12:11:56 2020 +0100
+
+    fix the smartlinks api endpoint error
+
+[33mcommit 8e45d0d05fa7c4dad9cab3b0b45eee221ba3cdff[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 02:09:27 2020 +0100
+
+    re-packaged for production deployment
+
+[33mcommit fefc07e25de01def496f763eee756411a94431c6[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 02:05:39 2020 +0100
+
+    re-packaged for production deployment
+
+[33mcommit f9cd69a1d9b4fe638707dbea4bbd6c00836a8530[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 02:04:05 2020 +0100
+
+    re-packaged for production deployment
+
+[33mcommit a04e0ad4e44d4134f8d9c3b512ebc9bdce7dcf7b[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 02:01:16 2020 +0100
+
+    re-packaged for production deployment
+
+[33mcommit a299edebdd9d2388a3fa73b98f97b57357fea22d[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 01:47:12 2020 +0100
+
+    add dotenv requirements to files
+
+[33mcommit 82ee85834cd155a2895b1f36a1b0e0611fbad696[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 00:41:37 2020 +0100
+
+    remove console.log from js assets
+
+[33mcommit d69fbae2a26730ce436ae4eb219b42b93ce5a619[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Apr 7 00:28:56 2020 +0100
+
+    fix bugs spotted on the test server
+
+[33mcommit 68fbc08eda9cb2212c55d96fa4fc98f531142d03[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon Apr 6 15:44:20 2020 +0100
+
+    add a maintainance html page fallback
+
+[33mcommit e9fd6dc4c239443468eaae3e7bae564a15c846f4[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon Apr 6 15:18:52 2020 +0100
+
+    apply the features and tidyed project
+
+[33mcommit b0478f465b8d88178e23c67424d80bf75c6e9644[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 23:18:48 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit 0f5e9cf28cb0060350077cb9537898d3176c18b7[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 22:57:22 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit d7cc98841fd37d4b6fe06af902c8dbaf6b2379f1[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 22:39:57 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit 14442cff7b471a2ae63047adadb53da2755ec7ef[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 22:31:35 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit 859c0369915117e699e2b3a747fda6359c2c64d6[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 22:24:42 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit 0bfc0a39a173c00286e6a70e7fb26af475644ca4[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 22:19:36 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit d3ad477236259446eaf59b1ae9f6984aa4ccfd16[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 22:13:27 2020 +0100
+
+    fix bugs for test deploy
+
+[33mcommit 07e75fad6c48656d97cdfa41806883b66c3d98ec[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 21:58:44 2020 +0100
+
+    fix the migration bug on test server
+
+[33mcommit e97c909cee6a4831ac290549556507b5456af471[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 21:35:54 2020 +0100
+
+    bundle webpack for production, and will add some commands to the package.json file to be used for running
+
+[33mcommit ab1bb28dfb46f242764a3839d214ccd333e7eb68[m
+Merge: bdfac20 7fcbece
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 17:34:33 2020 +0100
+
+    Merge branch 'main-dev'
+
+[33mcommit 7fcbece58bd8cbc33139022299344c24f15abf4a[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 17:34:21 2020 +0100
+
+    made changes to package.json
+
+[33mcommit bdfac20faae6208b3d0a6bc7befceba32fe9a438[m
+Merge: b7a899a 3861260
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 17:22:30 2020 +0100
+
+    merge with main-dev
+
+[33mcommit 3861260ed7267e0e79916a5f1989e51a27decf42[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 17:19:16 2020 +0100
+
+    add new layer of functionality to the laver level structure
+
+[33mcommit 7954531a1f6cf0da8d85179c1f46e8e96b4609f3[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Apr 4 17:18:07 2020 +0100
+
+    restructured the database migrations and models
+
+[33mcommit 0cdf652b1a7a298b4dc687f05805075d9b3179c0[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Mar 31 22:39:41 2020 +0100
+
+    made progress on the feature
+
+[33mcommit ac1e966fa507e2e6f5236987ccf979e0609687fe[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Mon Mar 30 19:36:02 2020 +0100
+
+    today's progress
+
+[33mcommit b7a899a7f5bcd8ea923be852b4e00edc51896f87[m
+Merge: cf41ec6 2e110c8
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun Mar 29 16:46:47 2020 +0100
+
+    Merge branch 'main-dev'
+
+[33mcommit cf41ec6d2f0b595ba14a20ae03eef4f1daf9f2e0[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun Mar 29 16:29:20 2020 +0100
+
+    added gitignore
+
+[33mcommit 2e110c8d2a55b8fc68314bef8f44806e44e4d060[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sun Mar 29 16:11:55 2020 +0100
+
+    today's progress on adding the required features
+
+[33mcommit 5b7c2257d9da99b13f76ce9f28985e1be0145a1c[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Sat Mar 28 11:23:52 2020 +0100
+
+    made another progress today
+
+[33mcommit 53996f7fe9d0c7cbc7527d94049f93a2d6c8f515[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Fri Mar 27 18:18:07 2020 +0100
+
+    progressively nearing the target
+
+[33mcommit f16fd8dd5d4edd25f5600a4997bd832392fee59f[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Fri Mar 27 13:35:14 2020 +0100
+
+    progressed on the label feature and structure enhancements
+
+[33mcommit 60593915267ce4f5361b9137dfd8ebbcb82bc9c3[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Tue Mar 24 07:52:34 2020 +0100
+
+    made few pre-test adjustments to the sequelize files
+
+[33mcommit 69d58e73dc919bc8c7a8cae4f30fbf782b3f0166[m
+Author: Hope Praise <hopejedidiahgmail.com>
+Date:   Fri Mar 20 17:06:14 2020 +0100
+
+    first commit to the new repo

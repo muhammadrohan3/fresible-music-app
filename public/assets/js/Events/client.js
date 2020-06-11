@@ -7,10 +7,6 @@ import Royalty from "../components/Royalty";
 import Analytics from "../components/Analytics";
 
 export default (Controller) => {
-  if (location.pathname === "/royalties") {
-    Royalty("/royalties/data").initiate();
-  }
-
   if (location.pathname === "/analytics") {
     (async () =>
       await Analytics.initiate({

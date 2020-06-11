@@ -27,9 +27,8 @@ import View from "../View";
       return new AddMusicController(new AddMusicView());
     }
 
-    if (location.pathname.startsWith("/royalties")) {
+    if (location.pathname === "/royalties") {
       Royalty("/royalties/data").initiate();
-      return;
     }
     Event(Controller());
   } catch (err) {
