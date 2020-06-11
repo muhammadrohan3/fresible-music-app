@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import injectIconToAlert from "./components/AlertIcon";
 
 const View = ((document) => {
+  let E;
   const _ = (e) => document.querySelector(e);
   const getCookieValue = (cookieName) => {
     const cookies = decodeURIComponent(document.cookie);
@@ -119,10 +120,11 @@ const View = ((document) => {
   };
 
   //CLOSE ALERT ON CANCEL CLICK
-  _("#alert-close").addEventListener("click", (e) => {
-    e.stopPropagation();
-    showAlert(false);
-  });
+  (E = _("#alert-close")) &&
+    E.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showAlert(false);
+    });
 
   return {
     show,
