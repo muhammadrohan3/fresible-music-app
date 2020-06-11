@@ -13,8 +13,8 @@ class View {
     this.mobileMenuElement = this.getElement("#hamburger");
     this.LOADER_TEXT = this.getElement("#loader-text");
     //SUBSCRIPTIONS
-    pubSub.subscribe("loader/uploading", this.showLoaderText, this);
-    pubSub.subscribe("loader/loading", this.showLoader, this);
+    pubSub.subscribe("loader/uploading", this.showLoaderText.bind(this), this);
+    pubSub.subscribe("loader/loading", this.showLoader.bind(this));
 
     //EVENTS
     //CLICK

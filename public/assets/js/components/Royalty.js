@@ -10,6 +10,12 @@ import LineGraph from "./LineGraph";
 
 const royalty = (BASEURL) => {
   const CACHE = new Map();
+  const _formatAmount = (amount) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(amount);
+  };
 
   const _getTableData = async (params) => {
     View.showLoader(true);
@@ -30,7 +36,7 @@ const royalty = (BASEURL) => {
     }
     if (isDataFromServer) CACHE.set(key, JSON.stringify(tableData));
     View.showLoader(false);
-    return tableData;
+    return _convertEarningToNairaEquiv(tableData);
   };
 
   const _getChartData = async (routeName) => {
@@ -38,7 +44,31 @@ const royalty = (BASEURL) => {
       href: BASEURL + "/" + routeName,
       method: "GET",
     });
+    return _convertEarningToNairaEquiv(data);
+  };
+
+  const _convertEarningToNairaEquiv = (data) => {
+    if (Array.isArray(data)) {
+      data.forEach((dataObj) => _convertEarningKeysValueToNairaEquiv(dataObj));
+    } else {
+      if (_allObjectValuesAreNull(data)) return data;
+      _convertEarningKeysValueToNairaEquiv(data);
+    }
     return data;
+  };
+
+  const _convertEarningKeysValueToNairaEquiv = (dataObj) => {
+    const earningKeys = [
+      "releaseDownloadEarning",
+      "trackStreamEarning",
+      "trackDownloadEarning",
+      "earning",
+    ];
+    earningKeys.forEach((key) => {
+      let keyValue = dataObj[key];
+      if (!keyValue) return;
+      dataObj[key] = Number(keyValue) / 100;
+    });
   };
 
   const _injectIfTopGraphSuccess = (topGraphSuccess) => {
@@ -111,13 +141,13 @@ const royalty = (BASEURL) => {
     const monthName = moment(monthValue, "M").format("MMM");
     View.addHTML(RATE_ID, rangeHTML);
     View.addContent(MONTH_ID, monthName);
-    View.addContent(EARNING_ID, `₦${earning}`);
+    View.addContent(EARNING_ID, _formatAmount(earning));
   };
 
   const _renderTotalSales = (data) => {
     const TOTAL_SALES_MAIN = "#total-sales-main";
     const TOTAL_SALES_SUB = "#total-sales-sub";
-    const total = `₦${_getRowTotalEarning(data)}`;
+    const total = _formatAmount(_getRowTotalEarning(data));
     View.addContent(TOTAL_SALES_MAIN, total);
     View.addContent(TOTAL_SALES_SUB, total);
   };
@@ -150,8 +180,7 @@ const royalty = (BASEURL) => {
     const monthsNotComplete = data.length < 12;
     if (monthsNotComplete)
       dataToBeRendered = _fillUpMissingMonthlySalesGraphData(data);
-    dataToBeRendered.forEach(({ monthValue, royalties: [royaltyData] }) => {
-      const earning = _getRowTotalEarning(royaltyData) || 0;
+    dataToBeRendered.forEach(({ monthValue, earning }) => {
       const month = moment(monthValue, "M").format("MMM");
       const fullMonth = moment(monthValue, "M").format("MMMM");
       fullMonths.push(fullMonth);
@@ -170,7 +199,7 @@ const royalty = (BASEURL) => {
       let value = startValue - 1;
       value = value <= 0 ? 12 : value;
       startValue = value;
-      dataCopy.push({ monthValue: value, royalties: [{ earning: 0 }] });
+      dataCopy.push({ monthValue: value, earning: 0 });
     }
     return dataCopy;
   };
@@ -196,7 +225,9 @@ const royalty = (BASEURL) => {
         title: () => "",
         label(tooltipItem, data) {
           const { value, index } = tooltipItem;
-          return `${data.datasets[0].fullMonths[index] || ""}: ₦${value}`;
+          return `${data.datasets[0].fullMonths[index] || ""}: ${_formatAmount(
+            value
+          )}`;
         },
       },
     };
@@ -292,7 +323,7 @@ const royalty = (BASEURL) => {
         labels.push(store);
         storeRoyaltyList.push({
           store,
-          value,
+          value: _formatAmount(value),
           bgColor: backgroundColors[index],
         });
       }
@@ -308,7 +339,9 @@ const royalty = (BASEURL) => {
     };
     const label = (tooltipItem, data) => {
       const { index } = tooltipItem;
-      return `${data.labels[index]}: ₦${data.datasets[0].data[index]}`;
+      return `${data.labels[index]}: ${_formatAmount(
+        data.datasets[0].data[index]
+      )}`;
     };
     DoughnutChart(data, containerId, { callbacks: { label } });
     const storeListHTML = Template(
@@ -392,7 +425,7 @@ const royalty = (BASEURL) => {
 
   const _tableFormatters = {
     priceFormat(value, row) {
-      return `₦${value}`;
+      return _formatAmount(value);
     },
     monthFormat(value, row) {
       const {

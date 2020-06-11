@@ -71,15 +71,22 @@ const View = ((document) => {
     return typeof id === "string" ? document.querySelector(id) : id;
   };
 
-  const showAlert = (text, stay = true) => {
-    if (!text) return removeClass("#page-alert", "page__alert--show");
+  //TODO: REFACTOR ALERT FUNCTIONALITY
+  let ALERT_TIMEOUT_ID;
+  const ALERT_CONTAINER = _("#page-alert");
+  const _alertPanelIsActive = () => {
+    return ALERT_CONTAINER.classList.contains("page__alert--show");
+  };
+  const showAlert = (text) => {
+    ALERT_TIMEOUT_ID && clearTimeout(ALERT_TIMEOUT_ID);
+    if (!text) return removeClass(ALERT_CONTAINER, "page__alert--show");
     showLoader(false);
     addContent("#page-alert-text", text, true);
     addClass("#page-alert", "page__alert--show");
-    return setTimeout(
-      () => removeClass("#page-alert", "page__alert--show"),
-      10000
-    );
+    ALERT_TIMEOUT_ID = setTimeout(() => {
+      if (!_alertPanelIsActive()) return;
+      removeClass("#page-alert", "page__alert--show");
+    }, 10000);
   };
 
   const showLoader = (status) => {
@@ -111,7 +118,11 @@ const View = ((document) => {
     return false;
   };
 
-  const prepareModal = async () => {};
+  //CLOSE ALERT ON CANCEL CLICK
+  _("#alert-close").addEventListener("click", (e) => {
+    e.stopPropagation();
+    showAlert(false);
+  });
 
   return {
     show,

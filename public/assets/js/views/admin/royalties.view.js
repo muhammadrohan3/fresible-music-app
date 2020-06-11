@@ -179,6 +179,8 @@ export default class RoyaltiesView extends ViewIndex {
               });
               const $storeContainer = this.getElement(elementId);
               const { rawFormData } = this.getFormData($storeContainer);
+              this._formatInputEarnings(rawFormData);
+              this._formatInputEarnings(releaseInputs);
               dataToBeSubmitted.push({
                 userId,
                 releaseId,
@@ -197,6 +199,18 @@ export default class RoyaltiesView extends ViewIndex {
     return dataToBeSubmitted;
   }
 
+  _formatInputEarnings(valueObj = {}) {
+    const earningKeys = [
+      "releaseDownloadEarning",
+      "trackStreamEarning",
+      "trackDownloadEarning",
+    ];
+    earningKeys.forEach((key) => {
+      let keyValue = valueObj[key];
+      if (!keyValue) return;
+      valueObj[key] = Math.round(Number(keyValue) * 100);
+    });
+  }
   _getTypeDataForNextModal(type) {
     const { title, items } = this._getEntityTypeData(type);
     return {

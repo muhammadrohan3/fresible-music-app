@@ -64,12 +64,8 @@ const _getRowTotalEarning = (row = {}) => {
 const royalties_monthSerializer = ({ getStore, setStore }) => () => {
   const { schemaResult } = getStore();
   const [latestPublishedMonth, previousPublishedMonth = {}] = schemaResult;
-  const previousPublishedMonthEarning = previousPublishedMonth.royalties
-    ? _getRowTotalEarning(previousPublishedMonth.royalties)
-    : 0;
-  const latestPublishedMonthEarning = _getRowTotalEarning(
-    latestPublishedMonth.royalties[0]
-  );
+  const { earning: previousPublishedMonthEarning = 0 } = previousPublishedMonth;
+  const { earning: latestPublishedMonthEarning } = latestPublishedMonth;
   const [rate, growth] = growthCalc(
     latestPublishedMonthEarning,
     previousPublishedMonthEarning

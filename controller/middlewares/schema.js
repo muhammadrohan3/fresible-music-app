@@ -320,6 +320,20 @@ const deleteSchemaData = _modelWrapper("destroy", {
   actionType: "delete",
 });
 
+const processRawSQL = ({ getStore, setStore, req }) => async (SQL) => {
+  const { replacements = {} } = getStore();
+  const schemaResult = await sequelize.query(SQL, {
+    replacements,
+    type: sequelize.QueryTypes.SELECT,
+  });
+  console.log(schemaResult);
+  return schemaResultHandler(
+    { setStore, getStore, req, schema: "" },
+    schemaResult,
+    (actionType = "get")
+  );
+};
+
 // const bulkCreateSchema = ({ getStore, setStore }) => async (schema) => {
 //   try {
 //     const Model = schemaType(schema, getStore);
@@ -340,5 +354,6 @@ module.exports = {
   getOrCreateSchemaData,
   bulkCreateSchema,
   getAndCountAllFromSchema,
+  processRawSQL,
   runSql,
 };

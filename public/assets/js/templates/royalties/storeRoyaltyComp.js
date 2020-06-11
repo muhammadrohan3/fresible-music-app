@@ -7,7 +7,7 @@ export default `
   ></div>
   <div class="store-royalty__details">
     <div class="store-royalty__details__store"><%= store %></div>
-    <div class="store-royalty__details__amount">₦<%= value %></div>
+    <div class="store-royalty__details__amount"><%= value %></div>
   </div>
 </div>
 <% }) %>

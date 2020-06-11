@@ -62,6 +62,7 @@ module.exports = (Controller) => {
     sendMail,
     isValueIn,
     setStoreIf,
+    processRawSQL,
     royalties_GenerateStructureForEdit,
     royalties_queryIntercept,
     royalties_OverviewStructure,
@@ -118,50 +119,18 @@ module.exports = (Controller) => {
 
   router.get(
     "/index/data/month",
-    addToSchema(SCHEMAQUERY, { status: "published" }),
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: ROYALTY,
-        al: "royalties",
-        at: [
-          ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-          ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-          ["SUM", "trackStreamEarning", "trackStreamEarning"],
-        ],
-      },
-    ]),
-    getAllFromSchema(MONTHLYROYALTY, ["id", "monthValue", "yearValue"], {
-      limit: 2,
-      order: [
-        ["monthValue", "DESC"],
-        ["yearValue", "DESC"],
-      ],
-    }),
+    processRawSQL(`
+    SELECT id, monthValue, yearValue, earning FROM monthlyroyalties A JOIN (SELECT B.monthId, SUM(B.trackStreamEarning) + SUM(B.trackDownloadEarning) + SUM(B.releaseDownloadEarning) AS 'earning' FROM royalties B GROUP BY B.monthId) B ON A.id = B.monthId WHERE A.status = 'published' ORDER BY A.monthValue DESC, A.yearValue DESC LIMIT 2
+    `),
     royalties_monthSerializer(),
     respond(["MONTH_SERIALIZED_DATA"])
   );
 
   router.get(
     "/index/data/months",
-    addToSchema(SCHEMAQUERY, { status: "published" }),
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: ROYALTY,
-        al: "royalties",
-        at: [
-          ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-          ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-          ["SUM", "trackStreamEarning", "trackStreamEarning"],
-        ],
-      },
-    ]),
-    getAllFromSchema(MONTHLYROYALTY, ["id", "monthValue", "yearValue"], {
-      limit: 12,
-      order: [
-        ["monthValue", "DESC"],
-        ["yearValue", "DESC"],
-      ],
-    }),
+    processRawSQL(`
+    SELECT id, monthValue, yearValue, earning FROM monthlyroyalties A JOIN (SELECT B.monthId, SUM(B.trackStreamEarning) + SUM(B.trackDownloadEarning) + SUM(B.releaseDownloadEarning) AS 'earning' FROM royalties B GROUP BY B.monthId) B ON A.id = B.monthId WHERE A.status = 'published' ORDER BY A.monthValue DESC, A.yearValue DESC LIMIT 12
+    `),
     respond([SCHEMARESULT])
   );
 
