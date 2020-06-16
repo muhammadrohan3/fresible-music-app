@@ -30,6 +30,10 @@ const {
   ROYALTY,
   COUNTRY,
 } = require("../../constants");
+const {
+  royalties_formatToNaira,
+  royalties_formatToKobo,
+} = require("../../controller/middlewares/royaltiesMiddlewares");
 
 module.exports = (Controller) => {
   const {
@@ -67,6 +71,8 @@ module.exports = (Controller) => {
     royalties_queryIntercept,
     royalties_OverviewStructure,
     royalties_monthSerializer,
+    royalties_formatToKobo,
+    royalties_formatToNaira,
   } = Controller;
 
   router.get(
@@ -241,6 +247,7 @@ module.exports = (Controller) => {
     schemaDataConstructor("body"),
     respondIf(SCHEMADATA, false, "Error: request body missing"),
     deleteSchemaData(ROYALTY),
+    royalties_formatToKobo(SCHEMADATA),
     bulkCreateSchema(ROYALTY),
     respond(1)
   );
@@ -264,6 +271,7 @@ module.exports = (Controller) => {
       { m: COUNTRY, al: ["country"], at: ["name"] },
     ]),
     getAllFromSchema(ROYALTY, null, { limit: null }),
+    royalties_formatToNaira(SCHEMARESULT),
     royalties_GenerateStructureForEdit(),
     respond(["ROYALTIES_EDIT_STRUCTURE"])
   );

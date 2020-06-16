@@ -18,6 +18,57 @@ const fs = require("fs");
 const path = require("path");
 const { convertHashToList } = generateStructure;
 
+const _convertToNairaDenomination = (dataObj = {}) => {
+  const earningKeys = [
+    "releaseDownloadEarning",
+    "trackDownloadEarning",
+    "trackStreamEarning",
+  ];
+  earningKeys.forEach((key) => {
+    const value = Number(dataObj[key]);
+    if (!value) return;
+    if (value == 0) return;
+    dataObj[key] = value / 100;
+  });
+  return dataObj;
+};
+
+const _convertToKoboDenomination = (dataObj = {}) => {
+  const earningKeys = [
+    "releaseDownloadEarning",
+    "trackDownloadEarning",
+    "trackStreamEarning",
+  ];
+  earningKeys.forEach((key) => {
+    const value = Number(dataObj[key]);
+    if (!value) return;
+    if (value == 0) return;
+    dataObj[key] = value * 100;
+  });
+  return dataObj;
+};
+
+const royalties_formatToNaira = ({ getStore, setStore }) => (
+  key = "schemaResult"
+) => {
+  const dataset = getStore(key) || [];
+  const newdataset = dataset.map((data) => {
+    return _convertToNairaDenomination(data);
+  });
+  setStore(key, null);
+  setStore(key, newdataset);
+};
+const royalties_formatToKobo = ({ getStore, setStore }) => (
+  key = "schemaResult"
+) => {
+  const dataset = getStore(key) || [];
+  const newdataset = dataset.map((data) => {
+    return _convertToKoboDenomination(data);
+  });
+  setStore(key, null);
+  setStore(key, newdataset);
+};
+
 const royalties_GenerateStructureForEdit = ({ getStore, setStore }) => () => {
   const { schemaResult } = getStore();
   let dataHash = {};
@@ -178,4 +229,6 @@ module.exports = {
   royalties_queryIntercept,
   royalties_OverviewStructure,
   royalties_monthSerializer,
+  royalties_formatToKobo,
+  royalties_formatToNaira,
 };
