@@ -69,7 +69,7 @@
             <div class="submission__details__overview__image__container">
               <img
               class="submission__details__overview__image__container--img"
-              src="<%= Fns.cloudinaryDynamicSize(artwork) || '/dist/no-image.jpg' %>"
+              src="<%= artwork || '/dist/no-image.jpg' %>"
               alt="<%= title %> artwork"
             />
             </div>
