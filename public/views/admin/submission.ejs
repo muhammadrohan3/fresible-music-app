@@ -69,8 +69,8 @@
                 <div class="submission__list__item--title">
                   <%=type === 'track' ? 'single' : 'album' %> by
                 </div>
-                <div class="submission__list__item--details">
-                  <%= Fns.capitalize(stageName) %>
+                <div class="submission__list__item--details -u-text-capitalize">
+                  <%= stageName || '' %>
                 </div>
               </li>
               <li class="submission__list__item">
@@ -79,8 +79,8 @@
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">label</div>
-                <div class="submission__list__item--details">
-                  <%=Fns.capitalize(user.profile.label) %>
+                <div class="submission__list__item--details -u-text-capitalize">
+                  <%= user.profile.label %>
                 </div>
               </li>
               <li class="submission__list__item">
@@ -89,28 +89,28 @@
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Copyright Holder</div>
-                <div class="submission__list__item--details"><%=Fns.capitalize(copyrightHolder) %></div>
+                <div class="submission__list__item--details -u-text-capitalize"><%= copyrightHolder %></div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Copyright Year</div>
-                <div class="submission__list__item--details">
-                  <%=Fns.capitalize(copyrightYear) %>
+                <div class="submission__list__item--details -u-text-capitalize">
+                  <%= copyrightYear %>
                 </div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Primary Genre</div>
-                <div class="submission__list__item--details"><%=Fns.capitalize(primaryGenre) %></div>
+                <div class="submission__list__item--details -u-text-capitalize"><%= primaryGenre %></div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Secondary Genre</div>
-                <div class="submission__list__item--details">
-                  <%=Fns.capitalize(secondaryGenre) %>
+                <div class="submission__list__item--details -u-text-capitalize">
+                  <%= secondaryGenre %>
                 </div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Sub. package</div>
-                <div class="submission__list__item--details">
-                  <%= Fns.capitalize(subscription.package.package) %>
+                <div class="submission__list__item--details -u-text-capitalize">
+                  <%=  subscription.package.package %>
                 </div>
               </li>
               <li class="submission__list__item">
