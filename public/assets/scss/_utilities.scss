@@ -3,6 +3,10 @@
   font-weight: 600;
 }
 
+.-u-text-capitalize {
+  text-transform: capitalize;
+}
+
 .-u-link-default {
   color: $color-primary !important;
 }
