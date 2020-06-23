@@ -163,15 +163,35 @@ const analytics_dates = ({ getStore, setStore }) => () => {
   for (let i = 0; i < CurrentData.length; i++) {
     const CurrentDataAnalytics = CurrentData[i].analytics;
     const PreviousDataAnalytics = (PreviousData[i] || {}).analytics || [];
-    for (let j = 0; j < CurrentDataAnalytics.length; j++) {
+    const defaultCurrentData = {
+      dateId: CurrentData[i].id,
+      analyticsdate: {
+        id: CurrentData[i].id,
+        date: CurrentData[i].date,
+        status: "initiating",
+      },
+    };
+
+    const defaultPreviousData = {
+      dateId: PreviousData[i].id,
+      analyticsdate: {
+        id: PreviousData[i].id,
+        date: PreviousData[i].date,
+        status: "initiating",
+      },
+    };
+
+    for (let j = 0; j < (CurrentDataAnalytics.length || 1); j++) {
+      const data = CurrentDataAnalytics[j] || defaultCurrentData;
       CurrentDataHash = hashGenerator(CurrentDataHash, {
-        ...CurrentDataAnalytics[j],
+        ...data,
         dateGroupId: i,
       });
     }
-    for (let j = 0; j < PreviousDataAnalytics.length; j++) {
+    for (let j = 0; j < (PreviousDataAnalytics.length || 1); j++) {
+      const data = PreviousDataAnalytics[j] || defaultPreviousData;
       PreviousDataHash = hashGenerator(PreviousDataHash, {
-        ...PreviousDataAnalytics[j],
+        ...data,
         dateGroupId: i,
       });
     }

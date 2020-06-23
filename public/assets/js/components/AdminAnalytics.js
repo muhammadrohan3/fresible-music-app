@@ -37,6 +37,7 @@ export default class AdminAnalytics {
 
     const statusFormat = (value) => {
       const statusHash = {
+        initiating: "danger",
         processing: "info",
         published: "success",
       };

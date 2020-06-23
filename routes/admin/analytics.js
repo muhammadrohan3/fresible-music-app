@@ -83,6 +83,7 @@ module.exports = (Controller) => {
           { m: STORE, at: ["store", "id"] },
           { m: ANALYTICSDATE, at: ["date", "id", "status"] },
         ],
+        r: false,
       },
     ]),
     analytics_intercept(),

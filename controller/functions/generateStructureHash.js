@@ -16,15 +16,19 @@ module.exports = (structure = {}, Callbacks) => (sourceHash = {}, dataItem) => {
       }
       if (cb) {
         keyValue[name] = Callbacks[cb](keyValue[name], dataItem, name, value);
-      } else keyValue[name] = value;
+      } else {
+        keyValue[name] = value;
+      }
     });
-    if (children)
+    if (children) {
       keyValue.children = _generateHash(
         keyValue.children,
         dataItem,
         children,
         level + 1
       );
+    }
+
     hash[dataItem[key]] = keyValue;
     return hash;
   };
