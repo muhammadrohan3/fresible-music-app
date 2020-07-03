@@ -71,7 +71,7 @@
       </li>
     </ul>
   </div>
-  <% if(status.toLowerCase() === 'inactive') { %>
+  <% if(status !== 'active') { %>
   <div>
     <div
       class="w-75 mx-auto d-flex flex-column flex-md-row justify-content-between"
@@ -92,7 +92,7 @@
     </div>
     <div class="alert alert-info payment__note">
       N.B: Clicking the <b>"Pay Online"</b> button will redirect you to
-      Paystack's secure page, you will be redirected back to us after making
+      Flutterwave's secure page, you will be redirected back to us after making
       payment.
     </div>
   </div>

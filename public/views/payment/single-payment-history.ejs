@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
-  <% const {id, status, subscription: {id: subscriptionId, package}, reference,
-  date, createdAt} = pageData; %>
+  <% const {id, status, gateway, subscription: {id: subscriptionId, package},
+  reference, date, createdAt} = pageData; %>
   <div class="single-head">
     <a class="single-head__back" href="/payment/history">
       <span
@@ -154,7 +154,8 @@
             <button
               class="btn-primary"
               id="queryPayment"
-              data-reference="<%= reference %>"
+              data-id="<%= id %>"
+              data-gateway="<%= gateway %>"
             >
               Query now &rarr;
             </button>

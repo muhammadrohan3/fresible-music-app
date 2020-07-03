@@ -188,7 +188,6 @@ router.get(
   "/submissions",
   schemaQueryConstructor("query", ["artistId"]),
   schemaQueryConstructor("user", ["id"], ["userId"]),
-  addToSchema(SCHEMAQUERY, { status: ["not", "deleted"] }),
   addToSchema(SCHEMAINCLUDE, [
     { m: USERPACKAGE, al: "subscription", at: ["status"] },
   ]),
@@ -283,8 +282,6 @@ router.get(
     {
       m: RELEASE,
       al: "releases",
-      w: [{ status: "deleted" }, "not"],
-      // r: false,
     },
     { m: PACKAGE, at: ["package", "maxTracks", "maxAlbums"] },
   ]),

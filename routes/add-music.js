@@ -103,7 +103,7 @@ module.exports = (Controller) => {
     redirectIf(SAMEAS, true, "/add-music/create/label"),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: RELEASE, at: ["type"], w: [{ status: "deleted" }, "not"], r: false },
+      { m: RELEASE, at: ["type"], r: false },
       {
         m: PACKAGE,
         at: ["package", "maxAlbums", "maxTracks"],
@@ -137,7 +137,7 @@ module.exports = (Controller) => {
     schemaQueryConstructor("query", ["artistId"]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMAINCLUDE, [
-      { m: RELEASE, at: ["type"], w: [{ status: "deleted" }, "not"] },
+      { m: RELEASE, at: ["type"] },
       {
         m: PACKAGE,
         at: ["package", "maxAlbums", "maxTracks"],

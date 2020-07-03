@@ -163,20 +163,23 @@ const Controller = () => {
     let { id } = e.target.dataset;
     id = parseInt(id);
     const response = await serverRequest({
-      href: `/payment`,
+      href: `/payment/rave`,
       data: { id },
     });
     if (!(R = responseHandler(response))) return;
-    const { authorization_url } = R;
-    return location.replace(authorization_url);
+    const { link } = R;
+    return location.replace(link);
   };
 
   const queryPayment = async (e) => {
     View.showLoader(true);
-    const { reference } = e.dataset;
+    const { id, gateway } = e.dataset;
+    let endpoint = "/payment/paystack/site/verify";
+    if (gateway === "FLUTTERWAVE") endpoint = "/payment/rave/site/verify";
     const response = await serverRequest({
-      href: "/payment/verify",
-      data: { reference },
+      href: endpoint,
+      method: "GET",
+      params: { id: Number(id) },
     });
     if (!responseHandler(response)) return;
     return View.refresh();

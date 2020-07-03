@@ -7,6 +7,19 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.INTEGER,
       status: DataTypes.STRING,
       reference: DataTypes.STRING,
+      gateway: DataTypes.STRING,
+      meta: {
+        type: DataTypes.STRING,
+        get() {
+          const value = this.getDataValue("meta");
+          if (!value) return {};
+          return JSON.parse(value);
+        },
+        set() {
+          const value = this.getDataValue("meta");
+          return JSON.stringify(value || {});
+        },
+      },
       date: DataTypes.DATE,
     },
     {}
