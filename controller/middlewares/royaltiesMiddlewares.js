@@ -14,38 +14,32 @@ const {
   hashGenerator,
   generateStructure,
 } = require("../functions/royalties");
-const fs = require("fs");
-const path = require("path");
+
+const queries = require("../functions/royalties/queries");
 const { convertHashToList } = generateStructure;
 
+const EARNING_KEYS = [
+  "releaseDownloadEarning",
+  "trackDownloadEarning",
+  "trackStreamEarning",
+];
+
 const _convertToNairaDenomination = (dataObj = {}) => {
-  const earningKeys = [
-    "releaseDownloadEarning",
-    "trackDownloadEarning",
-    "trackStreamEarning",
-  ];
-  earningKeys.forEach((key) => {
+  const newDataObj = {};
+  EARNING_KEYS.forEach((key) => {
     const value = Number(dataObj[key]);
-    if (!value) return;
-    if (value == 0) return;
-    dataObj[key] = value / 100;
+    newDataObj[key] = Number.isNaN(value) || value === 0 ? 0 : value / 100;
   });
-  return dataObj;
+  return newDataObj;
 };
 
 const _convertToKoboDenomination = (dataObj = {}) => {
-  const earningKeys = [
-    "releaseDownloadEarning",
-    "trackDownloadEarning",
-    "trackStreamEarning",
-  ];
-  earningKeys.forEach((key) => {
+  const newDataObj = {};
+  EARNING_KEYS.forEach((key) => {
     const value = Number(dataObj[key]);
-    if (!value) return;
-    if (value == 0) return;
-    dataObj[key] = value * 100;
+    newDataObj[key] = Number.isNaN(value) || value === 0 ? 0 : value * 100;
   });
-  return dataObj;
+  return newDataObj;
 };
 
 const royalties_formatToNaira = ({ getStore, setStore }) => (
@@ -53,7 +47,8 @@ const royalties_formatToNaira = ({ getStore, setStore }) => (
 ) => {
   const dataset = getStore(key) || [];
   const newdataset = dataset.map((data) => {
-    return _convertToNairaDenomination(data);
+    const newEarnings = _convertToNairaDenomination(data);
+    return { ...data, ...newEarnings };
   });
   setStore(key, null);
   setStore(key, newdataset);
@@ -63,7 +58,8 @@ const royalties_formatToKobo = ({ getStore, setStore }) => (
 ) => {
   const dataset = getStore(key) || [];
   const newdataset = dataset.map((data) => {
-    return _convertToKoboDenomination(data);
+    const newEarnings = _convertToKoboDenomination(data);
+    return { ...data, ...newEarnings };
   });
   setStore(key, null);
   setStore(key, newdataset);
@@ -224,6 +220,17 @@ var groupByMap = {
   },
 };
 
+const royalties_query = ({ setStore, getStore }) => async (queryKey) => {
+  const { tempKey = {} } = getStore();
+  const { groupBy = "overview" } = tempKey;
+  const QUERY = queryKey || groupBy.toUpperCase();
+  const queryHandler = queries[QUERY];
+  if (!queryHandler) {
+    return setStore(SCHEMARESULT, []);
+  }
+  return await queryHandler(getStore, setStore);
+};
+
 module.exports = {
   royalties_GenerateStructureForEdit,
   royalties_queryIntercept,
@@ -231,4 +238,5 @@ module.exports = {
   royalties_monthSerializer,
   royalties_formatToKobo,
   royalties_formatToNaira,
+  royalties_query,
 };

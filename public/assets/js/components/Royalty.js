@@ -8,6 +8,45 @@ import rangeFormatter from "../utilities/rangeFormatter";
 import generateRandomNumber from "../utilities/randomNumberGenerator";
 import LineGraph from "./LineGraph";
 
+const FORMATTER = {
+  overview: (data) => {
+    const {
+      trackDownloadEarning,
+      trackStreamEarning,
+      trackDownload,
+      trackStream,
+      releaseDownloadEarning,
+      releaseDownload,
+    } = data[0];
+    return [
+      {
+        item: "Release Download",
+        total: releaseDownload,
+        earning: releaseDownloadEarning,
+      },
+      {
+        item: "Track Download",
+        total: trackDownload,
+        earning: trackDownloadEarning,
+      },
+      {
+        item: "Stream",
+        total: trackStream,
+        earning: trackStreamEarning,
+      },
+      {
+        item: "Total",
+        total:
+          Number(releaseDownload) + Number(trackDownload) + Number(trackStream),
+        earning:
+          Number(releaseDownloadEarning) +
+          Number(trackDownloadEarning) +
+          Number(trackStreamEarning),
+      },
+    ];
+  },
+};
+
 const royalty = (BASEURL) => {
   const CACHE = new Map();
   const _formatAmount = (amount) => {
@@ -36,7 +75,7 @@ const royalty = (BASEURL) => {
     }
     if (isDataFromServer) CACHE.set(key, JSON.stringify(tableData));
     View.showLoader(false);
-    return _convertEarningToNairaEquiv(tableData);
+    return tableData;
   };
 
   const _getChartData = async (routeName) => {
@@ -44,7 +83,7 @@ const royalty = (BASEURL) => {
       href: BASEURL + "/" + routeName,
       method: "GET",
     });
-    return _convertEarningToNairaEquiv(data);
+    return data;
   };
 
   const _convertEarningToNairaEquiv = (data) => {
@@ -108,8 +147,9 @@ const royalty = (BASEURL) => {
 
   const _handleTopGraphAndTotal = async () => {
     const totalSales = await _getChartData("total");
-    const isTotalSalesEmpty = _checkIfServerResponseIsNull(totalSales);
-    if (isTotalSalesEmpty) {
+    let { earning = 0 } = totalSales || {};
+    earning = Number(earning);
+    if (earning === 0) {
       _renderMonthlySalesGraph();
       return false;
     }
@@ -135,7 +175,10 @@ const royalty = (BASEURL) => {
     const RATE_ID = "#monthdata-rate";
     const EARNING_ID = "#monthdata-earning";
     const rangeHTML = rangeFormatter(data);
-    const { earning, monthValue } = data;
+    const {
+      earning,
+      month: { monthValue },
+    } = data;
     const monthName = moment(monthValue, "M").format("MMM");
     View.addHTML(RATE_ID, rangeHTML);
     View.addContent(MONTH_ID, monthName);
@@ -382,7 +425,6 @@ const royalty = (BASEURL) => {
 
   const _getTabHeaders = (name, params) => {
     let headerTabs = [];
-    console.log("TABS: ", name);
     if (name === "index") headerTabs = schema["index"];
     else headerTabs = schema[name].tabs;
     const [firstTab] = headerTabs;
@@ -412,8 +454,16 @@ const royalty = (BASEURL) => {
   };
 
   const _processTable = async ($table, name, params) => {
-    const data = await _getTableData(params);
-    const { columns, hasSubTable, paramName: nameParamKey } = schema[name];
+    let data = await _getTableData(params);
+    const {
+      columns,
+      hasSubTable,
+      paramName: nameParamKey,
+      dataFormatter,
+    } = schema[name];
+
+    const formatter = FORMATTER[dataFormatter];
+    data = formatter ? formatter(data) : data;
     const columnsToBeUsed = [...columns]; //to avoid modifying the base array.
     const isNotSubTable = Object.keys(params).length === 1;
     if (isNotSubTable && hasSubTable)
@@ -426,9 +476,7 @@ const royalty = (BASEURL) => {
       return _formatAmount(value);
     },
     monthFormat(value, row) {
-      const {
-        month: { monthValue, yearValue },
-      } = row;
+      const { monthValue, yearValue } = row;
       const month = moment(monthValue, "MM").format("MMMM");
       return `${month} ${yearValue}`;
     },
@@ -468,7 +516,7 @@ const royalty = (BASEURL) => {
 
   const _addDetailsColumn = (columns, nameParamKey, name) => {
     const _clickFormatter = (value, row, index) => {
-      const params = JSON.stringify({ [nameParamKey]: row[name].id });
+      const params = JSON.stringify({ [nameParamKey]: row.id });
       return `<button class='analytics--view-btn' data-view_open='false' data-params=${params} data-parent="${name}"><span class="iconify" data-icon="ant-design:down-square-outlined" data-inline="false"></span></button>`;
     };
 
@@ -531,14 +579,15 @@ var schema = {
   overview: {
     title: "Overview",
     hasSubTable: false,
+    dataFormatter: "overview",
     columns: [
       {
         title: "#Item",
-        field: "name",
+        field: "item",
       },
       {
         title: "Total",
-        field: "count",
+        field: "total",
         align: "center",
       },
       {

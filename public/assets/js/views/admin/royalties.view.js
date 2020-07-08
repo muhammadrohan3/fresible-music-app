@@ -144,6 +144,7 @@ export default class RoyaltiesView extends ViewIndex {
 
   async _handleSaveMonthRoyaltiesDatasheet(handleSave) {
     const toSubmit = this._processRoyaltiesFormData();
+    console.log("TO-SUBMIT: ", toSubmit);
     await handleSave(toSubmit, this.MONTH_ID);
     return this.refresh();
   }

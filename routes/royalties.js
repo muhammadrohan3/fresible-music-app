@@ -67,6 +67,7 @@ module.exports = (Controller) => {
     royalties_queryIntercept,
     royalties_OverviewStructure,
     royalties_monthSerializer,
+    royalties_query,
   } = Controller;
 
   router.get(
@@ -85,120 +86,44 @@ module.exports = (Controller) => {
       "countryId",
     ]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    fromReq("query", ["groupBy"], SCHEMAOPTIONS),
-    royalties_queryIntercept(),
-    getAllFromSchema(
-      ROYALTY,
-      [
-        ["SUM", "releaseDownload", "releaseDownload"],
-        ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-        ["SUM", "trackDownload", "trackDownload"],
-        ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-        ["SUM", "trackStream", "trackStream"],
-        ["SUM", "trackStreamEarning", "trackStreamEarning"],
-      ],
-      { limit: null }
-    ),
-    royalties_OverviewStructure(),
+    fromReq("query", ["groupBy"], TEMPKEY),
+    royalties_query(),
     respond([SCHEMARESULT])
   );
 
   router.get(
     "/data/month",
-    fromReq("user", ["id"], "replacements"),
-    processRawSQL(`
-    SELECT id, monthValue, yearValue, earning FROM monthlyroyalties A JOIN (SELECT B.monthId, SUM(B.trackStreamEarning) + SUM(B.trackDownloadEarning) + SUM(B.releaseDownloadEarning) AS 'earning' FROM royalties B WHERE B.userId = :id GROUP BY B.monthId) B ON A.id = B.monthId WHERE A.status = 'published' ORDER BY A.monthValue DESC, A.yearValue DESC LIMIT 2
-    `),
-    royalties_monthSerializer(),
-    respond(["MONTH_SERIALIZED_DATA"])
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    royalties_query("LATEST_PUBLISHED_MONTH"),
+    respond([SCHEMARESULT])
   );
 
   router.get(
     "/data/months",
-    fromReq("user", ["id"], "replacements"),
-    processRawSQL(`
-    SELECT id, monthValue, yearValue, earning FROM monthlyroyalties A JOIN (SELECT B.monthId, SUM(B.trackStreamEarning) + SUM(B.trackDownloadEarning) + SUM(B.releaseDownloadEarning) AS 'earning' FROM royalties B WHERE B.userId = :id GROUP BY B.monthId) B ON A.id = B.monthId WHERE A.status = 'published' ORDER BY A.monthValue DESC, A.yearValue DESC LIMIT 12
-    `),
+    schemaQueryConstructor("user", ["id"], ["userId"]),
+    royalties_query("PAST_12_MONTHS"),
     respond([SCHEMARESULT])
   );
 
   router.get(
     "/data/top-countries",
-    addToSchema(TEMPKEY, { status: "published" }),
-    addToSchema(SCHEMAINCLUDE, [
-      { m: COUNTRY, at: ["id", "name", "code"] },
-      { m: MONTHLYROYALTY, w: [TEMPKEY], al: "monthlyroyalty", at: [] },
-    ]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    getAllFromSchema(
-      ROYALTY,
-      [
-        ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-        ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-        ["SUM", "trackStreamEarning", "trackStreamEarning"],
-      ],
-      {
-        group: ["countryId"],
-        limit: 5,
-        order: [
-          [["SUM", "releaseDownloadEarning", "DESC"]],
-          [["SUM", "trackDownloadEarning", "DESC"]],
-          [["SUM", "trackStreamEarning", "DESC"]],
-        ],
-      }
-    ),
+    royalties_query("TOP_COUNTRIES"),
     respond([SCHEMARESULT])
   );
 
   //TOP STORES
   router.get(
     "/data/top-stores",
-    addToSchema(TEMPKEY, { status: "published" }),
-    addToSchema(SCHEMAINCLUDE, [
-      { m: STORE, at: ["id", "store"] },
-      { m: MONTHLYROYALTY, w: [TEMPKEY], al: "monthlyroyalty", at: [] },
-    ]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    getAllFromSchema(
-      ROYALTY,
-      [
-        ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-        ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-        ["SUM", "trackStreamEarning", "trackStreamEarning"],
-      ],
-      {
-        group: ["storeId"],
-        limit: 6,
-        order: [
-          [["SUM", "releaseDownloadEarning", "DESC"]],
-          [["SUM", "trackDownloadEarning", "DESC"]],
-          [["SUM", "trackStreamEarning", "DESC"]],
-        ],
-      }
-    ),
+    royalties_query("TOP_STORES"),
     respond([SCHEMARESULT])
   );
 
   router.get(
     "/data/total",
-    addToSchema(SCHEMAINCLUDE, [
-      {
-        m: MONTHLYROYALTY,
-        w: [{ status: "published" }],
-        at: [],
-        al: "monthlyroyalty",
-      },
-    ]),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    getOneFromSchema(
-      ROYALTY,
-      [
-        ["SUM", "releaseDownloadEarning", "releaseDownloadEarning"],
-        ["SUM", "trackDownloadEarning", "trackDownloadEarning"],
-        ["SUM", "trackStreamEarning", "trackStreamEarning"],
-      ],
-      { limit: null }
-    ),
+    royalties_query("TOTAL"),
     respond([SCHEMARESULT])
   );
 
