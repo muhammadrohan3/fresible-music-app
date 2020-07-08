@@ -123,7 +123,7 @@ const getTotalEarned = async (getStore, setStore) => {
     ) RO  
     JOIN monthlyroyalties M ON M.id = monthId AND M.status = 'published'`;
   const sqlResult = await makeQuery(SQL, getStore);
-  const [earning] = sqlResult;
+  const [earning = { earning: 0 }] = sqlResult;
   setStore("schemaResult", earning);
   return;
 };
