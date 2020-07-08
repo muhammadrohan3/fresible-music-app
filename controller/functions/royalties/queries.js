@@ -108,7 +108,7 @@ const getTopCountries = async (getStore, setStore) => {
     {WHERE}
     GROUP BY RO.countryId) O
     JOIN monthlyroyalties M ON M.id = monthId AND M.status = 'published'
-    ORDER BY earning DESC`;
+    ORDER BY earning DESC LIMIT 6`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
 
@@ -170,7 +170,7 @@ const getTopStores = async (getStore, setStore) => {
     LEFT  JOIN stores S ON S.id = RO.storeId
     {WHERE}
       GROUP BY RO.storeId) O
-      ORDER BY earning DESC`;
+      ORDER BY earning DESC LIMIT 6`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
   return;
