@@ -138,6 +138,69 @@ module.exports = (Controller) => {
     respond([SCHEMARESULT])
   );
 
+  //ROYALTY FOR USERS
+
+  router.get(
+    "/subscriber/:id",
+    schemaQueryConstructor("params", ["id"]),
+    getOneFromSchema(USER),
+    redirectIf(SCHEMARESULT, false, "/fmadmincp/subscribers"),
+    fromStore(SCHEMARESULT, ["firstName", "lastName", "id"], PAGEDATA),
+    addToSchema(SITEDATA, { page: "royalties_user", title: "Royalties" }),
+    pageRender()
+  );
+
+  router.get(
+    "/subscriber/:userId/data/table",
+    schemaQueryConstructor("query", [
+      "releaseId",
+      "trackId",
+      "storeId",
+      "monthId",
+      "countryId",
+    ]),
+    schemaQueryConstructor("params", ["userId"]),
+    fromReq("query", ["groupBy"], TEMPKEY),
+    royalties_query(),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/subscriber/:userId/data/month",
+    schemaQueryConstructor("params", ["userId"]),
+    royalties_query("LATEST_PUBLISHED_MONTH"),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/subscriber/:userId/data/months",
+    schemaQueryConstructor("params", ["userId"]),
+    royalties_query("PAST_12_MONTHS"),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/subscriber/:userId/data/top-countries",
+    schemaQueryConstructor("params", ["userId"]),
+    royalties_query("TOP_COUNTRIES"),
+    respond([SCHEMARESULT])
+  );
+
+  //TOP STORES
+  router.get(
+    "/subscriber/:userId/data/top-stores",
+    schemaQueryConstructor("params", ["userId"]),
+    royalties_query("TOP_STORES"),
+    respond([SCHEMARESULT])
+  );
+
+  router.get(
+    "/subscriber/:userId/data/total",
+    schemaQueryConstructor("params", ["userId"]),
+    royalties_query("TOTAL"),
+    respond([SCHEMARESULT])
+  );
+
   router.get(
     "/search-month",
     schemaQueryConstructor("query", ["monthValue", "yearValue"]),

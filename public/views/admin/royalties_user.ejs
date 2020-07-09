@@ -1,4 +1,13 @@
-<section class="royalties mx-2 mx-md-5">
+<% const {id, firstName, lastName} = pageData %>
+<section
+  class="royalties mx-2 mx-md-5"
+  id="royalties-user"
+  data-userid="<%= id %>"
+>
+  <div class="royalties--welcome mb-4 text-center">
+    Royalties for <%= firstName %> <%= lastName %>
+  </div>
+
   <section class="royalties__info d-flex flex-column flex-md-row">
     <div
       class="mb-4 mb-md-0 mr-md-5 bg-white royalties__info__graph royalties__info__graph--inactive"

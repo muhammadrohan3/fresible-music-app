@@ -3,7 +3,7 @@ const growthCalc = require("../../util/growthCalc");
 
 const generateWhere = (keysObj = {}) => {
   const pairs = Object.entries(keysObj).map(
-    ([key, value]) => `${key} = ${value}`
+    ([key, value]) => `RO.${key} = ${value}`
   );
   if (pairs.length === 0) return "";
   return `WHERE ${pairs.join(" AND ")}`;
@@ -20,6 +20,7 @@ const makeQuery = async (SQL, getStore) => {
   const { schemaQuery } = getStore();
   const whereString = generateWhere(schemaQuery);
   const query = SQL.replace("{WHERE}", whereString);
+  console.log("QUERY: -> ", query);
   const sqlResult = await sequelize.query(query, {
     type: sequelize.QueryTypes.SELECT,
     nest: true,
@@ -29,10 +30,11 @@ const makeQuery = async (SQL, getStore) => {
 };
 
 const getOverview = async (getStore, setStore) => {
-  const SQL = `SELECT monthId, SUM(RD) AS 'releaseDownload', ROUND(SUM(RDE/100), 2) AS 'releaseDownloadEarning', SUM(TD) AS 'trackDownload', ROUND(SUM(TDE/100)) AS 'trackDownloadEarning', SUM(TS) AS 'trackStream', ROUND(SUM(TSE/100), 2) AS 'trackStreamEarning' FROM 
-  (SELECT monthId, releaseDownload AS 'RD', releaseDownloadEarning AS 'RDE', SUM(trackDownload) AS 'TD', SUM(trackDownloadEarning/100) AS 'TDE', SUM(trackStream) AS 'TS', SUM(trackStreamEarning) AS 'TSE' FROM royalties 
+  const SQL = `SELECT monthId, SUM(RD) AS 'releaseDownload', ROUND(SUM(RDE/100), 2) AS 'releaseDownloadEarning', SUM(TD) AS 'trackDownload', ROUND(SUM(TDE/100)) AS 'trackDownloadEarning', SUM(TS) AS 'trackStream', ROUND(SUM(TSE/100), 2) AS 'trackStreamEarning' FROM
+  (SELECT monthId, releaseDownload AS 'RD', releaseDownloadEarning AS 'RDE', SUM(trackDownload) AS 'TD', SUM(trackDownloadEarning/100) AS 
+'TDE', SUM(trackStream) AS 'TS', SUM(trackStreamEarning) AS 'TSE' FROM royalties RO
   {WHERE}
-  GROUP BY monthId, royalties.releaseId)R
+  GROUP BY monthId, RO.releaseId)R
      JOIN monthlyroyalties M ON M.status = 'published' AND monthId = M.id`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
@@ -40,13 +42,13 @@ const getOverview = async (getStore, setStore) => {
 };
 
 const getReleases = async (getStore, setStore) => {
-  const SQL = `SELECT C.* FROM 
-		(SELECT monthId, R.id AS 'id', R.title as 'title', RO.releaseDownload AS 'releaseDownload', SUM(RO.trackDownload) 'trackDownload', SUM(RO.trackStream) 'trackStream', ROUND((RO.releaseDownloadEarning + SUM(RO.trackDownloadEarning) + SUM(RO.trackStreamEarning))/100,2) AS 'earning' FROM royalties RO
-  LEFT  JOIN releases R ON R.id = RO.releaseId
-  {WHERE}
-   GROUP BY monthId, RO.releaseId) C 
-     JOIN monthlyroyalties M ON M.id = monthId AND M.status = 'published'
-   ORDER BY C.earning DESC`;
+  const SQL = `SELECT C.title 'title', C.id 'id', SUM(C.rD) 'releaseDownload', SUM(C.tD) 'trackDownload', SUM(C.tS) 'trackStream', SUM(C.e) 'earning' FROM
+  (SELECT monthId, R.id AS 'id', R.title as 'title', RO.releaseDownload AS 'rD', SUM(RO.trackDownload) 'tD', SUM(RO.trackStream) 'tS', ROUND((RO.releaseDownloadEarning + SUM(RO.trackDownloadEarning) + SUM(RO.trackStreamEarning))/100,2) AS 'e' FROM royalties RO
+LEFT  JOIN releases R ON R.id = RO.releaseId
+{WHERE}
+GROUP BY monthId, RO.releaseId) C
+JOIN monthlyroyalties M ON M.id = monthId AND M.status = 'published'
+ORDER BY SUM(C.e) DESC`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
   return;

@@ -40,6 +40,10 @@ export default class ReleaseController extends ControllerIndex {
     if (location.pathname === "/fmadmincp/royalties/index") {
       this.View.bindRoyaltiesComponent();
     }
+
+    if (location.pathname.startsWith("/fmadmincp/royalties/subscriber")) {
+      this.View.bindSubscriberRoyaltiesComponent();
+    }
   }
 
   async getAllMonths(params) {

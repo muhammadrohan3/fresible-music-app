@@ -31,6 +31,13 @@ export default class RoyaltiesView extends ViewIndex {
     Royalty("/fmadmincp/royalties/index/data").initiate();
   }
 
+  bindSubscriberRoyaltiesComponent() {
+    const dataElement = this.getElement("#royalties-user");
+    if (!dataElement) return;
+    const { userid } = dataElement.dataset;
+    Royalty(`/fmadmincp/royalties/subscriber/${userid}/data`).initiate();
+  }
+
   async bindNewDataSheetBtn(getAllMonths, createNewMonth) {
     this.NEW_DATASHEET_BTN.addEventListener("click", (e) => {
       e.stopPropagation();
