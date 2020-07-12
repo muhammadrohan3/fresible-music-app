@@ -31,7 +31,7 @@ const makeQuery = async (SQL, getStore) => {
 
 const getOverview = async (getStore, setStore) => {
   const SQL = `SELECT monthId, SUM(RD) AS 'releaseDownload', ROUND(SUM(RDE/100), 2) AS 'releaseDownloadEarning', SUM(TD) AS 'trackDownload', ROUND(SUM(TDE/100)) AS 'trackDownloadEarning', SUM(TS) AS 'trackStream', ROUND(SUM(TSE/100), 2) AS 'trackStreamEarning' FROM
-  (SELECT monthId, releaseDownload AS 'RD', releaseDownloadEarning AS 'RDE', SUM(trackDownload) AS 'TD', SUM(trackDownloadEarning/100) AS 
+  (SELECT monthId, releaseDownload AS 'RD', releaseDownloadEarning AS 'RDE', SUM(trackDownload) AS 'TD', SUM(trackDownloadEarning) AS 
 'TDE', SUM(trackStream) AS 'TS', SUM(trackStreamEarning) AS 'TSE' FROM royalties RO
   {WHERE}
   GROUP BY monthId, RO.releaseId)R
@@ -48,6 +48,7 @@ LEFT  JOIN releases R ON R.id = RO.releaseId
 {WHERE}
 GROUP BY monthId, RO.releaseId) C
 JOIN monthlyroyalties M ON M.id = monthId AND M.status = 'published'
+GROUP BY C.id
 ORDER BY SUM(C.e) DESC`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
