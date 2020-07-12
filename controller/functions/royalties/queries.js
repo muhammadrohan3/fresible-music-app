@@ -56,7 +56,7 @@ ORDER BY SUM(C.e) DESC`;
 };
 
 const getTracks = async (getStore, setStore) => {
-  const SQL = `SELECT C.* FROM (SELECT monthId, T.id AS 'id', T.title as 'title', SUM(RO.trackDownload) 'trackDownload', SUM(RO.trackStream) 'trackStream', ROUND((RO.trackDownloadEarning + SUM(RO.trackStreamEarning))/100, 2) AS 'earning' FROM royalties RO
+  const SQL = `SELECT C.* FROM (SELECT monthId, T.id AS 'id', T.title as 'title', SUM(RO.trackDownload) 'trackDownload', SUM(RO.trackStream) 'trackStream', ROUND(SUM(RO.trackDownloadEarning) + SUM(RO.trackStreamEarning))/100, 2) AS 'earning' FROM royalties RO
   LEFT JOIN tracks T ON T.id = RO.trackId
    {WHERE}
   GROUP BY RO.trackId) C 
