@@ -20,7 +20,6 @@ const makeQuery = async (SQL, getStore) => {
   const { schemaQuery } = getStore();
   const whereString = generateWhere(schemaQuery);
   const query = SQL.replace("{WHERE}", whereString);
-  console.log("QUERY: -> ", query);
   const sqlResult = await sequelize.query(query, {
     type: sequelize.QueryTypes.SELECT,
     nest: true,
