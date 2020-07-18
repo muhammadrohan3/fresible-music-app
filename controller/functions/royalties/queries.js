@@ -141,7 +141,7 @@ const getLatestPublished = async (getStore, setStore) => {
   ORDER BY M.yearValue, M.monthValue DESC
   limit 2`;
   const sqlResult = await makeQuery(SQL, getStore);
-  const [current, previous] = sqlResult;
+  const [current = {}, previous = {}] = sqlResult || [];
   const [rate, growing] = growthCalc(current.earning, previous.earning);
   const result = {
     ...current,
