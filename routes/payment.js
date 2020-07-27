@@ -116,6 +116,8 @@ module.exports = (Controller) => {
     getOneFromSchema(USERPACKAGE),
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
+    urlFormer("/subscription", TEMPKEY),
+    sendMail(SUBSCRIPTIONACTIVATED),
     handleProfileSetupUpdate("payment"),
     redirect("/payment/{id}", TEMPKEY)
   );
@@ -212,6 +214,8 @@ module.exports = (Controller) => {
     getOneFromSchema(USERPACKAGE),
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
+    urlFormer("/subscription", TEMPKEY),
+    sendMail(SUBSCRIPTIONACTIVATED),
     handleProfileSetupUpdate("payment"),
     redirect("/payment/{id}", TEMPKEY)
   );
@@ -237,6 +241,8 @@ module.exports = (Controller) => {
     updateSchemaData(USERPACKAGE),
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
+    urlFormer("/subscription", TEMPKEY),
+    sendMail(SUBSCRIPTIONACTIVATED),
     handleProfileSetupUpdate("payment"),
     respond(1)
   );
