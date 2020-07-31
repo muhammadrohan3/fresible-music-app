@@ -72,7 +72,7 @@ module.exports = () => ({
   convertObjArray: (objArray = [], keys = []) => {
     return objArray.map((obj) => keys.map((key) => obj[key]));
   },
-  cloudinaryDynamicSize: (link, width = 300, height = 200) => {
+  cloudinaryDynamicSize: (link, width = 600, height = 500) => {
     if (!link) return;
     const dynamicString = `upload/w_${width},h_${height}/`;
     const [part1, part2] = link.split("upload/");

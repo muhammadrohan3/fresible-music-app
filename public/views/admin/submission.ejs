@@ -58,6 +58,12 @@
             alt="<%= title %> artwork"
           />
           </div>
+          <% if(artwork) { %>
+            <div class="text-center mt-2">
+              <a href="<%= artwork %>">View Artwork</a>
+            </div>
+          <% } %>
+
       </div>
         <div class="submission__details__overview__info">
           <div class="-u-font-big submission__details__overview__info--title">
