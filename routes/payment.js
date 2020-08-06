@@ -305,7 +305,7 @@ module.exports = (Controller) => {
     getOneFromSchema(USERPACKAGE),
     redirectIf(SCHEMARESULT, false, "/subscriptions"),
     copyKeyTo(SCHEMARESULT, SITEDATA, PAGEDATA),
-    addToSchema(SITEDATA, { title: "Manual Payment" }),
+    addToSchema(SITEDATA, { title: "Manual Payment", page: "payment/manual" }),
     pageRender()
   );
 
