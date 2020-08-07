@@ -22,6 +22,7 @@ export default (TRACKLISTCONTAINER, ADDNEWTRACKBTN) => {
     upload_preset,
     url,
     public_id: "music/musics/music",
+    backgroundLoading: true,
   });
 
   const initiate = () => {

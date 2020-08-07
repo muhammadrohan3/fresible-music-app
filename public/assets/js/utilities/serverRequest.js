@@ -7,9 +7,9 @@ export default async ({
   url,
   href,
   method = "POST",
-  contentType,
   data,
   params,
+  backgroundLoading = false,
 }) => {
   if (url && !url.includes("localhost") && !window.navigator.onLine)
     return {
@@ -39,7 +39,9 @@ export default async ({
         value = Math.floor((loaded * 100) / total) + "%";
         if (total > 1000) {
           View.loaderText(value);
-          pubSub.publish("loader/loading", [value]);
+          if (!backgroundLoading) {
+            pubSub.publish("loader/loading", [value]);
+          }
         }
       },
       params,

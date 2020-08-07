@@ -19,7 +19,12 @@ export default class CloudinaryFileUploader {
 
   async upload(file) {
     debugger;
-    let { upload_preset, public_id, url } = this.configOptions;
+    let {
+      upload_preset,
+      public_id,
+      url,
+      backgroundLoading,
+    } = this.configOptions;
     const uploadForm = new FormData();
     public_id = public_id.concat(shortId.generate());
     uploadForm.append("upload_preset", upload_preset);
@@ -30,8 +35,9 @@ export default class CloudinaryFileUploader {
         url,
         contentType: "hi",
         data: uploadForm,
+        backgroundLoading,
       });
-      if (response.existing === true) return this.upload(file);
+      if (response.existing === true) return await this.upload(file);
       debugger;
       return { status: "success", data: response };
     } catch (err) {
