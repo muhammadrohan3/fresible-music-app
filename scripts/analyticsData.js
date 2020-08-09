@@ -76,15 +76,15 @@ const request = async (url) => {
   Object.entries(analyticsData).forEach(([date, dateData], index) => {
     const dateId = 42351 + index;
     Result["analyticsdates"].push({ id: dateId, date, status: "published" });
-    debugger;
+
     Object.entries(dateData).forEach(([title, { stream, download }]) => {
       let titleHashData = trackDataHash[title];
       if (!titleHashData) return;
-      debugger;
+
       stream &&
         stream.forEach(({ name, streamTotal }) => {
           const store = storeDataHash[name.trim().toLowerCase()];
-          debugger;
+
           if (!store) return;
           const { storeId } = store;
           Result.analytics.push({
@@ -165,7 +165,7 @@ const request = async (url) => {
 //       });
 //     });
 //   }
-//   debugger;
+//
 //   fs.writeFileSync(
 //     __dirname + "/analyticsData.json",
 //     JSON.stringify(Result),

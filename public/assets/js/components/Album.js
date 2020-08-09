@@ -190,7 +190,6 @@ export default (TRACKLISTCONTAINER, ADDNEWTRACKBTN) => {
     const response = await FileUploader.upload(Files.get(fileName));
     //Adds the file to the uploaded files list to avoid duplicate uploads
     response.status === "success" && UPLOADED_FILES.push(fileName);
-    debugger;
     //Stores the response of the server to the hidden input element
     const hiddenInput = getElement(`input[name='track']`, trackForm);
     hiddenInput.value = response.data.secure_url;

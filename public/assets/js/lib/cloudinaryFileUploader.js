@@ -17,8 +17,7 @@ export default class CloudinaryFileUploader {
     );
   }
 
-  async upload(file) {
-    debugger;
+  async upload(file) 
     let {
       upload_preset,
       public_id,
@@ -38,7 +37,6 @@ export default class CloudinaryFileUploader {
         backgroundLoading,
       });
       if (response.existing === true) return await this.upload(file);
-      debugger;
       return { status: "success", data: response };
     } catch (err) {
       console.log("FILE UPLOADER: ", err);
