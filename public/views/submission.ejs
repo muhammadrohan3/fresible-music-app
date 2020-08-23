@@ -1,7 +1,7 @@
 <div class="-u-page submission">
   <!-- <div><a href="/submissions" class="-u-link-default">&larr;</a></div> -->
   <% const {id, type, status, title, comment, subscription, releaseDate,
-  approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artwork, copyrightYear, copyrightHolder, primaryGenre, secondaryGenre} = pageData;
+  approvedDate, createdAt, user, labelArtist, linkId, link, tracks, artwork, copyrightYear, copyrightHolder, primaryGenre, secondaryGenre, manualBarcode} = pageData;
   %>
   <div class="single-head">
     <a class="single-head__back" href="/submissions">
@@ -101,7 +101,7 @@
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">UPC/EAN</div>
-                <div class="submission__list__item--details">-</div>
+                <div class="submission__list__item--details"><%= manualBarcode || "-" %></div>
               </li>
               <li class="submission__list__item">
                 <div class="submission__list__item--title">Copyright Holder</div>

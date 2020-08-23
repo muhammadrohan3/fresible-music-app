@@ -98,7 +98,7 @@ const getMonths = async (getStore, setStore) => {
 ) RO
  JOIN monthlyroyalties M ON M.id = RO.monthId AND M.status = 'published'
   GROUP BY RO.monthId
-  ORDER BY M.yearValue, M.monthValue DESC`;
+  ORDER BY  M.yearValue DESC, M.monthValue DESC`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
   return;
@@ -138,7 +138,7 @@ const getLatestPublished = async (getStore, setStore) => {
 ) RO
  JOIN monthlyroyalties M ON M.id = RO.monthId AND M.status = 'published'
   GROUP BY RO.monthId
-  ORDER BY M.yearValue, M.monthValue DESC
+  ORDER BY  M.yearValue DESC, M.monthValue DESC
   limit 2`;
   const sqlResult = await makeQuery(SQL, getStore);
   const [current = {}, previous = {}] = sqlResult || [];
@@ -160,7 +160,7 @@ const getPast12Months = async (getStore, setStore) => {
 ) RO
  JOIN monthlyroyalties M ON M.id = RO.monthId AND M.status = 'published'
   GROUP BY RO.monthId
-  ORDER BY M.yearValue, M.monthValue DESC
+  ORDER BY  M.yearValue DESC, M.monthValue DESC
   limit 12`;
   const sqlResult = await makeQuery(SQL, getStore);
   setStore("schemaResult", sqlResult);
