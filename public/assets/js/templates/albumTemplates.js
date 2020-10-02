@@ -15,7 +15,7 @@ export default `
               Jazz\`, \`Metal\`, \`New Age\`, \`Pop\`, \`Pop Latino\`, \`Punk\`, \`R&B\`,
               \`Raices\`, \`Reggae\`, \`Regional Mexicano\`, \`Rock\`,
               \`Singer/Songwriter\`, \`Soul\`, \`Spoken Word\`, \`Vocal/Nostalgia\`,
-              \`World\`, \`Chinese\`, \`Original Pilipino Music\`, \`Trot\`
+              \`World\`, "World / Afrobeat", "World / Afro Pop", "World / Christian & Gospel", \`Chinese\`, \`Original Pilipino Music\`, \`Trot\`
 ]; %>
 
 <!--  -->
