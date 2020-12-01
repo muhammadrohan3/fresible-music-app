@@ -224,7 +224,6 @@ module.exports = (Controller) => {
       "Error: retry or contact admin if error persist"
     ),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    fromStore(SCHEMARESULT, ["userPackageId"]),
     addToSchema(SCHEMADATA, { comment: null }),
     getToBePublishedReleaseStatus(SCHEMAQUERY, "id"),
     fromStore("RELEASE-STATUS", ["status"], SCHEMADATA),

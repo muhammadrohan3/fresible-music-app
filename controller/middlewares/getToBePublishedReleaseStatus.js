@@ -5,8 +5,8 @@ const getToBePublishedReleaseStatus = ({ getStore, setStore }) => async (
   key
 ) => {
   let status = "pending";
-  const id = getStore(source)[key];
-  const release = await Release.findByPk(id);
+  const attr = getStore()[source];
+  const release = await Release.findOne({ where: attr });
   const userPackage = await Userpackage.findByPk(release.userPackageId);
   if (userPackage.status.toLowerCase() === "active") status = "processing";
   return setStore("RELEASE-STATUS", { status });
