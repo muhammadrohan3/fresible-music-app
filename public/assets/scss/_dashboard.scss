@@ -63,10 +63,7 @@
 
 .dashboard-main {
   &--container {
-    display: flex;
-    flex-direction: column;
-    // align-items: center;
-    justify-content: center;
+    display: block;
   }
   flex: 1;
   display: grid;
