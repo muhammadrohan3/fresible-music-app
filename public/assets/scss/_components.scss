@@ -1892,3 +1892,25 @@ $font-size-base: 15px !default;
     }
   }
 }
+
+//////////////////////////>>>>>> HOLIDAY NOTICE
+.holiday-notice {
+  max-width: 450px;
+  margin: 30px auto;
+  text-align: center;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  & > * {
+    &:not(:last-child) {
+      margin-bottom: 15px;
+    }
+  }
+  &__title {
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  &__content {
+    font-size: 14px;
+  }
+}

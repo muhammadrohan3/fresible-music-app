@@ -20,6 +20,7 @@ const {
   SUBSCRIPTIONACTIVATED,
   PAGEDATA,
   SITEDATA,
+  RELEASE,
 } = require("../constants");
 
 module.exports = (Controller) => {
@@ -51,6 +52,7 @@ module.exports = (Controller) => {
     handleProfileSetupUpdate,
     flutterwave_initiate,
     flutterwave_verify,
+    updateReleaseStatusWhenSubscriptionIsActivated,
   } = Controller;
 
   // This GET Route is internally called to get subscription Id (for new subscribers)
@@ -149,6 +151,7 @@ module.exports = (Controller) => {
     resetKey(TEMPKEY),
     fromStore(SCHEMARESULT, ["userPackageId"], TEMPKEY, ["id"]),
     handleProfileSetupUpdate("payment"),
+    updateReleaseStatusWhenSubscriptionIsActivated(TEMPKEY, ["id"]),
     respond(1)
   );
 

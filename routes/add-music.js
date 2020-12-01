@@ -59,6 +59,7 @@ module.exports = (Controller) => {
     addMusic_structureReleaseType,
     addMusic_structureSubs,
     handleProfileSetupUpdate,
+    getToBePublishedReleaseStatus,
   } = Controller;
 
   /// This GET ROUTE is called internally to set current release ID if a profile isn't active yet to avoid server error
@@ -223,12 +224,15 @@ module.exports = (Controller) => {
       "Error: retry or contact admin if error persist"
     ),
     schemaQueryConstructor("user", ["id"], ["userId"]),
-    addToSchema(SCHEMADATA, { status: "processing", comment: null }),
+    fromStore(SCHEMARESULT, ["userPackageId"]),
+    addToSchema(SCHEMADATA, { comment: null }),
+    getToBePublishedReleaseStatus(SCHEMAQUERY, "id"),
+    fromStore("RELEASE-STATUS", ["status"], SCHEMADATA),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Not updated"),
-    resetKey(TEMPKEY),
-    fromStore(SCHEMAQUERY, ["id"], TEMPKEY),
-    urlFormer("/submission", TEMPKEY),
+    resetKey("TEMPKEY1"),
+    fromStore(SCHEMAQUERY, ["id"], "TEMPKEY1"),
+    urlFormer("/submission", "TEMPKEY1"),
     sendMail(NEWRELEASE),
     handleProfileSetupUpdate("add-release"),
     addToSchema(SCHEMAINCLUDE, [

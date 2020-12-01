@@ -12,6 +12,7 @@ module.exports = () => ({
   idLookUp: (num) => num,
   colorText: (text) => {
     let textColorMap = {
+      pending: "info",
       processing: "info",
       active: "success",
       inactive: "danger",
