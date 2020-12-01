@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM,
         values: [
           "incomplete",
+          "pending",
           "processing",
           "approved",
           "pre-save",
