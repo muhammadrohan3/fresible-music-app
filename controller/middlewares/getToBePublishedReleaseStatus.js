@@ -5,11 +5,11 @@ const getToBePublishedReleaseStatus = ({ getStore, setStore }) => async (
   key
 ) => {
   let status = "pending";
-  const attr = getStore()[source];
-  const release = await Release.findOne({ where: attr });
+  const id = getStore(source)[key];
+  const release = await Release.findByPk(id);
   const userPackage = await Userpackage.findByPk(release.userPackageId);
   if (userPackage.status.toLowerCase() === "active") status = "processing";
-  return setStore(SCHEMADATA, { status });
+  return setStore("RELEASE-STATUS", { status });
 };
 
 module.exports = { getToBePublishedReleaseStatus };

@@ -226,6 +226,7 @@ module.exports = (Controller) => {
     schemaQueryConstructor("user", ["id"], ["userId"]),
     addToSchema(SCHEMADATA, { comment: null }),
     getToBePublishedReleaseStatus(SCHEMAQUERY, "id"),
+    fromStore("RELEASE-STATUS", ["status"], SCHEMADATA),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Not updated"),
     resetKey("TEMPKEY1"),
