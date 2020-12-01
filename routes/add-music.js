@@ -227,6 +227,7 @@ module.exports = (Controller) => {
     addToSchema(SCHEMADATA, { comment: null }),
     getToBePublishedReleaseStatus(SCHEMAQUERY, "id"),
     fromStore("RELEASE-STATUS", ["status"], SCHEMADATA),
+    seeStore(),
     updateSchemaData(RELEASE),
     respondIf(SCHEMAMUTATED, false, "Not updated"),
     resetKey("TEMPKEY1"),
