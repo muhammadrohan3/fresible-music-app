@@ -1896,6 +1896,7 @@ $font-size-base: 15px !default;
 //////////////////////////>>>>>> HOLIDAY NOTICE
 .holiday-notice {
   max-width: 450px;
+  padding: 10px 20px;
   margin: 30px auto;
   text-align: center;
   border: 1px solid $color-border;
@@ -1912,5 +1913,6 @@ $font-size-base: 15px !default;
 
   &__content {
     font-size: 14px;
+    margin-bottom: 10px;
   }
 }

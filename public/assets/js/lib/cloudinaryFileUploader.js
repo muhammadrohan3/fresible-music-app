@@ -17,7 +17,7 @@ export default class CloudinaryFileUploader {
     );
   }
 
-  async upload(file) 
+  async upload(file) {
     let {
       upload_preset,
       public_id,
