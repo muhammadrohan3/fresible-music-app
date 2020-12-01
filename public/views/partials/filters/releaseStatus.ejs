@@ -1,6 +1,6 @@
 <div class="form__input">
   <% const { s } = Fns.query; %> <% const a = Fns.filter(["deleted", "approved",
-  "in stores", "declined", "incomplete", "processing"], s); %>
+  "in stores", "declined", "incomplete", "pending", "processing"], s); %>
   <select class="form__input--element" name="s">
     <option value="<%= s && s %>"><%= s ? s : "Filter by status" %></option>
     <% a.forEach(i => { %>
