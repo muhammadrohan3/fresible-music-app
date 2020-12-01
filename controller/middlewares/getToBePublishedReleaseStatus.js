@@ -9,7 +9,7 @@ const getToBePublishedReleaseStatus = ({ getStore, setStore }) => async (
   const release = await Release.findOne({ where: attr });
   const userPackage = await Userpackage.findByPk(release.userPackageId);
   if (userPackage.status.toLowerCase() === "active") status = "processing";
-  return setStore("RELEASE-STATUS", { status });
+  return setStore(SCHEMADATA, { status });
 };
 
 module.exports = { getToBePublishedReleaseStatus };
