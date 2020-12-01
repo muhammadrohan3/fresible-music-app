@@ -55,6 +55,7 @@ module.exports = (Controller) => {
     generateSmartLink,
     deleteSchemaData,
     Link_slugGenerator,
+    updateReleaseStatusWhenSubscriptionIsActivated,
   } = Controller;
 
   router.use(isAdmin());
@@ -188,6 +189,7 @@ module.exports = (Controller) => {
     urlFormer("/subscription", SCHEMAQUERY),
     sendMail("subscriptionActivated"),
     handleProfileSetupUpdate("payment", [SCHEMARESULT, "user"]),
+    updateReleaseStatusWhenSubscriptionIsActivated(SCHEMAQUERY, ["id"]),
     respond(1)
   );
 

@@ -121,6 +121,7 @@ module.exports = (Controller) => {
     urlFormer("/subscription", TEMPKEY),
     sendMail(SUBSCRIPTIONACTIVATED),
     handleProfileSetupUpdate("payment"),
+    updateReleaseStatusWhenSubscriptionIsActivated(TEMPKEY, ["id"]),
     redirect("/payment/{id}", TEMPKEY)
   );
 
@@ -220,6 +221,7 @@ module.exports = (Controller) => {
     urlFormer("/subscription", TEMPKEY),
     sendMail(SUBSCRIPTIONACTIVATED),
     handleProfileSetupUpdate("payment"),
+    updateReleaseStatusWhenSubscriptionIsActivated(TEMPKEY, ["id"]),
     redirect("/payment/{id}", TEMPKEY)
   );
 
@@ -247,6 +249,7 @@ module.exports = (Controller) => {
     urlFormer("/subscription", TEMPKEY),
     sendMail(SUBSCRIPTIONACTIVATED),
     handleProfileSetupUpdate("payment"),
+    updateReleaseStatusWhenSubscriptionIsActivated(TEMPKEY, ["id"]),
     respond(1)
   );
 
