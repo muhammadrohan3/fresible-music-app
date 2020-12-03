@@ -248,7 +248,7 @@
   <% } else { %>
   <div class="admin-submission">
     <div class="row admin-submission__action__btns text-center">
-      <% if(['incomplete', 'processing', 'declined'].includes(status)) { %>
+      <% if(['incomplete', 'pending', 'processing', 'declined'].includes(status)) { %>
       <div class="col-xs-12 col-md">
         <button
         id="approve"
@@ -258,7 +258,7 @@
         </button>
       </div>
    <% } %>
-   <% if(['incomplete', 'processing'].includes(status)) { %>
+   <% if(['incomplete', 'pending', 'processing'].includes(status)) { %>
       <div class="col-xs-12 col-md">
         <button
           id="decline"
